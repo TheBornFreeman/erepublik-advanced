@@ -1,5 +1,5 @@
 // -- Constants --------------------------------------------------------------------------------------------------------
-var VERSION = '4.2.6.0';
+var VERSION = '4.2.6';
 var RELEASE_DAY = '14. Nov 2013.';
 
 var country_id = {'romania' : '1', 'brazil' : '9', 'italy' : '10', 'france' : '11', 'germany' : '12', 'hungary' : '13', 'china' : '14', 'spain' : '15', 'canada' : '23', 'usa' : '24', 'mexico' : '26', 'argentina' : '27', 'venezuela' : '28', 'united-kingdom' : '29', 'switzerland' : '30', 'netherlands' : '31', 'belgium' : '32', 'austria' : '33', 'czech-republic' : '34', 'poland' : '35', 'slovakia' : '36', 'norway' : '37', 'sweden' : '38', 'finland' : '39', 'ukraine' : '40', 'russia' : '41', 'bulgaria' : '42', 'turkey' : '43', 'greece' : '44', 'japan' : '45', 'south-korea' : '47', 'india' : '48', 'indonesia' : '49', 'australia' : '50', 'south-africa' : '51', 'republic-of-moldova' : '52', 'portugal' : '53', 'ireland' : '54', 'denmark' : '55', 'iran' : '56', 'pakistan' : '57', 'israel' : '58', 'thailand' : '59', 'slovenia' : '61', 'gold' : '62', 'croatia' : '63', 'chile' : '64', 'serbia' : '65', 'malaysia' : '66', 'philippines' : '67', 'singapore' : '68', 'bosnia-herzegovina' : '69', 'estonia' : '70', 'latvia' : '71', 'lithuania' : '72', 'north-korea' : '73', 'uruguay' : '74', 'paraguay' : '75', 'bolivia' : '76', 'peru' : '77', 'colombia' : '78', 'republic-of-macedonia-fyrom' : '79', 'montenegro' : '80', 'republic-of-china-taiwan' : '81', 'cyprus' : '82', 'belarus' : '83', 'new-zealand' : '84', 'saudi-arabia' : '164', 'egypt' : '165', 'united-arab-emirates' : '166', 'albania' : '167'};
@@ -250,14 +250,14 @@ var era = {
             $('#large_sidebar').append(
                 $('<div>', {id: 'optionsHolder'}).append(
                     $('<div>', {id: 'optionsContent', class: 'optionsContent'}),
-                    $('<div>', {class: 'versionHolder', text: 'v ' + VERSION.substr(0, VERSION.lastIndexOf('.'))}),
+                    $('<div>', {class: 'versionHolder', text: 'v ' + VERSION}),
                     $('<span>', {class: 'infoHolder'}).append(
                         $('<div>', {class: 'infoContent'}).append(
                             $('<span>', {class: 'menuWindowHeader'}),
                             $('<table>', {border: '0', cellspacing: '5px', cellpadding: '5px'}).append(
                                 $('<tr>').append($('<td>').text('Founder: ').append($('<strong>').text('Roktaal'))),
                                 $('<tr>').append($('<td>').text('Developer: ').append($('<strong>').text('frimen'))),
-                                $('<tr>').append($('<td>').text('Version: ').append($('<strong>').text('v' + VERSION.substr(0, VERSION.lastIndexOf('.'))))),
+                                $('<tr>').append($('<td>').text('Version: ').append($('<strong>').text('v' + VERSION))),
                                 $('<tr>').append($('<td>').text('Release date: ').append($('<strong>').text(RELEASE_DAY))),
                                 $('<tr>').append($('<td>').text('Special thanks to: ').append($('<strong>').text('SJeB, Veljkokg, nolf, ziloslav, Brdar Dragan, drcika, Boolee, Denis Cicic, hapf, Leroy Combs, Basowy, ThomasRed, RatePV and many others.'))),
                                 $('<tr>').append($('<td>', {align: 'center'}).append($('<i>').text("Software is provided 'AS IS' and without any warranty. Use on your own responsibility.")))
@@ -366,7 +366,7 @@ var era = {
                                             '<div id="resetSettings" class="optionsInnerItemLabel_QuickLinks">Reset settings and data</div>' +
                                         '</div>' +
                                     '</div>' +
-                                    '<div class="optionsInnerVersion">v' + VERSION.substr(0, VERSION.lastIndexOf('.')) + '</div>' +
+                                    '<div class="optionsInnerVersion">v' + VERSION + '</div>' +
                                     '<div class="optionsInnerFooter">Note: After you change these settings reload current page in order for settings to take effect.</div>' +
                                 '</div>');
                 
