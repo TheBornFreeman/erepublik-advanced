@@ -1,5 +1,5 @@
 ## Release Information
-eRepublik Advanced 4.2.6dev
+eRepublik Advanced 4.2.6
 
 ### Google Chrome
 After completing these steps you should have a working extension.
