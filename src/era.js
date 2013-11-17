@@ -3114,9 +3114,6 @@ function enchantInventory() {
         $(this).find('.delete_offer').before(
             '<a title="Visit market" target="_blank" class="fluid_blue_dark_small" style="padding-left: 3px;" id="visit_market" href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + country_id[currency_country[offerCurrency].toLowerCase()] + '/' + offerIndustry + '/' + offerQuality + '/citizen/0/price_asc/1">' +
                 '<span>M</span>' +
-            '</a>' +
-            '<a title="Show offer on market" id="goto_offer" href="http://www.erepublik.com/' + era.hostLang + '/economy/market/offer/' + offerId + '?countryId=' + country_id[currency_country[offerCurrency].toLowerCase()] + '&industryId=' + offerIndustry + '&quality=' + offerQuality + '">' +
-                '<img style="padding-left: 10px;" src="' + iconOffer + '">' +
             '</a>'
         );
 
