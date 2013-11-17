@@ -1323,7 +1323,7 @@ var era = {
                 var mercenary = {};
                 var $r = $(r.replace(/src=/gi, 'dgffd='));
 
-                $r.find('#achievment .hinter:eq(9) ul > li').each(function() {
+                $r.find('#achievment .country_list:last li').each(function() {
                     mercenary[$(this).find('small').text()] = {
                         'country': $(this).attr('title'),
                         'progress': $(this).find('em').text().split('/')[0]
@@ -1331,7 +1331,7 @@ var era = {
                 });
 
                 era.storage.set('MercenaryProgress', {
-                    'totalProgress': $r.find('#achievment .hinter:eq(9) big strong').text().split('/')[0],
+                    'totalProgress': ~~$r.find('#achievment .country_list:last').prev().text().match(/\d+/),
                     'countryProgress': mercenary
                 });
 
@@ -2777,20 +2777,23 @@ function miniMonetary() {
 function miniMercenary() {
     var mercenaryProgress = era.storage.get('MercenaryProgress', {});
 
-    if (!mercenaryProgress.hasOwnProperty('totalProgress') || !mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
+    if (!mercenaryProgress.hasOwnProperty('totalProgress') || mercenaryProgress.totalProgress >= 50 || !mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
     
     $('.inventoryHolder').append('<div style="text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;">Mercenary</div><div id="miniMercenary1" class="miniInventoryHolder" style="cursor: default;"></div>');
-    
-    var tmp = '<div id="mercHolder" class="mercHolder" style="text-align: center;">' +
+
+    var tmp = '<div id="mercHolder" class="mercHolder" data-state="0" style="text-align: center; position: relative; cursor: pointer;">' +
+                                    '<div id="mercenaryTooltip" style="display: none; position: absolute;">' +
+                                        '<div style="font-size: 11px; background-color: #fffcc8; line-height: initial; padding: 5px; border-radius: 4px; border: 1px solid #ffd800; color: #595959;">Defeat 25 enemies for 50 different countries to get Mercenary medal.</div>' +
+                                        '<div style="width: 0; height: 0; border: 1px solid transparent; border-top-color: #ffd800; border-width: 4px 4px; margin: auto;"></div>' +
+                                    '</div>' +
                                     '<div class="mercBarBg">' +
                                         '<img src="' + mercBarIcon + '" alt="" style="position: absolute; top: -1px; z-index: 3; left: -5px;">' +
-                                        '<strong id="currMercProgress" style="width: 120px; text-align: center; position: absolute; right: 2px; top: 2px; height: 17px; font-size: 11px; line-height: 17px; z-index: 3; cursor: default; color: #333; color: rgba(51, 74, 33, 0.6); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4),0 0 5px rgba(255, 255, 255, 0.9);">' + mercenaryProgress.totalProgress + '</strong>' +
+                                        '<strong id="currMercProgress" style="width: 100%; text-align: center; position: absolute; right: 2px; top: 2px; height: 17px; font-size: 11px; line-height: 17px; z-index: 3; color: #333; color: rgba(51, 74, 33, 0.6); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4),0 0 5px rgba(255, 255, 255, 0.9);">' + mercenaryProgress.totalProgress + ' / 50</strong>' +
                                         '<div id="mercBarProgress" class="mercBarProgress"></div>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div id="mercDropHolder" class="mercDropHolder" style="text-align: center;">' +
-                                    '<span style="font-size: 11px; color: grey; margin-left: 5px;">' +
-                                        '<ul class="mercList">';
+                                    '<ul class="mercList" style="font-size: 11px; color: grey;">';
 
                                 for (var i in mercenaryProgress.countryProgress) {
     tmp +=                                  '<li title="' + mercenaryProgress.countryProgress[i].country + '">' +
@@ -2801,17 +2804,12 @@ function miniMercenary() {
                                 }
 
 
-    tmp +=                              '</ul>' +
-                                    '</span>' +
-                                '</div>' +
-                                '<div id="mercenaryTooltip" class="simple_yellow" style="width: 250px; display: none; position: absolute;">' +
-                                    '<img src="http://www.erepublik.com/images/modules/sidebar/yellow_arrow_tip.png" class="tip" alt="">' +
-                                    'Defeat 25 enemies for 50 different countries to get Mercenary medal.' +
+    tmp +=                          '</ul>' +
                                 '</div>';
 
     $('#miniMercenary1').append(tmp);
     
-    $('#mercBarProgress').css('width', mercenaryProgress.totalProgress + '%');
+    $('#mercBarProgress').css('width', mercenaryProgress.totalProgress / 0.5 + '%');
     
     $('.mercList li em').each(function() {
         if($(this).html() == '0/25') {
@@ -2830,28 +2828,23 @@ function miniMercenary() {
             $(this).parent().remove();
         }
     });
-    
-    $(document).on('mouseover mouseout', '#miniMercenary1', function(event) {
-        if (event.type == 'mouseover') {
-            $('#miniMercenary1 .mercDropHolder:last').css('display', 'block');
+
+    $('#mercHolder').hover(
+        function() {
+            $('#mercenaryTooltip').css('top', 7 - $('#mercenaryTooltip').height() + 'px').show();
+        },
+        function() {
+            $('#mercenaryTooltip').hide();
+        }
+    ).click(function() {
+        if ($(this).data('state')) {
+            $('#mercDropHolder').hide();
+            $(this).data('state', 0)
         } else {
-            $('#miniMercenary1 .mercDropHolder:last').css('display', 'none');
+            $('#mercDropHolder').show();
+            $(this).data('state', 1)
         }
     });
-
-    sidebarTooltip('#currMercProgress', '#mercenaryTooltip');
-}
-
-function sidebarTooltip(trigger, tooltip){
-    var $to = $(tooltip);
-
-    $(trigger).hover(
-        function() {
-          $to.attr('id') == 'mercenaryTooltip' && $to.css('top', $('.mercBarBg').offset().top + 33 + 'px');
-          $to.css({ display: "block" });
-        },
-        function() { $to.css({ display: "none" }); }
-    );
 }
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -4194,7 +4187,7 @@ function Main() {
         'ul.achiev .hinter .country_list li img { opacity: 1; }' +
         'ul.achiev .hinter .country_list li small { color: #666666; }' +
         
-        '.mercHolder { clear: both; float: left; line-height: 26px; width: 142px; }' +
+        '.mercHolder { clear: both; float: left; line-height: 26px; width: 100%; }' +
         '.mercDropHolder { clear: both; float: left; line-height: 14px; width: 153px; display: none; }' +
         
         '.mercBarBg { float: left; width: 136px; height: 21px; margin: 5px 0px 8px 11px; position: relative; background-image: url(' + mercBarBgImg + '); background-repeat: no-repeat; background-position: right; }' +
