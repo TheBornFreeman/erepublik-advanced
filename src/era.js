@@ -3717,7 +3717,7 @@ function mercTrackerMain() {
 
     var neededProgress = {};
 
-    $('#battle_listing li .side_flags:lt(2)').each(function() {
+    $('#battle_listing li .side_flags').each(function() {
         neededProgress[$(this).attr('title')] = 0;
     });
 
@@ -3726,50 +3726,48 @@ function mercTrackerMain() {
     }
 
     $('#battle_listing li').each(function() {
-        if (!$(this).parent().hasClass('resistance_war') || !$(this).parent().parent().hasClass('fighters')) {
-            $(this).css('height', '61px');
-            
-            var mercProgressOne = neededProgress[$(this).find('.side_flags:eq(0)').attr('title')];
-            var mercProgressTwo = neededProgress[$(this).find('.side_flags:eq(1)').attr('title')];
-            
-            if(mercProgressOne == '25' && mercProgressTwo == '25') {
-                $(this).append('<div class="mercMainHolder">' +
-                                    '<div style="width: 157px; float: left;">' +
-                                        '&nbsp;' +
-                                    '</div>' +
-                                    '<div class="mercCheckSmallRight"></div>' +
-                                    '<div style="width: 147px; float: left;">' +
-                                        '&nbsp;' +
-                                    '</div>' +
-                               '</div>');
-            } else {
-                $(this).append('<div class="mercMainHolder">' +
-                                    '<div style="width: 139px; float: left;">' +
-                                        '<strong style="font-size: 11px; float: right; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressOne + '</strong>' +
-                                    '</div>' +
-                                    '<div class="mercTank" style="margin: 3px 13px 0 13px;"></div>' +
-                                    '<div style="width: 130px; float: left;">' +
-                                        '<strong style="font-size: 11px; float: left; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressTwo + '</strong>' +
-                                    '</div>' +
-                               '</div>');
-            }
-            
-            if (mercProgressTwo == '0') {
-                $(this).find('.mercMainHolder strong:eq(1)').css('color', '#999999');
-            } else if (mercProgressTwo == '25') {
-                $(this).find('.mercMainHolder strong:eq(1)').replaceWith('<div class="mercCheckSmallRight"></div>');
-            }
-            
-            if (mercProgressOne == '0') {
-                $(this).find('.mercMainHolder strong:eq(0)').css('color', '#999999');
-            } else if (mercProgressOne == '25') {
-                $(this).find('.mercMainHolder strong:eq(0)').replaceWith('<div class="mercCheckSmallLeft"></div>');
-            }
-            
-            if($(this).parent().hasClass('bod_listing')) {
-                $(this).find('.mercMainHolder').css('background-color', '#EAD791');
-                $(this).find('.mercTank').css('background-position', 'center bottom');
-            }
+        $(this).css('height', '61px');
+        
+        var mercProgressOne = neededProgress[$(this).find('.side_flags:eq(0)').attr('title')];
+        var mercProgressTwo = neededProgress[$(this).find('.side_flags:eq(1)').attr('title')];
+
+        if(mercProgressOne == 25 && mercProgressTwo == 25) {
+            $(this).append('<div class="mercMainHolder">' +
+                                '<div style="width: 157px; float: left;">' +
+                                    '&nbsp;' +
+                                '</div>' +
+                                '<div class="mercCheckSmallRight"></div>' +
+                                '<div style="width: 147px; float: left;">' +
+                                    '&nbsp;' +
+                                '</div>' +
+                           '</div>');
+        } else {
+            $(this).append('<div class="mercMainHolder">' +
+                                '<div style="width: 139px; float: left;">' +
+                                    '<strong style="font-size: 11px; float: right; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressOne + '</strong>' +
+                                '</div>' +
+                                '<div class="mercTank" style="margin: 3px 13px 0 13px;"></div>' +
+                                '<div style="width: 130px; float: left;">' +
+                                    '<strong style="font-size: 11px; float: left; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressTwo + '</strong>' +
+                                '</div>' +
+                           '</div>');
+        }
+        
+        if (mercProgressTwo == '0') {
+            $(this).find('.mercMainHolder strong:eq(1)').css('color', '#999999');
+        } else if (mercProgressTwo == '25') {
+            $(this).find('.mercMainHolder strong:eq(1)').replaceWith('<div class="mercCheckSmallRight"></div>');
+        }
+        
+        if (mercProgressOne == '0') {
+            $(this).find('.mercMainHolder strong:eq(0)').css('color', '#999999');
+        } else if (mercProgressOne == '25') {
+            $(this).find('.mercMainHolder strong:eq(0)').replaceWith('<div class="mercCheckSmallLeft"></div>');
+        }
+        
+        if($(this).parent().hasClass('bod_listing')) {
+            $(this).find('.mercMainHolder').css('background-color', '#EAD791');
+            $(this).find('.mercTank').css('background-position', 'center bottom');
         }
     });
 }
