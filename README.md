@@ -11,7 +11,7 @@ After completing these steps you should have a working extension.
 
 Every time you make changes in the extension's folder you have to reload the extension. There is a reload link below the extension.
 
-### Firefox
+### Mozilla Firefox
 After completing these steps you should have a working Add-on.
 
 1.  [Download](https://ftp.mozilla.org/pub/mozilla.org/labs/jetpack/jetpack-sdk-latest.zip) the Add-on SDK.
