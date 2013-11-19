@@ -2613,320 +2613,293 @@ var era = {
             }
             // --
         }
+    },
+
+    miniInventory: {
+        o: function() {
+            var itemIndustry;
+            var itemQuality;
+            var itemCount;
+            var itemPresent = false;
+            
+            var rawIndustry;
+            var rawCount;
+            var rawPresent = false;
+
+            var marketOffers = era.storage.get('MarketOffers', []);
+            var storageStatus = era.storage.get('StorageStatus', {});
+            var storageContent = era.storage.get('StorageContent', {});
+            
+            $('.inventoryHolder a:first').empty().append(
+                $('<div>', {style: 'text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;', text: 'Storage' + (!storageStatus.hasOwnProperty('currentSize') || !storageStatus.hasOwnProperty('maxSize') ? '' : ' (' + numeral(storageStatus.currentSize).format('0,0') + '/' + numeral(storageStatus.maxSize).format('0,0') + ')')})
+            );
+            
+            $('.inventoryHolder a:first').append('<div id="miniInventory1" class="miniInventoryHolder"></div>');
+            
+            if (marketOffers.length) {
+                $('.inventoryHolder a:first').append('<div style="text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;">On market</div>' +
+                                                '<div id="miniInventory3" class="miniInventoryHolder"></div>');
+            }
+         
+            if (storageContent.hasOwnProperty('cooked')) {
+                for (var i in storageContent.cooked) {
+                    var icon;
+
+                    if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 141) {
+                        icon = '<img src="http://www.erepublik.com/images/icons/industry/999/26.png">';
+                    } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 12) {
+                        icon = '<img src="http://s3.www.erepublik.net/images/icons/industry/999/1.png">';
+                    } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 1212) {
+                        icon = '<img src="http://s1.www.erepublik.net/images/icons/industry/999/21.png">';
+                    } else {
+                        icon = '<img src="http://www.erepublik.com/images/icons/industry/' + storageContent.cooked[i].industry + '/q' + storageContent.cooked[i].quality + '.png">';
+                    }
+
+                    $('#miniInventory1').append(
+                        '<div class="itemCountHolder">' +
+                            icon +
+                            '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + storageContent.cooked[i].amount + '</strong>' +
+                        '</div>'
+                    );
+                }
+            }
+
+            if (storageContent.hasOwnProperty('raw')) {
+                for (var i in storageContent.raw) {
+                    $('#miniInventory1').append('<div class="itemCountHolder">' +
+                                                    '<img src="http://www.erepublik.com/images/icons/industry/' + storageContent.raw[i].industry + '/default.png">' +
+                                                    '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + storageContent.raw[i].amount + '</strong>' +
+                                                '</div>');
+                }
+            }
+            
+            if (storageContent.hasOwnProperty('bazooka') && storageContent.bazooka > 0) {
+                $('#miniInventory1').append('<div class="itemCountHolder">' +
+                                                '<img src="http://www.erepublik.com/images/icons/industry/000/1.png">' +
+                                                '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + storageContent.bazooka + '</strong>' +
+                                            '</div>');
+            }
+            
+            var citizenshipCountry = id_country[era.characterCitizenshipId];
+            var taxes = era.storage.get('TaxValues', {});
+            var marketOffers = era.storage.get('MarketOffers', []);
+
+            for (var i in marketOffers) {
+                var foreignOffer = function() {
+                    return marketOffers[i].country != currency_country[era.characterCurrency];
+                }
+
+                var offVat = Number(taxes[country_id[marketOffers[i].country.toLowerCase()]][marketOffers[i].industry].value_added_tax);
+                var offImp = Number(taxes[country_id[marketOffers[i].country.toLowerCase()]][marketOffers[i].industry].import_tax);
+
+                var offPriceTax = parseFloat(marketOffers[i].price) / (1 + ((offVat + offImp * foreignOffer()) / 100));
+                var tOfferVal = marketOffers[i].amount * parseFloat(marketOffers[i].price) / (1 + ((offVat + offImp * foreignOffer()) / 100));
+
+                $('#miniInventory3').append('<div id="itemCountHolder_' + marketOffers[i].id + '" class="itemCountHolder">' +
+                                                (marketOffers[i].quality > 0 ? '<img src="http://www.erepublik.com/images/icons/industry/' + marketOffers[i].industry + '/q' + marketOffers[i].quality + '.png">' : '<img src="http://www.erepublik.com/images/icons/industry/' + marketOffers[i].industry + '/default.png">') +
+                                                '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + marketOffers[i].amount + '</strong>' +
+                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png">' +
+                                                '<span style="float: right; font-size: 11px; color: grey;">' + marketOffers[i].price + '</span>' +
+                                            '</div>' +
+                                            '<div id="marketDropHolder_' + marketOffers[i].id + '" class="marketDropHolder">' +
+                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png">' +
+                                                '<span id="offPriceTaxG_' + marketOffers[i].id + '" style="float: right; font-size: 11px; color: grey; margin-left: 5px;">n/a</span>' +
+                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png">' +
+                                                '<span style="float: right; font-size: 11px; color: grey;">' + offPriceTax.toFixed(2) + '</span>' +
+                                                
+                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px; clear: both;" title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png">' +
+                                                '<span id="tOfferValG_' + marketOffers[i].id + '" style="float: right; font-size: 11px; color: grey; margin-left: 5px;">n/a</span>' +
+                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png">' +
+                                                '<span style="float: right; font-size: 11px; color: grey;">' + tOfferVal.toFixed(2) + '</span>' +
+                                            '</div>');
+                
+                $('#offPriceTaxG_' + marketOffers[i].id).gold(offPriceTax, 4);
+                $('#tOfferValG_' + marketOffers[i].id).gold(tOfferVal, 4);
+            }
+            
+            $('#miniInventory1 div:last').css('border-bottom', 'none');
+            $('#miniInventory3 .itemCountHolder:last').css('border-bottom', 'none');
+            $('#miniInventory3 .marketDropHolder:last').css('border-bottom', 'none');
+            
+            $(document).on('mouseover mouseout', 'div[id*="itemCountHolder_"]', function(event) {
+                var thisId = $(this).attr('id').split('_')[1];
+                if (event.type == 'mouseover') {
+                    $(this).css('border-bottom', '1px solid #DEDEDE');
+                    $(this).parent().find('div[id*="marketDropHolder_' + thisId + '"]').css('display', 'block');
+                } else {
+                    $('#miniInventory3 .itemCountHolder:last').css('border-bottom', 'none');
+                    $('#miniInventory3 .marketDropHolder:last').css('border-bottom', 'none');
+                    $(this).parent().find('div[id*="marketDropHolder_' + thisId + '"]').css('display', 'none');
+                }
+            });
+        }
+    },
+
+    miniMonetary: {
+        o: function() {
+            var monetaryOffers = era.storage.get('MonetaryOffers', []);
+
+            if(!monetaryOffers.length) return;
+            
+            $('.inventoryHolder').append('<a href="http://www.erepublik.com/' + era.hostLang + '/economy/exchange-market"><div style="text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;">Monetary market</div><div id="miniMonetary1" class="miniInventoryHolder"></div></a>');
+
+            for (var i in monetaryOffers) {
+                $('#miniMonetary1').append('<div id="monCountHolder_' + monetaryOffers[i].id + '" class="monCountHolder">' +
+                                                (monetaryOffers[i].currency == 'GOLD' ? '<img title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png">' : '<img title="' + monetaryOffers[i].currency + '" alt="' + monetaryOffers[i].currency + '" src="http://www.erepublik.com/images/flags_png/S/' + currency_country[monetaryOffers[i].currency] + '.png">') +
+                                                '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold; float: left;">' + (monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].amount * 1).toFixed(2) : (monetaryOffers[i].amount * 1).toFixed(0) ) + '</strong>' +
+                                                (monetaryOffers[i].currency == 'GOLD' ? '<img title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + currency_country[era.characterCurrency] + '.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">' : '<img title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">') +
+                                                '<span style="color: grey; font-size: 11px; text-shadow: 0 1px 0 #FFFFFF; float: right;">' + (monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].rate * 1).toFixed(0) : (monetaryOffers[i].rate * 1).toFixed(2) ) + '</strong>' +
+                                            '</div>' +
+                                            '<div id="monDropHolder_' + monetaryOffers[i].id + '" class="monDropHolder">' +
+                                                (monetaryOffers[i].currency == 'GOLD' ? '<img title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + currency_country[era.characterCurrency] + '.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">' : '<img title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">') +
+                                                '<span style="float: right; font-size: 11px; color: grey; margin-left: 5px;">' + (monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].amount * monetaryOffers[i].rate).toFixed(0) : (monetaryOffers[i].amount * monetaryOffers[i].rate).toFixed(2) ) + '</span>' +
+                                            '</div>');
+            }
+            
+            $('#miniMonetary1 .monCountHolder:last').css('border-bottom', 'none');
+            $('#miniMonetary1 .monDropHolder:last').css('border-bottom', 'none');
+            
+            $(document).on('mouseover mouseout', 'div[id*="monCountHolder_"]', function(event) {
+                var thisId = $(this).attr('id').split('_')[1];
+                if (event.type == 'mouseover') {
+                    $(this).css('border-bottom', '1px solid #DEDEDE');
+                    $(this).parent().find('div[id*="monDropHolder_' + thisId + '"]').css('display', 'block');
+                } else {
+                    $('#miniMonetary1 .monCountHolder:last').css('border-bottom', 'none');
+                    $('#miniMonetary1 .monDropHolder:last').css('border-bottom', 'none');
+                    $(this).parent().find('div[id*="monDropHolder_' + thisId + '"]').css('display', 'none');
+                }
+            });
+        }
+    },
+
+    miniMercenary: {
+        o: function() {
+            var mercenaryProgress = era.storage.get('MercenaryProgress', {});
+
+            if (!mercenaryProgress.hasOwnProperty('totalProgress') || mercenaryProgress.totalProgress >= 50 || !mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
+            
+            $('.inventoryHolder').append('<div style="text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;">Mercenary</div><div id="miniMercenary1" class="miniInventoryHolder" style="cursor: default;"></div>');
+
+            var tmp = '<div id="mercHolder" class="mercHolder" data-state="0" style="text-align: center; position: relative; cursor: pointer;">' +
+                                            '<div id="mercenaryTooltip" style="display: none; position: absolute;">' +
+                                                '<div style="font-size: 11px; background-color: #fffcc8; line-height: initial; padding: 5px; border-radius: 4px; border: 1px solid #ffd800; color: #595959;">Defeat 25 enemies for 50 different countries to get Mercenary medal.</div>' +
+                                                '<div style="width: 0; height: 0; border: 1px solid transparent; border-top-color: #ffd800; border-width: 4px 4px; margin: auto;"></div>' +
+                                            '</div>' +
+                                            '<div class="mercBarBg">' +
+                                                '<img src="' + mercBarIcon + '" alt="" style="position: absolute; top: -1px; z-index: 3; left: -5px;">' +
+                                                '<strong id="currMercProgress" style="width: 100%; text-align: center; position: absolute; right: 2px; top: 2px; height: 17px; font-size: 11px; line-height: 17px; z-index: 3; color: #333; color: rgba(51, 74, 33, 0.6); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4),0 0 5px rgba(255, 255, 255, 0.9);">' + mercenaryProgress.totalProgress + ' / 50</strong>' +
+                                                '<div id="mercBarProgress" class="mercBarProgress"></div>' +
+                                            '</div>' +
+                                        '</div>' +
+                                        '<div id="mercDropHolder" class="mercDropHolder" style="text-align: center;">' +
+                                            '<ul class="mercList" style="font-size: 11px; color: grey;">';
+
+                                        for (var i in mercenaryProgress.countryProgress) {
+            tmp +=                                  '<li title="' + mercenaryProgress.countryProgress[i].country + '">' +
+                                                        '<img src="http://www.erepublik.com/images/flags_png/S/' + id_country[countryName_id[mercenaryProgress.countryProgress[i].country]] + '.png" alt="">' +
+                                                        '<small>' + i + '</small>' +
+                                                        '<em style="background-image: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(225, 225, 225); background-position: initial initial; background-repeat: initial initial; ">' + mercenaryProgress.countryProgress[i].progress + '/25</em>' +
+                                                    '</li>';
+                                        }
+
+
+            tmp +=                          '</ul>' +
+                                        '</div>';
+
+            $('#miniMercenary1').append(tmp);
+            
+            $('#mercBarProgress').css('width', mercenaryProgress.totalProgress / 0.5 + '%');
+            
+            $('.mercList li em').each(function() {
+                if($(this).html() == '0/25') {
+                    $(this).css({
+                        'background' : '#e9e9e9',
+                        'backgroundColor' : '#e1e1e1',
+                        'backgroundImage' : '-webkit-gradient(linear, left bottom, left top, color-stop(1, #e9e9e9), color-stop(0, #e1e1e1))',
+                        'backgroundImage' : '-webkit-linear-gradient(center bottom, #e9e9e9 0%, #e1e1e1 100%)',
+                        'backgroundImage' : '-moz-linear-gradient(top, #e9e9e9 0%, #e1e1e1 100%)',
+                        'backgroundImage' : '-o-linear-gradient(top, #e9e9e9 0%, #e1e1e1 100%)',
+                        'backgroundImage' : '-ms-linear-gradient(top, #e9e9e9 0%, #e1e1e1 100%)',
+
+                        'backgroundImage' : 'linear-gradient(top, #e9e9e9 0%,#e1e1e1 100%)'
+                    });
+                } else if ($(this).html() == '25/25') {
+                    $(this).parent().remove();
+                }
+            });
+
+            $('#mercHolder').hover(
+                function() {
+                    $('#mercenaryTooltip').css('top', 7 - $('#mercenaryTooltip').height() + 'px').show();
+                },
+                function() {
+                    $('#mercenaryTooltip').hide();
+                }
+            ).click(function() {
+                if ($(this).data('state')) {
+                    $('#mercDropHolder').hide();
+                    $(this).data('state', 0)
+                } else {
+                    $('#mercDropHolder').show();
+                    $(this).data('state', 1)
+                }
+            });
+        }
+    },
+
+    searchRedirect: {
+        o: function() {
+            if (eRAopt['search'] == false || $('table.bestof:first tr').length != 2) {
+                return;
+            }
+
+            $('<tr/>').append($('<td>', {colspan: 4, style: 'text-align: center; padding: 10px;', text: 'Redirecting...'})).insertAfter('table.bestof:first tr:last');
+            location.assign($('.entity a:first').attr('href'));
+        }
+    },
+
+    changeComments: {
+        o: function() {
+            if (!era.settings.news) return;
+            
+            // time stamp
+            var timeNow = $('#live_time').text().split(':');
+            var totalTimeNow = (parseInt(era.erepDay, 10) * 1440) + (parseInt(timeNow[0], 10) * 60) + parseInt(timeNow[1], 10);
+            
+            $('#comments_div .comment-holder').each(function() {
+                var commentTimestamp = $(this).find('.article_comment_posted_at').text().match(/(\d+,\d+),[ ]+(\d+:\d+)/);
+                
+                var commentDay = ~~commentTimestamp[1].match(/\d+/g).join('');
+                var commentTime = commentTimestamp[2].split(':');
+                
+                var totalTimeCom = (commentDay * 1440) + (commentTime[0] * 60) + ~~commentTime[1];
+                var totalMinutes = totalTimeNow - totalTimeCom;
+                
+                var showText = '';
+                var comYears = Math.floor(totalMinutes / 525600);
+                if (comYears > 0) {
+                    showText = 'more than one year';
+                } else {
+                    var comDays = Math.floor(totalMinutes / 1440);
+                    showText = (comDays > 0) ? comDays + 'd ' : '';
+                    var comHours = Math.floor((totalMinutes - (comDays * 1440)) / 60);
+                    showText += (comHours > 0) ? comHours + 'h ' : '';
+                    var comMinutes = Math.floor(totalMinutes - (comDays * 1440) - (comHours * 60));
+                    if (totalMinutes > 0) {
+                        showText += (comMinutes > 0) ? comMinutes + 'm' : '';
+                    } else {
+                        showText += 'less then min.';
+                    }
+                }
+
+                $(this).find('.reply_links').append('<li style="color: #999; font-size: 11px;">' + showText + ' ago</li>');
+            });
+        }
     }
 
 };
 
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -- Improved sidebar -------------------------------------------------------------------------------------------------
-function miniInventory() {
-    var itemIndustry;
-    var itemQuality;
-    var itemCount;
-    var itemPresent = false;
-    
-    var rawIndustry;
-    var rawCount;
-    var rawPresent = false;
-
-    var marketOffers = era.storage.get('MarketOffers', []);
-    var storageStatus = era.storage.get('StorageStatus', {});
-    var storageContent = era.storage.get('StorageContent', {});
-    
-    $('.inventoryHolder a:first').empty().append(
-        $('<div>', {style: 'text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;', text: 'Storage' + (!storageStatus.hasOwnProperty('currentSize') || !storageStatus.hasOwnProperty('maxSize') ? '' : ' (' + numeral(storageStatus.currentSize).format('0,0') + '/' + numeral(storageStatus.maxSize).format('0,0') + ')')})
-    );
-    
-    $('.inventoryHolder a:first').append('<div id="miniInventory1" class="miniInventoryHolder"></div>');
-    
-    if (marketOffers.length) {
-        $('.inventoryHolder a:first').append('<div style="text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;">On market</div>' +
-                                        '<div id="miniInventory3" class="miniInventoryHolder"></div>');
-    }
- 
-    if (storageContent.hasOwnProperty('cooked')) {
-        for (var i in storageContent.cooked) {
-            var icon;
-
-            if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 141) {
-                icon = '<img src="http://www.erepublik.com/images/icons/industry/999/26.png">';
-            } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 12) {
-                icon = '<img src="http://s3.www.erepublik.net/images/icons/industry/999/1.png">';
-            } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 1212) {
-                icon = '<img src="http://s1.www.erepublik.net/images/icons/industry/999/21.png">';
-            } else {
-                icon = '<img src="http://www.erepublik.com/images/icons/industry/' + storageContent.cooked[i].industry + '/q' + storageContent.cooked[i].quality + '.png">';
-            }
-
-            $('#miniInventory1').append(
-                '<div class="itemCountHolder">' +
-                    icon +
-                    '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + storageContent.cooked[i].amount + '</strong>' +
-                '</div>'
-            );
-        }
-    }
-
-    if (storageContent.hasOwnProperty('raw')) {
-        for (var i in storageContent.raw) {
-            $('#miniInventory1').append('<div class="itemCountHolder">' +
-                                            '<img src="http://www.erepublik.com/images/icons/industry/' + storageContent.raw[i].industry + '/default.png">' +
-                                            '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + storageContent.raw[i].amount + '</strong>' +
-                                        '</div>');
-        }
-    }
-    
-    if (storageContent.hasOwnProperty('bazooka') && storageContent.bazooka > 0) {
-        $('#miniInventory1').append('<div class="itemCountHolder">' +
-                                        '<img src="http://www.erepublik.com/images/icons/industry/000/1.png">' +
-                                        '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + storageContent.bazooka + '</strong>' +
-                                    '</div>');
-    }
-    
-    var citizenshipCountry = id_country[era.characterCitizenshipId];
-    var taxes = era.storage.get('TaxValues', {});
-    var marketOffers = era.storage.get('MarketOffers', []);
-
-    for (var i in marketOffers) {
-        var foreignOffer = function() {
-            return marketOffers[i].country != currency_country[era.characterCurrency];
-        }
-
-        var offVat = Number(taxes[country_id[marketOffers[i].country.toLowerCase()]][marketOffers[i].industry].value_added_tax);
-        var offImp = Number(taxes[country_id[marketOffers[i].country.toLowerCase()]][marketOffers[i].industry].import_tax);
-
-        var offPriceTax = parseFloat(marketOffers[i].price) / (1 + ((offVat + offImp * foreignOffer()) / 100));
-        var tOfferVal = marketOffers[i].amount * parseFloat(marketOffers[i].price) / (1 + ((offVat + offImp * foreignOffer()) / 100));
-
-        $('#miniInventory3').append('<div id="itemCountHolder_' + marketOffers[i].id + '" class="itemCountHolder">' +
-                                        (marketOffers[i].quality > 0 ? '<img src="http://www.erepublik.com/images/icons/industry/' + marketOffers[i].industry + '/q' + marketOffers[i].quality + '.png">' : '<img src="http://www.erepublik.com/images/icons/industry/' + marketOffers[i].industry + '/default.png">') +
-                                        '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + marketOffers[i].amount + '</strong>' +
-                                        '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png">' +
-                                        '<span style="float: right; font-size: 11px; color: grey;">' + marketOffers[i].price + '</span>' +
-                                    '</div>' +
-                                    '<div id="marketDropHolder_' + marketOffers[i].id + '" class="marketDropHolder">' +
-                                        '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png">' +
-                                        '<span id="offPriceTaxG_' + marketOffers[i].id + '" style="float: right; font-size: 11px; color: grey; margin-left: 5px;">n/a</span>' +
-                                        '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png">' +
-                                        '<span style="float: right; font-size: 11px; color: grey;">' + offPriceTax.toFixed(2) + '</span>' +
-                                        
-                                        '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px; clear: both;" title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png">' +
-                                        '<span id="tOfferValG_' + marketOffers[i].id + '" style="float: right; font-size: 11px; color: grey; margin-left: 5px;">n/a</span>' +
-                                        '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png">' +
-                                        '<span style="float: right; font-size: 11px; color: grey;">' + tOfferVal.toFixed(2) + '</span>' +
-                                    '</div>');
-        
-        $('#offPriceTaxG_' + marketOffers[i].id).gold(offPriceTax, 4);
-        $('#tOfferValG_' + marketOffers[i].id).gold(tOfferVal, 4);
-    }
-    
-    $('#miniInventory1 div:last').css('border-bottom', 'none');
-    $('#miniInventory3 .itemCountHolder:last').css('border-bottom', 'none');
-    $('#miniInventory3 .marketDropHolder:last').css('border-bottom', 'none');
-    
-    $(document).on('mouseover mouseout', 'div[id*="itemCountHolder_"]', function(event) {
-        var thisId = $(this).attr('id').split('_')[1];
-        if (event.type == 'mouseover') {
-            $(this).css('border-bottom', '1px solid #DEDEDE');
-            $(this).parent().find('div[id*="marketDropHolder_' + thisId + '"]').css('display', 'block');
-        } else {
-            $('#miniInventory3 .itemCountHolder:last').css('border-bottom', 'none');
-            $('#miniInventory3 .marketDropHolder:last').css('border-bottom', 'none');
-            $(this).parent().find('div[id*="marketDropHolder_' + thisId + '"]').css('display', 'none');
-        }
-    });
-}
-
-function miniMonetary() {
-    var monetaryOffers = era.storage.get('MonetaryOffers', []);
-
-    if(!monetaryOffers.length) return;
-    
-    $('.inventoryHolder').append('<a href="http://www.erepublik.com/' + era.hostLang + '/economy/exchange-market"><div style="text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;">Monetary market</div><div id="miniMonetary1" class="miniInventoryHolder"></div></a>');
-
-    for (var i in monetaryOffers) {
-        $('#miniMonetary1').append('<div id="monCountHolder_' + monetaryOffers[i].id + '" class="monCountHolder">' +
-                                        (monetaryOffers[i].currency == 'GOLD' ? '<img title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png">' : '<img title="' + monetaryOffers[i].currency + '" alt="' + monetaryOffers[i].currency + '" src="http://www.erepublik.com/images/flags_png/S/' + currency_country[monetaryOffers[i].currency] + '.png">') +
-                                        '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold; float: left;">' + (monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].amount * 1).toFixed(2) : (monetaryOffers[i].amount * 1).toFixed(0) ) + '</strong>' +
-                                        (monetaryOffers[i].currency == 'GOLD' ? '<img title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + currency_country[era.characterCurrency] + '.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">' : '<img title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">') +
-                                        '<span style="color: grey; font-size: 11px; text-shadow: 0 1px 0 #FFFFFF; float: right;">' + (monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].rate * 1).toFixed(0) : (monetaryOffers[i].rate * 1).toFixed(2) ) + '</strong>' +
-                                    '</div>' +
-                                    '<div id="monDropHolder_' + monetaryOffers[i].id + '" class="monDropHolder">' +
-                                        (monetaryOffers[i].currency == 'GOLD' ? '<img title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + currency_country[era.characterCurrency] + '.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">' : '<img title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">') +
-                                        '<span style="float: right; font-size: 11px; color: grey; margin-left: 5px;">' + (monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].amount * monetaryOffers[i].rate).toFixed(0) : (monetaryOffers[i].amount * monetaryOffers[i].rate).toFixed(2) ) + '</span>' +
-                                    '</div>');
-    }
-    
-    $('#miniMonetary1 .monCountHolder:last').css('border-bottom', 'none');
-    $('#miniMonetary1 .monDropHolder:last').css('border-bottom', 'none');
-    
-    $(document).on('mouseover mouseout', 'div[id*="monCountHolder_"]', function(event) {
-        var thisId = $(this).attr('id').split('_')[1];
-        if (event.type == 'mouseover') {
-            $(this).css('border-bottom', '1px solid #DEDEDE');
-            $(this).parent().find('div[id*="monDropHolder_' + thisId + '"]').css('display', 'block');
-        } else {
-            $('#miniMonetary1 .monCountHolder:last').css('border-bottom', 'none');
-            $('#miniMonetary1 .monDropHolder:last').css('border-bottom', 'none');
-            $(this).parent().find('div[id*="monDropHolder_' + thisId + '"]').css('display', 'none');
-        }
-    });
-}
-
-function miniMercenary() {
-    var mercenaryProgress = era.storage.get('MercenaryProgress', {});
-
-    if (!mercenaryProgress.hasOwnProperty('totalProgress') || mercenaryProgress.totalProgress >= 50 || !mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
-    
-    $('.inventoryHolder').append('<div style="text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;">Mercenary</div><div id="miniMercenary1" class="miniInventoryHolder" style="cursor: default;"></div>');
-
-    var tmp = '<div id="mercHolder" class="mercHolder" data-state="0" style="text-align: center; position: relative; cursor: pointer;">' +
-                                    '<div id="mercenaryTooltip" style="display: none; position: absolute;">' +
-                                        '<div style="font-size: 11px; background-color: #fffcc8; line-height: initial; padding: 5px; border-radius: 4px; border: 1px solid #ffd800; color: #595959;">Defeat 25 enemies for 50 different countries to get Mercenary medal.</div>' +
-                                        '<div style="width: 0; height: 0; border: 1px solid transparent; border-top-color: #ffd800; border-width: 4px 4px; margin: auto;"></div>' +
-                                    '</div>' +
-                                    '<div class="mercBarBg">' +
-                                        '<img src="' + mercBarIcon + '" alt="" style="position: absolute; top: -1px; z-index: 3; left: -5px;">' +
-                                        '<strong id="currMercProgress" style="width: 100%; text-align: center; position: absolute; right: 2px; top: 2px; height: 17px; font-size: 11px; line-height: 17px; z-index: 3; color: #333; color: rgba(51, 74, 33, 0.6); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4),0 0 5px rgba(255, 255, 255, 0.9);">' + mercenaryProgress.totalProgress + ' / 50</strong>' +
-                                        '<div id="mercBarProgress" class="mercBarProgress"></div>' +
-                                    '</div>' +
-                                '</div>' +
-                                '<div id="mercDropHolder" class="mercDropHolder" style="text-align: center;">' +
-                                    '<ul class="mercList" style="font-size: 11px; color: grey;">';
-
-                                for (var i in mercenaryProgress.countryProgress) {
-    tmp +=                                  '<li title="' + mercenaryProgress.countryProgress[i].country + '">' +
-                                                '<img src="http://www.erepublik.com/images/flags_png/S/' + id_country[countryName_id[mercenaryProgress.countryProgress[i].country]] + '.png" alt="">' +
-                                                '<small>' + i + '</small>' +
-                                                '<em style="background-image: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(225, 225, 225); background-position: initial initial; background-repeat: initial initial; ">' + mercenaryProgress.countryProgress[i].progress + '/25</em>' +
-                                            '</li>';
-                                }
-
-
-    tmp +=                          '</ul>' +
-                                '</div>';
-
-    $('#miniMercenary1').append(tmp);
-    
-    $('#mercBarProgress').css('width', mercenaryProgress.totalProgress / 0.5 + '%');
-    
-    $('.mercList li em').each(function() {
-        if($(this).html() == '0/25') {
-            $(this).css({
-                'background' : '#e9e9e9',
-                'backgroundColor' : '#e1e1e1',
-                'backgroundImage' : '-webkit-gradient(linear, left bottom, left top, color-stop(1, #e9e9e9), color-stop(0, #e1e1e1))',
-                'backgroundImage' : '-webkit-linear-gradient(center bottom, #e9e9e9 0%, #e1e1e1 100%)',
-                'backgroundImage' : '-moz-linear-gradient(top, #e9e9e9 0%, #e1e1e1 100%)',
-                'backgroundImage' : '-o-linear-gradient(top, #e9e9e9 0%, #e1e1e1 100%)',
-                'backgroundImage' : '-ms-linear-gradient(top, #e9e9e9 0%, #e1e1e1 100%)',
-
-                'backgroundImage' : 'linear-gradient(top, #e9e9e9 0%,#e1e1e1 100%)'
-            });
-        } else if ($(this).html() == '25/25') {
-            $(this).parent().remove();
-        }
-    });
-
-    $('#mercHolder').hover(
-        function() {
-            $('#mercenaryTooltip').css('top', 7 - $('#mercenaryTooltip').height() + 'px').show();
-        },
-        function() {
-            $('#mercenaryTooltip').hide();
-        }
-    ).click(function() {
-        if ($(this).data('state')) {
-            $('#mercDropHolder').hide();
-            $(this).data('state', 0)
-        } else {
-            $('#mercDropHolder').show();
-            $(this).data('state', 1)
-        }
-    });
-}
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -- Search redirect --------------------------------------------------------------------------------------------------
-function searchRedirect() {
-    if (eRAopt['search'] == false || $('table.bestof:first tr').length != 2) {
-        return;
-    }
-
-    $('<tr/>').append($('<td>', {colspan: 4, style: 'text-align: center; padding: 10px;', text: 'Redirecting...'})).insertAfter('table.bestof:first tr:last');
-    location.assign($('.entity a:first').attr('href'));
-}
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -- Article comments -------------------------------------------------------------------------------------------------
-function changeComments() {
-    if (eRAopt['news'] == false) {
-        return;
-    }
-    
-    var removedCount = 0;
-    
-    $('body#newspaper ul.tabs li a span').css('padding', '0px 10px');
-    $('body#newspaper ul.tabs li a span').css('width', '150px');
-    
-    var commentsText = $('#comments_button_on span').text();
-    commentsText = commentsText.replace(/\s/g, '/');
-    var numberOfComments = commentsText.split('/')[1];
-    numberOfComments = numberOfComments.substring(1, numberOfComments.length - 1);
-    
-    var currNumComments = $('input#NumberOfComments').val();
-    $('input#NumberOfComments').val(currNumComments - removedCount);
-    
-    $('#comments_button_on span').text(numberOfComments + ' Comments');
-    $('#comments_button_off span').text(numberOfComments + ' Comments');
-    
-    var oldWidth = $('#article_comment').css('width');
-    var oldHeight = $('#article_comment').css('height');
-    $('#article_comment').css('margin-bottom', '0px');
-    $('#article_comment').attr('class', 'resizable');
-    $('#article_comment').parent().css('height', 'auto');
-    $('#article_comment').css('width', oldWidth);
-    $('#article_comment').css('height', oldHeight);
-    $('#article_comment').css('font-family', 'Arial,Helvetica,sans-serif');
-    $('#article_comment').css('font-size', '13px');
-    
-    // time stamp
-    
-    var today = $('.eday strong').html().replace(/,/gi, '');
-    if (today) {
-        var timeNow = $('#live_time').text().split(':');
-        var totalTimeNow = (parseInt(today, 10) * 1440) + (parseInt(timeNow[0], 10) * 60) + parseInt(timeNow[1], 10);
-        
-        $('#comments_div .articlecomments').each(function() {
-            var commentTimestamp = $(this).find('.article_comment_posted_at').text().split(' ');
-            
-            var commentDay = commentTimestamp[1].replace(/,/gi, '');
-            var commentTime = commentTimestamp[2].split(':');
-            
-            var totalTimeCom = (parseInt(commentDay, 10) * 1440) + (parseInt(commentTime[0], 10) * 60) + parseInt(commentTime[1], 10);
-            var totalMinutes = totalTimeNow - totalTimeCom;
-            
-            var showText = '';
-            var comYears = Math.floor(totalMinutes / 525600);
-            if (comYears > 0) {
-                showText = 'more than one year';
-            } else {
-                var comDays = Math.floor(totalMinutes / 1440);
-                showText = (comDays > 0) ? comDays + 'd ' : '';
-                var comHours = Math.floor((totalMinutes - (comDays * 1440)) / 60);
-                showText += (comHours > 0) ? comHours + 'h ' : '';
-                var comMinutes = Math.floor(totalMinutes - (comDays * 1440) - (comHours * 60));
-                if (totalMinutes > 0) {
-                    showText += (comMinutes > 0) ? comMinutes + 'm' : '';
-                } else {
-                    showText += 'less then min.';
-                }
-            }
-            $(this).find('.article_comment_posted_at').css({'display':'block','float':'left'}).append('<br /><div style="font-size: 10px; padding-top: 3px;"> ' + showText + ' ago</div>');
-        });
-    }
-}
 // ---------------------------------------------------------------------------------------------------------------------
 
 // -- Better messages --------------------------------------------------------------------------------------------------
@@ -4379,13 +4352,13 @@ function Main() {
     );
     era.settings.sidebar && $('#optionsHolder').before('<div class="inventoryHolder"><a href="http://www.erepublik.com/' + era.hostLang + '/economy/inventory"></a></div>');
 
-    era.settings.sidebar && era.inventoryPageProcessor.subscribers.push(miniInventory);
+    era.settings.sidebar && era.inventoryPageProcessor.subscribers.push(era.miniInventory.o);
     era.settings.sidebar && era.inventoryPageProcessor.o();
 
-    era.settings.sidebar && era.monetaryOffersFetcher.subscribers.push(miniMonetary);
+    era.settings.sidebar && era.monetaryOffersFetcher.subscribers.push(era.miniMonetary.o);
     era.settings.sidebar && era.monetaryOffersFetcher.o();
 
-    era.settings.sidebar && era.profilePageProcessor.subscribers.push(miniMercenary);
+    era.settings.sidebar && era.profilePageProcessor.subscribers.push(era.miniMercenary.o);
 
     /**
     * Mercenary tracker.
@@ -4419,10 +4392,10 @@ function Main() {
     era.settings.mmarket && location.href.indexOf('economy/exchange-market') >= 0 && era.monetaryMarket.o();
     
     var pagesFunctions = [
-        {p: 'main/search/', f: searchRedirect},
+        {p: 'main/search/', f: era.searchRedirect.o},
         {p: 'economy/inventory', f: enchantInventory},
         {p: 'economy/inventory', f: taxTable},
-        {p: 'article/', f: changeComments},
+        {p: 'article/', f: era.changeComments.o},
         {p: 'economy/citizen-accounts/', f: storageTab},
         {p: 'citizen/edit/profile', f: storageTab},
         {p: 'citizen/change-residence', f: storageTab},
