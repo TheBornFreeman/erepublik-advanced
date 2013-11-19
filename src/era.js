@@ -2647,7 +2647,7 @@ var era = {
 
                     if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 141) {
                         icon = '<img src="http://www.erepublik.com/images/icons/industry/999/26.png">';
-                    } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 12) {
+                    } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 13) {
                         icon = '<img src="http://s3.www.erepublik.net/images/icons/industry/999/1.png">';
                     } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 1212) {
                         icon = '<img src="http://s1.www.erepublik.net/images/icons/industry/999/21.png">';
