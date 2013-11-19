@@ -1,6 +1,14 @@
 ## Release Information
 eRepublik Advanced 4.2.7dev
 
+### Official extensions
+Here are the links for the official extensions built from this repository.
+- [Google Chrome](http://j.mp/1gezQip) `Chrome Web Store`
+- [Mozilla Firefox](http://j.mp/19nN73y) `Firefox Add-ons (AMO)`
+
+## Instructions for developers
+In order to run the script and test your modifications you have to build the supported extensions and load them into the web browser. You can find the browser specific extension building steps below.
+
 ### Google Chrome
 After completing these steps you should have a working extension.
 
@@ -26,5 +34,5 @@ After completing these steps you should have a working Add-on.
 
 In case you need help with the Add-on SDK here is the [documentation](https://addons.mozilla.org/en-US/developers/docs/sdk/latest/) for you.
 
-### Notes
+## Notes
 The source is a big mess right now, but it will get better with time. I have plans and solutions that I will share later on.
