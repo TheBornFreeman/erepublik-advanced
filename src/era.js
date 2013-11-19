@@ -2360,7 +2360,7 @@ var era = {
                     currency = $('#buy_flag em').text()
                 ;
 
-                $('.exchange_offers:first tbody tr').each(function() {
+                $('.buy_mode .exchange_offers:first tbody tr').each(function() {
                     var $row = $(this);
 
                     $row.find('.ex_buy').append(
@@ -2467,8 +2467,8 @@ var era = {
                 '}'
             );
 
-            if (!$('.exchange_offers:first').data('eraTransformed')) {
-                $('.exchange_offers:first').data('eraTransformed', true);
+            if (!$('.buy_mode .exchange_offers:first').data('eraTransformed')) {
+                $('.buy_mode .exchange_offers:first').data('eraTransformed', true);
                 transformer();
             }
         }
