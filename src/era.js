@@ -1615,7 +1615,7 @@ var era = {
 
     improveProfile: {
         o: function() {
-            storageTab();
+            era.storageTab.o();
 
             !$('.citizen_menu').append(
                 '<li>' +
@@ -2896,657 +2896,561 @@ var era = {
                 $(this).find('.reply_links').append('<li style="color: #999; font-size: 11px;">' + showText + ' ago</li>');
             });
         }
-    }
+    },
 
-};
+    betterMessages: {
+        o: function() {
+            era.addStyle(
+                '#message_form .widearea-wrapper {' +
+                    '-webkit-animation-duration: 0.001s;' +
+                    '-webkit-animation-name: nodeInserted;' +
+                    '-moz-animation-duration: 0.001s;' +
+                    '-moz-animation-name: nodeInserted;' +
+                '}'
+            );
 
-// ---------------------------------------------------------------------------------------------------------------------
+            document.addEventListener(!era.chrome ? 'animationstart' : 'webkitAnimationStart', function(e){
+                if (e.animationName != 'nodeInserted' || !$(e.target).hasClass('widearea-wrapper') || $('#message_form igmClear').length) return;
 
-// -- Better messages --------------------------------------------------------------------------------------------------
-function betterMessages() {
-    era.addStyle(
-        '#message_form .widearea-wrapper {' +
-            '-webkit-animation-duration: 0.001s;' +
-            '-webkit-animation-name: nodeInserted;' +
-            '-moz-animation-duration: 0.001s;' +
-            '-moz-animation-name: nodeInserted;' +
-        '}'
-    );
+                $('#message_form').append(
+                    '<a href="javascript:;" id="igmClear" title="Delete saved message and subject" class="fluid_blue_dark_medium" style="margin-right: 10px; float: right;">' +
+                        '<span class="bold">Clear</span>' +
+                    '</a>' +
+                    '<a href="javascript:;" id="igmSave" title="Save message and subject" class="fluid_blue_dark_medium" style="margin-right: 10px; float: right;">' +
+                        '<span class="bold">Save</span>' +
+                    '</a>' +
+                    '<a href="javascript:;" id="igmFill" title="Fill the fields with the saved data" class="fluid_blue_dark_medium" style="margin-right: 10px; float: right;">' +
+                        '<span class="bold">Fill</span>' +
+                    '</a>'
+                );
 
-    document.addEventListener(!era.chrome ? 'animationstart' : 'webkitAnimationStart', function(e){
-        if (e.animationName != 'nodeInserted' || !$(e.target).hasClass('widearea-wrapper') || $('#message_form igmClear').length) return;
-
-        $('#message_form').append(
-            '<a href="javascript:;" id="igmClear" title="Delete saved message and subject" class="fluid_blue_dark_medium" style="margin-right: 10px; float: right;">' +
-                '<span class="bold">Clear</span>' +
-            '</a>' +
-            '<a href="javascript:;" id="igmSave" title="Save message and subject" class="fluid_blue_dark_medium" style="margin-right: 10px; float: right;">' +
-                '<span class="bold">Save</span>' +
-            '</a>' +
-            '<a href="javascript:;" id="igmFill" title="Fill the fields with the saved data" class="fluid_blue_dark_medium" style="margin-right: 10px; float: right;">' +
-                '<span class="bold">Fill</span>' +
-            '</a>'
-        );
-
-        $('#igmFill').click(function() {
-            var data = era.storage.get('Messenger', {});
-            $('#citizen_subject').length && $('#citizen_subject').val(data.subject);
-            $('#citizen_message').val(data.message);
-        });
-        
-        $('#igmSave').click(function() {
-            var data = {};
-            $('#citizen_subject').length && (data.subject = $('#citizen_subject').val()) || (data.subject = '');
-            data.message = $('#citizen_message').val();
-            era.storage.set('Messenger', data);
-        });
-        
-        $('#igmClear').click(function() {
-            var data = {message: '', subject: ''};
-            confirm('Are you sure you want to delete the saved message and subject?') && era.storage.set('Messenger', data);
-        });
-    }, true);
-}
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -- Inventory --------------------------------------------------------------------------------------------------------
-function enchantInventory() {
-    document.countries = [];
-    $('#market_licenses_select .ml_repeat li a').each(function() {
-        document.countries.push($(this).attr('title'));
-    });
-
-    if (eRAopt['inventory'] == false) return;
-
-    var taxes = era.storage.get('TaxValues', {});
-    var citCountry = $('#content script:last').text().split('var ')[5].replace('citizenshipCountry = ', '').match(/^[0-9]+/i)[0];
-    var initValue = parseFloat($('#sell_price').val());
-    var initTax = parseFloat($('#tax').text().split(' ')[0]);
-    var initCurr = $('#sell_currency').text();
-    var initAmount = parseFloat($('#sell_amount').val());
-    var citizenCurrency = country_currency[id_country[citCountry]];
-    var originalRowCount = $('#sell_offers > table tr:gt(1):not(:last)').length;
-
-    $('.offers_price').css('height', '110px').css('width', '330px');
-    $('.offers_product').css('width', '70px');
-    $('.offers_quantity').css('width', '100px');
-    $('.buy_market_license td').attr('colspan', '7').find('div:first').css('float', 'none').css('width', '100%');
-    $('#big_notifiers').css('padding-top', '15px').css('padding-bottom', '5px').css('width', '716px');
-    $('.delete_offer').css('opacity', '1');
-    $('.offers_action').css('padding-left', '0px');
-
-    $('.offers_price').after(
-        '<th id="priceWithoutTax" class="offers_price" style="width: 225px; padding-left: 5px;">' +
-            '<div class="relative">' +
-                '<strong style="text-align: center; margin-bottom: 3px; margin-top: -45px;">Price / unit<br/>w/o Tax</strong>' +
-                '<small id="wtax" style="top: -7px;"><span id="priceWoTax">n/a</span> <span class="destCurrency">n/a</span></small><small id="wtaxG" style="font-size: 10px; top: -7px;"><br /><span>n/a</span> GOLD</small>' +
-            '</div>' +
-        '</th>'
-    );
-
-    $('#priceWithoutTax').after(
-        '<th id="totalValue" class="offers_price" style="width: 90px; padding-left: 10px;">' +
-            '<div class="relative">' +
-                '<strong style="text-align: center; margin-bottom: 3px; margin-top: -45px;">Total value<br/>w/o Tax</strong>' +
-                '<small id="tvwotax" style="top: -7px;"><span id="tPriceWoTax">n/a</span> <span class="destCurrency">n/a</span></small><small id="tvwotaxG" style="font-size: 10px; top: -7px;"><br /><span>n/a</span> GOLD</small>' +
-            '</div>' +
-        '</th>'
-    );
-
-    $('#sell_offers table').append(
-        '<tfoot>' +
-            '<tr style="background: none repeat scroll 0 0 #F7FCFF;">' +
-                '<td colspan="4">&nbsp;</td>' +
-                '<td id="marketTotals" style="border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;">' +
-                    '<strong id="sumValue">' + (0).toFixed(2) + '</strong>&nbsp;' + citizenCurrency + '<br>' +
-                    '<strong style="color: #B2B2B2; font-size: 10px;" id="sumGold">' + (0).toFixed(4) + '</strong>' +
-                    '<span style="color: #B2B2B2; font-size: 10px;">&nbsp;GOLD</span>' +
-                '</td>' +
-                '<td colspan="2">&nbsp;</td>' +
-            '</tr>' +
-        '</tfoot>'
-    ).find('th:not(#totalValue, .offers_action)').css('padding-left', '10px');
-
-    $('#sell_offers').bind('update', function() {
-        var price = $('#sell_price').val().replace(',', '.');
-        price = isNaN(price) ? 0 : price;
-
-        var tax = $('#tax').text().split(' ')[0];
-        tax = isNaN(tax) ? 0 : tax;
-
-        var amount = $('#sell_amount').val().replace(',', '.');
-        amount = isNaN(amount) ? 0 : amount;
-
-        var taxlessPrice = price - tax;
-
-        var currency = $('#sell_currency').text();
-
-        $('.destCurrency').text(currency);
-
-        $('#priceWoTax').text(taxlessPrice.toFixed(2));
-        $('#wtaxG span').text('n/a').gold(taxlessPrice, 4);
-
-        $('#tPriceWoTax').text((amount * taxlessPrice).toFixed(2));
-        $('#tvwotaxG span').text('n/a').gold(amount * taxlessPrice, 4);
-    });
-
-    $('#sell_offers').triggerHandler('update');
-
-    $('#sell_price, #sell_amount').bind('keyup', function() { $('#sell_offers').triggerHandler('update'); });
-    $('.ml_selector, .sell_selector a').click(function() { $('#sell_offers').triggerHandler('update'); });    
-
-    var enchantOffer = function(i) {
-        var offerId = $(this).attr('id').split('_')[1];
-        var offerCurrency = country_currency[id_country[countryName_id[$(this).find('.offer_flag').attr('title')]]];
-        var offerPrice = $(this).find('.offer_price strong').text().replace(',', '');
-        var offerIndustry = $(this).find('.offer_image').attr('src').split('/')[6];
-        var offerAmount = $(this).find('.offer_amount').text().replace(',', '');
-
-        var foreignOffer = function() {
-            return !(new RegExp(citizenCurrency, 'i')).test(offerCurrency);
+                $('#igmFill').click(function() {
+                    var data = era.storage.get('Messenger', {});
+                    $('#citizen_subject').length && $('#citizen_subject').val(data.subject);
+                    $('#citizen_message').val(data.message);
+                });
+                
+                $('#igmSave').click(function() {
+                    var data = {};
+                    $('#citizen_subject').length && (data.subject = $('#citizen_subject').val()) || (data.subject = '');
+                    data.message = $('#citizen_message').val();
+                    era.storage.set('Messenger', data);
+                });
+                
+                $('#igmClear').click(function() {
+                    var data = {message: '', subject: ''};
+                    confirm('Are you sure you want to delete the saved message and subject?') && era.storage.set('Messenger', data);
+                });
+            }, true);
         }
+    },
 
-        var taxVat = parseFloat(taxes[country_id[currency_country[offerCurrency].toLowerCase()]][offerIndustry].value_added_tax);
-        var taxImp = parseFloat(taxes[country_id[currency_country[offerCurrency].toLowerCase()]][offerIndustry].import_tax);
-
-        var taxlessOfferPrice = offerPrice / (1 + ((taxVat + taxImp * foreignOffer()) / 100));
-
-        
-        if (offerIndustry > 0 && offerIndustry < 7)
-            var offerQuality = $(this).find('.offer_image').attr('src').split('/')[7].split('_')[0].replace('q', '');
-        else
-            var offerQuality = 1;
-
-        $(this).find('.offer_price').append(
-            '<br/>' +
-            '<strong class="goldOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
-            '<span style="color: #B2B2B2; font-size: 10px;"> GOLD</span>'
-        );
-
-        $(this).find('.goldOfferPrice').gold(offerPrice, 4);
-
-        $(this).find('.offer_price').after(
-            '<td style="border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;">' +
-                '<strong class="taxlessOfferPrice">' + taxlessOfferPrice.toFixed(2) + '</strong> ' + citizenCurrency + '<br>' +
-                '<strong class="goldTaxlessOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
-                '<span style="color: #B2B2B2; font-size: 10px;"> GOLD</span>' +
-            '</td>' +
-            '<td style="border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;">' +
-                '<strong class="taxlessTotalOfferPrice">' + (offerAmount * taxlessOfferPrice).toFixed(2) + '</strong> ' + citizenCurrency + '<br>' +
-                '<strong class="goldTaxlessTotalOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
-                '<span style="color: #B2B2B2; font-size: 10px;">&nbsp;GOLD</span>' +
-            '</td>'
-        );
-
-        $(this).find('.goldTaxlessOfferPrice').gold(taxlessOfferPrice, 4);
-
-        $(this).find('.goldTaxlessTotalOfferPrice').gold(offerAmount * taxlessOfferPrice, 4, null, function(v) {
-            (i == originalRowCount || typeof i != 'number') && $('#sell_offers > table:first').triggerHandler('totalRecalc');
-        });
-
-        $(this).find('.delete_offer').before(
-            '<a title="Visit market" target="_blank" class="fluid_blue_dark_small" style="padding-left: 3px;" id="visit_market" href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + country_id[currency_country[offerCurrency].toLowerCase()] + '/' + offerIndustry + '/' + offerQuality + '/citizen/0/price_asc/1">' +
-                '<span>M</span>' +
-            '</a>'
-        );
-
-        $(this).find('td:last').css('padding-left', '15px');
-        $(this).find('td:eq(5)').css('padding-left', '19px');
-    };
-
-    var updateOffer = function() {
-        var offerCurrency = country_currency[id_country[countryName_id[$(this).find('.offer_flag').attr('title')]]];
-        var offerPrice = $(this).find('.offer_price strong').text().replace(',', '');
-        var offerIndustry = $(this).find('.offer_image').attr('src').split('/')[6];
-        var offerAmount = $(this).find('.offer_amount').text().replace(',', '');
-
-        var foreignOffer = function() {
-            return !(new RegExp(citizenCurrency, 'i')).test(offerCurrency);
-        }
-
-        var taxVat = parseFloat(taxes[country_id[currency_country[offerCurrency].toLowerCase()]][offerIndustry].value_added_tax);
-        var taxImp = parseFloat(taxes[country_id[currency_country[offerCurrency].toLowerCase()]][offerIndustry].import_tax);
-
-        var taxlessOfferPrice = offerPrice / (1 + ((taxVat + taxImp * foreignOffer()) / 100));
-
-        $(this).find('.offer_price').append(
-            '<br/>' +
-            '<strong class="goldOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
-            '<span style="color: #B2B2B2; font-size: 10px;"> GOLD</span>'
-        );
-
-        $(this).find('.goldOfferPrice').gold(offerPrice, 4);
-
-        $(this).find('.taxlessOfferPrice').text(taxlessOfferPrice.toFixed(2));
-
-        $(this).find('.goldTaxlessOfferPrice').gold(taxlessOfferPrice, 4);
-
-        $(this).find('.taxlessTotalOfferPrice').text((offerAmount * taxlessOfferPrice).toFixed(2));
-
-        $(this).find('.goldTaxlessTotalOfferPrice').gold(offerAmount * taxlessOfferPrice, 4, null, function(v) {
-            $('#sell_offers > table:first').triggerHandler('totalRecalc');
-        });
-    }
-
-    $('#sell_offers > table:first').bind('totalRecalc', function() {
-        var ttv = 0;
-
-        $('#sell_offers > table tr:gt(1):not(:last)').each(function() {
-            ttv += $(this).find('.taxlessTotalOfferPrice').text() * 1;
-            
-            $('#sumValue').text(isNaN(ttv) ? 'n/a' : (ttv).toFixed(2));
-
-            if (!isNaN(ttv)) $('#sumGold').gold(ttv, 4, function(v) {
-                return $('#sumValue').text() != 0 ? v : (0).toFixed(4);
+    enchantInventory: {
+        o: function() {
+            document.countries = [];
+            $('#market_licenses_select .ml_repeat li a').each(function() {
+                document.countries.push($(this).attr('title'));
             });
-            else $('#sumGold').text('n/a');
-        });
 
-        if (ttv == 0) {
-            $('#sumValue').text((0).toFixed(2));
-            $('#sumGold').text((0).toFixed(4));
-        }
-    });
+            if (eRAopt['inventory'] == false) return;
 
-    $(document).on('click', '.delete_offer', function() {
-        $(this).parent().parent().remove();
-        $('#sell_offers > table:first').triggerHandler('totalRecalc');
-    });
+            var taxes = era.storage.get('TaxValues', {});
+            var citCountry = $('#content script:last').text().split('var ')[5].replace('citizenshipCountry = ', '').match(/^[0-9]+/i)[0];
+            var initValue = parseFloat($('#sell_price').val());
+            var initTax = parseFloat($('#tax').text().split(' ')[0]);
+            var initCurr = $('#sell_currency').text();
+            var initAmount = parseFloat($('#sell_amount').val());
+            var citizenCurrency = country_currency[id_country[citCountry]];
+            var originalRowCount = $('#sell_offers > table tr:gt(1):not(:last)').length;
 
-    $('#sell_offers > table:first').bind('DOMNodeInserted', function(e) {
-        if (era.chrome) {
-            if(/^tr$/i.test(e.target.tagName)) {
-                $(e.target).find('.delete_offer').css('opacity', '1');
-    
-                if ($(e.target).find('td').length == 7) updateOffer.apply(e.target);
-                else enchantOffer.apply(e.target);
-            }
-        } else {
-            setTimeout(function() {
-                if(/^tr$/i.test(e.target.tagName)) {
-                    $(e.target).find('.delete_offer').css('opacity', '1');
-        
-                    if ($(e.target).find('td').length == 7) updateOffer.apply(e.target);
-                    else enchantOffer.apply(e.target);
+            $('.offers_price').css('height', '110px').css('width', '330px');
+            $('.offers_product').css('width', '70px');
+            $('.offers_quantity').css('width', '100px');
+            $('.buy_market_license td').attr('colspan', '7').find('div:first').css('float', 'none').css('width', '100%');
+            $('#big_notifiers').css('padding-top', '15px').css('padding-bottom', '5px').css('width', '716px');
+            $('.delete_offer').css('opacity', '1');
+            $('.offers_action').css('padding-left', '0px');
+
+            $('.offers_price').after(
+                '<th id="priceWithoutTax" class="offers_price" style="width: 225px; padding-left: 5px;">' +
+                    '<div class="relative">' +
+                        '<strong style="text-align: center; margin-bottom: 3px; margin-top: -45px;">Price / unit<br/>w/o Tax</strong>' +
+                        '<small id="wtax" style="top: -7px;"><span id="priceWoTax">n/a</span> <span class="destCurrency">n/a</span></small><small id="wtaxG" style="font-size: 10px; top: -7px;"><br /><span>n/a</span> GOLD</small>' +
+                    '</div>' +
+                '</th>'
+            );
+
+            $('#priceWithoutTax').after(
+                '<th id="totalValue" class="offers_price" style="width: 90px; padding-left: 10px;">' +
+                    '<div class="relative">' +
+                        '<strong style="text-align: center; margin-bottom: 3px; margin-top: -45px;">Total value<br/>w/o Tax</strong>' +
+                        '<small id="tvwotax" style="top: -7px;"><span id="tPriceWoTax">n/a</span> <span class="destCurrency">n/a</span></small><small id="tvwotaxG" style="font-size: 10px; top: -7px;"><br /><span>n/a</span> GOLD</small>' +
+                    '</div>' +
+                '</th>'
+            );
+
+            $('#sell_offers table').append(
+                '<tfoot>' +
+                    '<tr style="background: none repeat scroll 0 0 #F7FCFF;">' +
+                        '<td colspan="4">&nbsp;</td>' +
+                        '<td id="marketTotals" style="border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;">' +
+                            '<strong id="sumValue">' + (0).toFixed(2) + '</strong>&nbsp;' + citizenCurrency + '<br>' +
+                            '<strong style="color: #B2B2B2; font-size: 10px;" id="sumGold">' + (0).toFixed(4) + '</strong>' +
+                            '<span style="color: #B2B2B2; font-size: 10px;">&nbsp;GOLD</span>' +
+                        '</td>' +
+                        '<td colspan="2">&nbsp;</td>' +
+                    '</tr>' +
+                '</tfoot>'
+            ).find('th:not(#totalValue, .offers_action)').css('padding-left', '10px');
+
+            $('#sell_offers').bind('update', function() {
+                var price = $('#sell_price').val().replace(',', '.');
+                price = isNaN(price) ? 0 : price;
+
+                var tax = $('#tax').text().split(' ')[0];
+                tax = isNaN(tax) ? 0 : tax;
+
+                var amount = $('#sell_amount').val().replace(',', '.');
+                amount = isNaN(amount) ? 0 : amount;
+
+                var taxlessPrice = price - tax;
+
+                var currency = $('#sell_currency').text();
+
+                $('.destCurrency').text(currency);
+
+                $('#priceWoTax').text(taxlessPrice.toFixed(2));
+                $('#wtaxG span').text('n/a').gold(taxlessPrice, 4);
+
+                $('#tPriceWoTax').text((amount * taxlessPrice).toFixed(2));
+                $('#tvwotaxG span').text('n/a').gold(amount * taxlessPrice, 4);
+            });
+
+            $('#sell_offers').triggerHandler('update');
+
+            $('#sell_price, #sell_amount').bind('keyup', function() { $('#sell_offers').triggerHandler('update'); });
+            $('.ml_selector, .sell_selector a').click(function() { $('#sell_offers').triggerHandler('update'); });    
+
+            var enchantOffer = function(i) {
+                var offerId = $(this).attr('id').split('_')[1];
+                var offerCurrency = country_currency[id_country[countryName_id[$(this).find('.offer_flag').attr('title')]]];
+                var offerPrice = $(this).find('.offer_price strong').text().replace(',', '');
+                var offerIndustry = $(this).find('.offer_image').attr('src').split('/')[6];
+                var offerAmount = $(this).find('.offer_amount').text().replace(',', '');
+
+                var foreignOffer = function() {
+                    return !(new RegExp(citizenCurrency, 'i')).test(offerCurrency);
                 }
-            }, 0);
-        }
-    });
 
-    $('#sell_offers > table tr:gt(1):not(:last)').each(enchantOffer);
-}
+                var taxVat = parseFloat(taxes[country_id[currency_country[offerCurrency].toLowerCase()]][offerIndustry].value_added_tax);
+                var taxImp = parseFloat(taxes[country_id[currency_country[offerCurrency].toLowerCase()]][offerIndustry].import_tax);
 
-function taxTable() {
-    if (eRAopt['taxes'] == false) {
-        return;
-    }
-    
-    var taxData = JSON.parse($('#content script:last').text().split('var ')[4].replace('countryList = ', '').replace(';', ''));
-    var citizenCountry = $.trim($('#content script:last').text().split('var ')[5].replace('citizenshipCountry = ', '').replace(';', ''));
-    
-    $('#sell_offers').after('<div class="taxTbl" style="display: block;">' +
-                                '<table id="taxTable" width="100%">' +
-                                    '<thead>' +
-                                        '<tr>' +
-                                            '<th style="height: 40px; text-align: center; padding-left: 0px;">&nbsp;</th>' +
-                                            '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/1/q6.png"></th>' +
-                                            '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/2/q6.png"></th>' +
-                                            '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/3/q5.png"></th>' +
-                                            '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/4/q5.png"></th>' +
-                                            '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/5/q5.png"></th>' +
-                                            '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/6/default.png"></th>' +
-                                            '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/7/default.png"></th>' +
-                                            '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/12/default.png"></th>' +
-                                        '</tr>' +
-                                    '</thead>' +
-                                    '<tbody></tbody>' +
-                                '</table>' +
-                            '</div>');
-    
-    $('#market_licenses_select .ml_repeat li').each(function() {
-        var countrCode = country_id[$(this).find('img').attr('src').split('/')[6].split('.')[0].toLowerCase()];
-        var countrName = $(this).find('img').attr('alt');
-        var countrFlag = $(this).find('img').attr('src');
-        
-        if (countrCode == citizenCountry) {
-            var taxSum1 = parseFloat(taxData[countrCode].taxes["1"].value_added_tax);
-            var taxSum2 = parseFloat(taxData[countrCode].taxes["2"].value_added_tax);
-            var taxSum3 = parseFloat(taxData[countrCode].taxes["3"].value_added_tax);
-            var taxSum4 = parseFloat(taxData[countrCode].taxes["4"].value_added_tax);
-            var taxSum5 = parseFloat(taxData[countrCode].taxes["5"].value_added_tax);
-            var taxSum6 = parseFloat(taxData[countrCode].taxes["6"].value_added_tax);
-            var taxSum7 = parseFloat(taxData[countrCode].taxes["7"].value_added_tax);
-            var taxSum12 = parseFloat(taxData[countrCode].taxes["12"].value_added_tax);
-        } else {
-            var taxSum1 = parseFloat(taxData[countrCode].taxes["1"].value_added_tax) + parseFloat(taxData[countrCode].taxes["1"].import_tax);
-            var taxSum2 = parseFloat(taxData[countrCode].taxes["2"].value_added_tax) + parseFloat(taxData[countrCode].taxes["2"].import_tax);
-            var taxSum3 = parseFloat(taxData[countrCode].taxes["3"].value_added_tax) + parseFloat(taxData[countrCode].taxes["3"].import_tax);
-            var taxSum4 = parseFloat(taxData[countrCode].taxes["4"].value_added_tax) + parseFloat(taxData[countrCode].taxes["4"].import_tax);
-            var taxSum5 = parseFloat(taxData[countrCode].taxes["5"].value_added_tax) + parseFloat(taxData[countrCode].taxes["5"].import_tax);
-            var taxSum6 = parseFloat(taxData[countrCode].taxes["6"].value_added_tax) + parseFloat(taxData[countrCode].taxes["6"].import_tax);
-            var taxSum7 = parseFloat(taxData[countrCode].taxes["7"].value_added_tax) + parseFloat(taxData[countrCode].taxes["7"].import_tax);
-            var taxSum12 = parseFloat(taxData[countrCode].taxes["12"].value_added_tax) + parseFloat(taxData[countrCode].taxes["12"].import_tax);
-        }
-        
-        function generateItem(industry, quality) {
-            var genItem = '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/' + industry + '/' + quality + '/citizen/0/price_asc/1" target="_blank"><div class="taxLinkItem">Q' + quality + '</div></a>';
-            return (genItem);
-        }
+                var taxlessOfferPrice = offerPrice / (1 + ((taxVat + taxImp * foreignOffer()) / 100));
 
-        $('#taxTable tbody').append('<tr>' +
-                                        '<td style="padding-left: 5px;"><img style="vertical-align: top;" src="' + countrFlag + '"> ' + countrName + '</td>' +
-                                        '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                            '<div class="taxLinkHolder">' +
-                                                '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                generateItem(1, 1) +
-                                                generateItem(1, 2) +
-                                                generateItem(1, 3) +
-                                                generateItem(1, 4) +
-                                                generateItem(1, 5) +
-                                                generateItem(1, 6) +
-                                                generateItem(1, 7) +
-                                            '</div>' +
-                                            '<span>' + taxSum1 + '%</span>' +
-                                        '</td>' +
-                                        '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                            '<div class="taxLinkHolder">' +
-                                                '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                generateItem(2, 1) +
-                                                generateItem(2, 2) +
-                                                generateItem(2, 3) +
-                                                generateItem(2, 4) +
-                                                generateItem(2, 5) +
-                                                generateItem(2, 6) +
-                                                generateItem(2, 7) +
-                                            '</div>' +
-                                            '<span>' + taxSum2 + '%</span>' +
-                                        '</td>' +
-                                        '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                            '<div class="taxLinkHolder">' +
-                                                '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                generateItem(3, 1) +
-                                                generateItem(3, 2) +
-                                                generateItem(3, 3) +
-                                                generateItem(3, 4) +
-                                                generateItem(3, 5) +
-                                            '</div>' +
+                
+                if (offerIndustry > 0 && offerIndustry < 7)
+                    var offerQuality = $(this).find('.offer_image').attr('src').split('/')[7].split('_')[0].replace('q', '');
+                else
+                    var offerQuality = 1;
 
-                                            '<span>' + taxSum3 + '%</span>' +
-                                        '</td>' +
-                                        '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                            '<div class="taxLinkHolder">' +
-                                                '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                generateItem(4, 1) +
-                                                generateItem(4, 2) +
-                                                generateItem(4, 3) +
-                                                generateItem(4, 4) +
-                                                generateItem(4, 5) +
-                                            '</div>' +
-                                            '<span>' + taxSum4 + '%</span>' +
-                                        '</td>' +
-                                        '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                            '<div class="taxLinkHolder">' +
-                                                '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                generateItem(5, 1) +
-                                                generateItem(5, 2) +
-                                                generateItem(5, 3) +
-                                                generateItem(5, 4) +
-                                                generateItem(5, 5) +
-                                            '</div>' +
-                                            '<span>' + taxSum5 + '%</span>' +
-                                        '</td>' +
-                                        '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                            '<div class="taxLinkHolder">' +
-                                                '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                generateItem(6, 1) +
-                                                generateItem(6, 2) +
-                                                generateItem(6, 3) +
-                                                generateItem(6, 4) +
-                                                generateItem(6, 5) +
-                                            '</div>' +
-                                            '<span>' + taxSum6 + '%</span>' +
-                                        '</td>' +
-                                        '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                            '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/7/1/citizen/0/price_asc/1" target="_blank">' + taxSum7 + '%</a>' +
-                                        '</td>' +
-                                        '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                            '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/12/1/citizen/0/price_asc/1" target="_blank">' + taxSum12 + '%</a>' +
-                                        '</td>' +
-                                    '</tr>');
-    });
-    
-    $('#taxTable tbody td').each(function() {
-        var cellWidth = $(this).width();
-        $(this).find('.taxLinkHolder').width(cellWidth - 4);
-    });
-}
-// ---------------------------------------------------------------------------------------------------------------------
+                $(this).find('.offer_price').append(
+                    '<br/>' +
+                    '<strong class="goldOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
+                    '<span style="color: #B2B2B2; font-size: 10px;"> GOLD</span>'
+                );
 
-// -- Region Links -----------------------------------------------------------------------------------------------------
-function linkRegions() {
-    if ($('#homepage_feed').html() != undefined) {
-        $('#battle_listing .bod_listing li').each(function() {
-            var regionName = $(this).find('strong:first').html().replace(/\./gi, '');
+                $(this).find('.goldOfferPrice').gold(offerPrice, 4);
 
-            if (!region_link.hasOwnProperty(regionName)) return;
-            else $(this).find('strong:first').wrap('<a style="float: left; margin-top: 0px; margin-left: 0px; background: none;" href="http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName] + '" />');
-        });
-        
-        $('#battle_listing .country_battles li').each(function() {
-            var regionName = $(this).find('strong:first').text().replace(/\./gi, '');
+                $(this).find('.offer_price').after(
+                    '<td style="border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;">' +
+                        '<strong class="taxlessOfferPrice">' + taxlessOfferPrice.toFixed(2) + '</strong> ' + citizenCurrency + '<br>' +
+                        '<strong class="goldTaxlessOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
+                        '<span style="color: #B2B2B2; font-size: 10px;"> GOLD</span>' +
+                    '</td>' +
+                    '<td style="border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;">' +
+                        '<strong class="taxlessTotalOfferPrice">' + (offerAmount * taxlessOfferPrice).toFixed(2) + '</strong> ' + citizenCurrency + '<br>' +
+                        '<strong class="goldTaxlessTotalOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
+                        '<span style="color: #B2B2B2; font-size: 10px;">&nbsp;GOLD</span>' +
+                    '</td>'
+                );
 
-            if (!region_link.hasOwnProperty(regionName)) return;
-            else $(this).find('strong:first').wrap('<a style="float: left; margin-top: 0px; margin-left: 0px; background: none;" href="http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName] + '" />');
-        });
-        
-        $('#battle_listing .allies_battles li').each(function() {
-            var regionName = $(this).find('strong:first').text().replace(/\./gi, '');
+                $(this).find('.goldTaxlessOfferPrice').gold(taxlessOfferPrice, 4);
 
-            if (!region_link.hasOwnProperty(regionName)) return;
-            else $(this).find('strong:first').wrap('<a style="float: left; margin-top: 0px; margin-left: 0px; background: none;" href="http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName] + '" />');
-        });
-    } else {
-        $('#battle_listing li').each(function() {
-            var regionName = $(this).find('.county:eq(0) span').text().replace(/\./gi, '');
+                $(this).find('.goldTaxlessTotalOfferPrice').gold(offerAmount * taxlessOfferPrice, 4, null, function(v) {
+                    (i == originalRowCount || typeof i != 'number') && $('#sell_offers > table:first').triggerHandler('totalRecalc');
+                });
 
-            if (!region_link.hasOwnProperty(regionName)) return;
-            else $(this).find('.county:eq(0)').attr('href', 'http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName]);
-        });
-        
-        $('#victory_listing li').each(function() {
-            var regionName = $(this).find('.county:eq(0) span').text().replace(/\./gi, '');
+                $(this).find('.delete_offer').before(
+                    '<a title="Visit market" target="_blank" class="fluid_blue_dark_small" style="padding-left: 3px;" id="visit_market" href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + country_id[currency_country[offerCurrency].toLowerCase()] + '/' + offerIndustry + '/' + offerQuality + '/citizen/0/price_asc/1">' +
+                        '<span>M</span>' +
+                    '</a>'
+                );
 
-            if (!region_link.hasOwnProperty(regionName)) return;
-            else $(this).find('.county:eq(0)').attr('href', 'http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName]);
-        });
-    }
-}
-// ---------------------------------------------------------------------------------------------------------------------
+                $(this).find('td:last').css('padding-left', '15px');
+                $(this).find('td:eq(5)').css('padding-left', '19px');
+            };
 
-// -- Natural enemy ----------------------------------------------------------------------------------------------------
-function changeFlagsMain() {
-    var natural = era.storage.get('Natural', '');
-    var userCountry = currency_country[era.characterCurrency];
-    
-    $('#battle_listing .side_flags').each(function() {
-        var flagName = $(this).attr('src').split('/')[4].split('.')[0];
-        
-        if (flagName == userCountry) {
-            var holder = $(this).parent();
-            
-            if($(this).parent().hasClass('opponent_holder')) {
-                holder = $(this).parent().parent();
+            var updateOffer = function() {
+                var offerCurrency = country_currency[id_country[countryName_id[$(this).find('.offer_flag').attr('title')]]];
+                var offerPrice = $(this).find('.offer_price strong').text().replace(',', '');
+                var offerIndustry = $(this).find('.offer_image').attr('src').split('/')[6];
+                var offerAmount = $(this).find('.offer_amount').text().replace(',', '');
+
+                var foreignOffer = function() {
+                    return !(new RegExp(citizenCurrency, 'i')).test(offerCurrency);
+                }
+
+                var taxVat = parseFloat(taxes[country_id[currency_country[offerCurrency].toLowerCase()]][offerIndustry].value_added_tax);
+                var taxImp = parseFloat(taxes[country_id[currency_country[offerCurrency].toLowerCase()]][offerIndustry].import_tax);
+
+                var taxlessOfferPrice = offerPrice / (1 + ((taxVat + taxImp * foreignOffer()) / 100));
+
+                $(this).find('.offer_price').append(
+                    '<br/>' +
+                    '<strong class="goldOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
+                    '<span style="color: #B2B2B2; font-size: 10px;"> GOLD</span>'
+                );
+
+                $(this).find('.goldOfferPrice').gold(offerPrice, 4);
+
+                $(this).find('.taxlessOfferPrice').text(taxlessOfferPrice.toFixed(2));
+
+                $(this).find('.goldTaxlessOfferPrice').gold(taxlessOfferPrice, 4);
+
+                $(this).find('.taxlessTotalOfferPrice').text((offerAmount * taxlessOfferPrice).toFixed(2));
+
+                $(this).find('.goldTaxlessTotalOfferPrice').gold(offerAmount * taxlessOfferPrice, 4, null, function(v) {
+                    $('#sell_offers > table:first').triggerHandler('totalRecalc');
+                });
             }
-            
-            $(holder).find('img[title*="' + natural + '"]').each(function() {
-                if($(holder).find('img[class*="resistance_sign"]').attr('title') == undefined) {
-                    var neImage = '<img alt="" title="Natural enemy" src="' + neIcon + '" class="natural_sign">';
+
+            $('#sell_offers > table:first').bind('totalRecalc', function() {
+                var ttv = 0;
+
+                $('#sell_offers > table tr:gt(1):not(:last)').each(function() {
+                    ttv += $(this).find('.taxlessTotalOfferPrice').text() * 1;
                     
-                    $(this).before(neImage);
-                    
-                    if($(this).index() > 1) {
-                        $(this).prev().addClass('two');
-                    } else {
-                        $(this).prev().addClass('one');
-                    }
+                    $('#sumValue').text(isNaN(ttv) ? 'n/a' : (ttv).toFixed(2));
+
+                    if (!isNaN(ttv)) $('#sumGold').gold(ttv, 4, function(v) {
+                        return $('#sumValue').text() != 0 ? v : (0).toFixed(4);
+                    });
+                    else $('#sumGold').text('n/a');
+                });
+
+                if (ttv == 0) {
+                    $('#sumValue').text((0).toFixed(2));
+                    $('#sumGold').text((0).toFixed(4));
                 }
             });
-        }
-    });
-}
 
-function changeFlagsWar() {
-    var natural = era.storage.get('Natural', '');
-    var userCountry = currency_country[era.characterCurrency];
-    
-    $('#battle_listing .side_flags').each(function() {
-        var flagName = $(this).attr('src').split('/')[4].split('.')[0];
-        
-        if (flagName == userCountry) {
-            var holder = $(this).parent();
+            $(document).on('click', '.delete_offer', function() {
+                $(this).parent().parent().remove();
+                $('#sell_offers > table:first').triggerHandler('totalRecalc');
+            });
+
+            $('#sell_offers > table:first').bind('DOMNodeInserted', function(e) {
+                if (era.chrome) {
+                    if(/^tr$/i.test(e.target.tagName)) {
+                        $(e.target).find('.delete_offer').css('opacity', '1');
             
-            if($(this).parent().hasClass('opponent_holder')) {
-                holder = $(this).parent().parent();
+                        if ($(e.target).find('td').length == 7) updateOffer.apply(e.target);
+                        else enchantOffer.apply(e.target);
+                    }
+                } else {
+                    setTimeout(function() {
+                        if(/^tr$/i.test(e.target.tagName)) {
+                            $(e.target).find('.delete_offer').css('opacity', '1');
+                
+                            if ($(e.target).find('td').length == 7) updateOffer.apply(e.target);
+                            else enchantOffer.apply(e.target);
+                        }
+                    }, 0);
+                }
+            });
+
+            $('#sell_offers > table tr:gt(1):not(:last)').each(enchantOffer);
+        }
+    },
+
+    taxTable: {
+        o: function() {
+            if (eRAopt['taxes'] == false) {
+                return;
             }
             
-            $(holder).find('img[title*="' + natural + '"]').each(function() {
-                if($(holder).find('img[class*="resistance_sign"]').attr('title') == undefined) {
-                    if($(this).parent().parent().hasClass('victory_listing')) {
-                        $(this).wrap('<div class="opponent_holder">');
-                    }
-                    
-                    var neImage = '<img alt="" title="Natural enemy" src="' + neIcon + '" class="natural_sign">';
-                    
-                    $(this).before(neImage);
+            var taxData = JSON.parse($('#content script:last').text().split('var ')[4].replace('countryList = ', '').replace(';', ''));
+            var citizenCountry = $.trim($('#content script:last').text().split('var ')[5].replace('citizenshipCountry = ', '').replace(';', ''));
+            
+            $('#sell_offers').after('<div class="taxTbl" style="display: block;">' +
+                                        '<table id="taxTable" width="100%">' +
+                                            '<thead>' +
+                                                '<tr>' +
+                                                    '<th style="height: 40px; text-align: center; padding-left: 0px;">&nbsp;</th>' +
+                                                    '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/1/q6.png"></th>' +
+                                                    '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/2/q6.png"></th>' +
+                                                    '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/3/q5.png"></th>' +
+                                                    '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/4/q5.png"></th>' +
+                                                    '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/5/q5.png"></th>' +
+                                                    '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/6/default.png"></th>' +
+                                                    '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/7/default.png"></th>' +
+                                                    '<th style="height: 40px; text-align: center; padding-left: 0px;"><img width="35px" height="35px" src="http://www.erepublik.com/images/icons/industry/12/default.png"></th>' +
+                                                '</tr>' +
+                                            '</thead>' +
+                                            '<tbody></tbody>' +
+                                        '</table>' +
+                                    '</div>');
+            
+            $('#market_licenses_select .ml_repeat li').each(function() {
+                var countrCode = country_id[$(this).find('img').attr('src').split('/')[6].split('.')[0].toLowerCase()];
+                var countrName = $(this).find('img').attr('alt');
+                var countrFlag = $(this).find('img').attr('src');
+                
+                if (countrCode == citizenCountry) {
+                    var taxSum1 = parseFloat(taxData[countrCode].taxes["1"].value_added_tax);
+                    var taxSum2 = parseFloat(taxData[countrCode].taxes["2"].value_added_tax);
+                    var taxSum3 = parseFloat(taxData[countrCode].taxes["3"].value_added_tax);
+                    var taxSum4 = parseFloat(taxData[countrCode].taxes["4"].value_added_tax);
+                    var taxSum5 = parseFloat(taxData[countrCode].taxes["5"].value_added_tax);
+                    var taxSum6 = parseFloat(taxData[countrCode].taxes["6"].value_added_tax);
+                    var taxSum7 = parseFloat(taxData[countrCode].taxes["7"].value_added_tax);
+                    var taxSum12 = parseFloat(taxData[countrCode].taxes["12"].value_added_tax);
+                } else {
+                    var taxSum1 = parseFloat(taxData[countrCode].taxes["1"].value_added_tax) + parseFloat(taxData[countrCode].taxes["1"].import_tax);
+                    var taxSum2 = parseFloat(taxData[countrCode].taxes["2"].value_added_tax) + parseFloat(taxData[countrCode].taxes["2"].import_tax);
+                    var taxSum3 = parseFloat(taxData[countrCode].taxes["3"].value_added_tax) + parseFloat(taxData[countrCode].taxes["3"].import_tax);
+                    var taxSum4 = parseFloat(taxData[countrCode].taxes["4"].value_added_tax) + parseFloat(taxData[countrCode].taxes["4"].import_tax);
+                    var taxSum5 = parseFloat(taxData[countrCode].taxes["5"].value_added_tax) + parseFloat(taxData[countrCode].taxes["5"].import_tax);
+                    var taxSum6 = parseFloat(taxData[countrCode].taxes["6"].value_added_tax) + parseFloat(taxData[countrCode].taxes["6"].import_tax);
+                    var taxSum7 = parseFloat(taxData[countrCode].taxes["7"].value_added_tax) + parseFloat(taxData[countrCode].taxes["7"].import_tax);
+                    var taxSum12 = parseFloat(taxData[countrCode].taxes["12"].value_added_tax) + parseFloat(taxData[countrCode].taxes["12"].import_tax);
+                }
+                
+                function generateItem(industry, quality) {
+                    var genItem = '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/' + industry + '/' + quality + '/citizen/0/price_asc/1" target="_blank"><div class="taxLinkItem">Q' + quality + '</div></a>';
+                    return (genItem);
+                }
+
+                $('#taxTable tbody').append('<tr>' +
+                                                '<td style="padding-left: 5px;"><img style="vertical-align: top;" src="' + countrFlag + '"> ' + countrName + '</td>' +
+                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
+                                                    '<div class="taxLinkHolder">' +
+                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
+                                                        generateItem(1, 1) +
+                                                        generateItem(1, 2) +
+                                                        generateItem(1, 3) +
+                                                        generateItem(1, 4) +
+                                                        generateItem(1, 5) +
+                                                        generateItem(1, 6) +
+                                                        generateItem(1, 7) +
+                                                    '</div>' +
+                                                    '<span>' + taxSum1 + '%</span>' +
+                                                '</td>' +
+                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
+                                                    '<div class="taxLinkHolder">' +
+                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
+                                                        generateItem(2, 1) +
+                                                        generateItem(2, 2) +
+                                                        generateItem(2, 3) +
+                                                        generateItem(2, 4) +
+                                                        generateItem(2, 5) +
+                                                        generateItem(2, 6) +
+                                                        generateItem(2, 7) +
+                                                    '</div>' +
+                                                    '<span>' + taxSum2 + '%</span>' +
+                                                '</td>' +
+                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
+                                                    '<div class="taxLinkHolder">' +
+                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
+                                                        generateItem(3, 1) +
+                                                        generateItem(3, 2) +
+                                                        generateItem(3, 3) +
+                                                        generateItem(3, 4) +
+                                                        generateItem(3, 5) +
+                                                    '</div>' +
+
+                                                    '<span>' + taxSum3 + '%</span>' +
+                                                '</td>' +
+                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
+                                                    '<div class="taxLinkHolder">' +
+                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
+                                                        generateItem(4, 1) +
+                                                        generateItem(4, 2) +
+                                                        generateItem(4, 3) +
+                                                        generateItem(4, 4) +
+                                                        generateItem(4, 5) +
+                                                    '</div>' +
+                                                    '<span>' + taxSum4 + '%</span>' +
+                                                '</td>' +
+                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
+                                                    '<div class="taxLinkHolder">' +
+                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
+                                                        generateItem(5, 1) +
+                                                        generateItem(5, 2) +
+                                                        generateItem(5, 3) +
+                                                        generateItem(5, 4) +
+                                                        generateItem(5, 5) +
+                                                    '</div>' +
+                                                    '<span>' + taxSum5 + '%</span>' +
+                                                '</td>' +
+                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
+                                                    '<div class="taxLinkHolder">' +
+                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
+                                                        generateItem(6, 1) +
+                                                        generateItem(6, 2) +
+                                                        generateItem(6, 3) +
+                                                        generateItem(6, 4) +
+                                                        generateItem(6, 5) +
+                                                    '</div>' +
+                                                    '<span>' + taxSum6 + '%</span>' +
+                                                '</td>' +
+                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
+                                                    '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/7/1/citizen/0/price_asc/1" target="_blank">' + taxSum7 + '%</a>' +
+                                                '</td>' +
+                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
+                                                    '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/12/1/citizen/0/price_asc/1" target="_blank">' + taxSum12 + '%</a>' +
+                                                '</td>' +
+                                            '</tr>');
+            });
+            
+            $('#taxTable tbody td').each(function() {
+                var cellWidth = $(this).width();
+                $(this).find('.taxLinkHolder').width(cellWidth - 4);
+            });
+        }
+    },
+
+    linkRegions: {
+        o: function() {
+            if ($('#homepage_feed').html() != undefined) {
+                $('#battle_listing .bod_listing li').each(function() {
+                    var regionName = $(this).find('strong:first').html().replace(/\./gi, '');
+
+                    if (!region_link.hasOwnProperty(regionName)) return;
+                    else $(this).find('strong:first').wrap('<a style="float: left; margin-top: 0px; margin-left: 0px; background: none;" href="http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName] + '" />');
+                });
+                
+                $('#battle_listing .country_battles li').each(function() {
+                    var regionName = $(this).find('strong:first').text().replace(/\./gi, '');
+
+                    if (!region_link.hasOwnProperty(regionName)) return;
+                    else $(this).find('strong:first').wrap('<a style="float: left; margin-top: 0px; margin-left: 0px; background: none;" href="http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName] + '" />');
+                });
+                
+                $('#battle_listing .allies_battles li').each(function() {
+                    var regionName = $(this).find('strong:first').text().replace(/\./gi, '');
+
+                    if (!region_link.hasOwnProperty(regionName)) return;
+                    else $(this).find('strong:first').wrap('<a style="float: left; margin-top: 0px; margin-left: 0px; background: none;" href="http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName] + '" />');
+                });
+            } else {
+                $('#battle_listing li').each(function() {
+                    var regionName = $(this).find('.county:eq(0) span').text().replace(/\./gi, '');
+
+                    if (!region_link.hasOwnProperty(regionName)) return;
+                    else $(this).find('.county:eq(0)').attr('href', 'http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName]);
+                });
+                
+                $('#victory_listing li').each(function() {
+                    var regionName = $(this).find('.county:eq(0) span').text().replace(/\./gi, '');
+
+                    if (!region_link.hasOwnProperty(regionName)) return;
+                    else $(this).find('.county:eq(0)').attr('href', 'http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName]);
+                });
+            }
+        }
+    },
+
+    changeFlagsMain: {
+        o: function() {
+            var natural = era.storage.get('Natural', '');
+            var userCountry = currency_country[era.characterCurrency];
+            
+            $('#battle_listing .side_flags').each(function() {
+                var flagName = $(this).attr('src').split('/')[4].split('.')[0];
+                
+                if (flagName == userCountry) {
+                    var holder = $(this).parent();
                     
                     if($(this).parent().hasClass('opponent_holder')) {
-                        $(this).prev().addClass('two');
-                    } else {
-                        $(this).prev().addClass('one');
+                        holder = $(this).parent().parent();
                     }
+                    
+                    $(holder).find('img[title*="' + natural + '"]').each(function() {
+                        if($(holder).find('img[class*="resistance_sign"]').attr('title') == undefined) {
+                            var neImage = '<img alt="" title="Natural enemy" src="' + neIcon + '" class="natural_sign">';
+                            
+                            $(this).before(neImage);
+                            
+                            if($(this).index() > 1) {
+                                $(this).prev().addClass('two');
+                            } else {
+                                $(this).prev().addClass('one');
+                            }
+                        }
+                    });
                 }
             });
         }
-    });
-}
-// ---------------------------------------------------------------------------------------------------------------------
+    },
 
-// -- Improve shouts ---------------------------------------------------------------------------------------------------
-function improveShouts() {
-    $('.post_actions').each(function() {
-
-        var postId = $(this).parent().parent().attr('id').split('_')[1];
-        
-        if($(this).find('.shareButton').length < 1) {
-            if ($('#show_friends_feed').hasClass('active')) {
-                $(this).append('<span class="shareDot">· </span>' +
-                                '<a class="shareButton" href="javascript:;">Share</a>' +
-                                '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
-                                    '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?viewPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
-                                '</div>');
-            } else {
-                $(this).append('<span class="shareDot">· </span>' +
-                                '<a class="shareButton" href="javascript:;">Share</a>' +
-                                '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
-                                    '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?unitPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
-                                '</div>');
-            }
-        }
-    });
-    
-    $('.shareButton').each(function() {
-        $(this).click(function() {
-            $(this).addClass('act');
+    changeFlagsWar: {
+        o: function() {
+            var natural = era.storage.get('Natural', '');
+            var userCountry = currency_country[era.characterCurrency];
             
-            $('.post_actions').each(function() {
-                if(!$(this).find('.shareButton').hasClass('act')) {
-                    if($(this).find('.shareUrl').css('opacity') != '0') {
-                        $(this).find('.shareUrl').animate({'opacity':'0'}, 300, "linear", function() {
-                            $(this).hide();
-                            $(this).parent().animate({'height':'0'}, 200, "linear", function() {
-                                $(this).hide();
-                            });
-                        });
+            $('#battle_listing .side_flags').each(function() {
+                var flagName = $(this).attr('src').split('/')[4].split('.')[0];
+                
+                if (flagName == userCountry) {
+                    var holder = $(this).parent();
+                    
+                    if($(this).parent().hasClass('opponent_holder')) {
+                        holder = $(this).parent().parent();
                     }
+                    
+                    $(holder).find('img[title*="' + natural + '"]').each(function() {
+                        if($(holder).find('img[class*="resistance_sign"]').attr('title') == undefined) {
+                            if($(this).parent().parent().hasClass('victory_listing')) {
+                                $(this).wrap('<div class="opponent_holder">');
+                            }
+                            
+                            var neImage = '<img alt="" title="Natural enemy" src="' + neIcon + '" class="natural_sign">';
+                            
+                            $(this).before(neImage);
+                            
+                            if($(this).parent().hasClass('opponent_holder')) {
+                                $(this).prev().addClass('two');
+                            } else {
+                                $(this).prev().addClass('one');
+                            }
+                        }
+                    });
                 }
             });
-            
-            $(this).removeClass('act');
-            
-            if($(this).next().css('height') == '0px') {
-                $(this).next().show();
-                $(this).next().animate({'height':'25'}, 200, "linear", function() {
-                    $(this).find('.shareUrl').show();
-                    $(this).find('.shareUrl').animate({'opacity':'1'}, 300).focus().select();
-                    $(this).find('.shareUrl').click(function() {
-                        $(this).select();
-                    });
-                });
-            } else {
-                $(this).next().find('.shareUrl').animate({'opacity':'0'}, 300, "linear", function() {
-                    $(this).hide();
-                    $(this).parent().animate({'height':'0'}, 200, "linear", function() {
-                        $(this).hide();
-                    });
-                });
-            }
-        });
-    });
-        
-    if ($('#citizen_older_feeds #lessCitizenPosts').length < 1) {
-        $('#citizen_older_feeds').append('<a id="lessCitizenPosts" class="blueButtonArrowUp" title=""><span>&nbsp;</span></a>');
-    
-        $('#lessCitizenPosts').click(function() {
-            $('.wall_post_list li:gt(9)').each(function() {
-                $(this).hide();
-            });
-        });
-    }
-    if ($('#group_older_feeds #lessGroupPosts').length < 1) {
-        $('#group_older_feeds').append('<a id="lessGroupPosts" class="blueButtonArrowUp" title=""><span>&nbsp;</span></a>');
-    
-        $('#lessGroupPosts').click(function() {
-            $('.wall_post_list li:gt(9)').each(function() {
-                $(this).hide();
-            });
-        });
-    }
-    
-    loadShoutScript();
-}
+        }
+    },
 
-function shoutScript() {
-    $ = window.jQuery;
-    
-    $(document).ajaxSuccess(function (event, requestData, settings) {
-        if (settings.url.match(/older/gi) != null ) {
+    improveShouts: {
+        o: function() {
             $('.post_actions').each(function() {
-                $(this).find('.shareDot').each(function() {
-                    $(this).remove();
-                });
-                
-                $(this).find('.shareButton').each(function() {
-                    $(this).remove();
-                });
-                
-                $(this).find('.shareUrl').each(function() {
-                    $(this).parent().remove();
-                });
-                
+
                 var postId = $(this).parent().parent().attr('id').split('_')[1];
                 
-                if ($('#show_friends_feed').hasClass('active')) {
-                    $(this).append('<span class="shareDot">· </span>' +
-                                    '<a class="shareButton" href="javascript:;">Share</a>' +
-                                    '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
-                                        '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?viewPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
-                                    '</div>');
-                } else {
-                    $(this).append('<span class="shareDot">· </span>' +
-                                    '<a class="shareButton" href="javascript:;">Share</a>' +
-                                    '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
-                                        '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?unitPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
-                                    '</div>');
+                if($(this).find('.shareButton').length < 1) {
+                    if ($('#show_friends_feed').hasClass('active')) {
+                        $(this).append('<span class="shareDot">· </span>' +
+                                        '<a class="shareButton" href="javascript:;">Share</a>' +
+                                        '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
+                                            '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?viewPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
+                                        '</div>');
+                    } else {
+                        $(this).append('<span class="shareDot">· </span>' +
+                                        '<a class="shareButton" href="javascript:;">Share</a>' +
+                                        '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
+                                            '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?unitPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
+                                        '</div>');
+                    }
                 }
             });
             
@@ -3588,7 +3492,7 @@ function shoutScript() {
                     }
                 });
             });
-            
+                
             if ($('#citizen_older_feeds #lessCitizenPosts').length < 1) {
                 $('#citizen_older_feeds').append('<a id="lessCitizenPosts" class="blueButtonArrowUp" title=""><span>&nbsp;</span></a>');
             
@@ -3607,817 +3511,927 @@ function shoutScript() {
                     });
                 });
             }
-        }
-    });
-}
-
-function loadShoutScript() {
-    if (document.getElementById('eRAShoutScript')) {
-        return;
-    }
-    var headID = document.getElementsByTagName('head')[0];
-    script = document.createElement('script');
-    script.id = 'eRAShoutScript';
-    script.type = 'text/javascript';
-    script.appendChild(document.createTextNode('('+ shoutScript +')();'));
-    headID.appendChild(script);
-}
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -- Daily order tracker ----------------------------------------------------------------------------------------------
-function dailyTrackerGet() {
-    if (eRAopt['dotrack'] == false || $('#homepage_feed').html() == undefined) {
-        return;
-    }
-    
-    var eToday = parseFloat($('.eday strong').html().replace(/,/gi, ''));
-    
-    if ($('#orderContainer').html() != undefined) {
-        if ($('#orderContainer big').html() == undefined) {
-            eRAdaily = {};
-            eRAdaily['eDay'] = eToday;
-            eRAdaily['Battlefield'] = '0';
-            eRAdaily['Country'] = '0';
-            eRAdaily['Progress'] = '25';
             
-            era.storage.set('Dod', eRAdaily);
+            era.loadShoutScript.o();
+        }
+    },
+
+    shoutScript: {
+        o: function() {
+            $ = window.jQuery;
             
-            return;
-        }
-    } else {
-        eRAdaily = {};
-        eRAdaily['eDay'] = eToday;
-        eRAdaily['Battlefield'] = '0';
-        eRAdaily['Country'] = '0';
-        eRAdaily['Progress'] = '0';
-        
-        era.storage.set('Dod', eRAdaily);
-        
-        return;
-    }
-    
-    var dailyBattle = $('#orderContainer a:eq(0)').attr('href').split('/')[4];
-    var dailyCountry = countryName_id[$('#orderContainer strong').html().replace('Fight for ', '').split(' in ')[0]];
-    var dailyProgress = $('#orderContainer big').html().split('/')[0];
-    
-    eRAdaily = era.storage.get('Dod', {});
-    
-    if (eRAdaily['eDay'] == undefined || eRAdaily['eDay'] != eToday || eRAdaily['Progress'] == undefined || eRAdaily['Progress'] <= parseFloat(dailyProgress)) {
-        eRAdaily = {};
-        eRAdaily['eDay'] = eToday;
-        eRAdaily['Battlefield'] = dailyBattle;
-        eRAdaily['Country'] = dailyCountry;
-        eRAdaily['Progress'] = dailyProgress;
-        
-        era.storage.set('Dod', eRAdaily);
-    }
-}
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -- Old style storage tab --------------------------------------------------------------------------------------------
-function storageTab() {
-    $('.citizen_menu').append('<li>' +
-                                    '<a href="http://www.erepublik.com/en/economy/inventory" title="Storage">Storage</a>' +
-                                '</li>');
-}
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -- Mercenary Tracker ------------------------------------------------------------------------------------------------
-function mercTrackerMain() {
-    var mercenaryProgress = era.storage.get('MercenaryProgress', {});
-
-    if (!mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
-
-    var neededProgress = {};
-
-    $('#battle_listing li .side_flags').each(function() {
-        neededProgress[$(this).attr('title')] = 0;
-    });
-
-    for (var i in mercenaryProgress.countryProgress) {
-        neededProgress.hasOwnProperty(mercenaryProgress.countryProgress[i].country) && (neededProgress[mercenaryProgress.countryProgress[i].country] = mercenaryProgress.countryProgress[i].progress);
-    }
-
-    $('#battle_listing li').each(function() {
-        $(this).css('height', '61px');
-        
-        var mercProgressOne = neededProgress[$(this).find('.side_flags:eq(0)').attr('title')];
-        var mercProgressTwo = neededProgress[$(this).find('.side_flags:eq(1)').attr('title')];
-
-        if(mercProgressOne == 25 && mercProgressTwo == 25) {
-            $(this).append('<div class="mercMainHolder">' +
-                                '<div style="width: 157px; float: left;">' +
-                                    '&nbsp;' +
-                                '</div>' +
-                                '<div class="mercCheckSmallRight"></div>' +
-                                '<div style="width: 147px; float: left;">' +
-                                    '&nbsp;' +
-                                '</div>' +
-                           '</div>');
-        } else {
-            $(this).append('<div class="mercMainHolder">' +
-                                '<div style="width: 139px; float: left;">' +
-                                    '<strong style="font-size: 11px; float: right; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressOne + '</strong>' +
-                                '</div>' +
-                                '<div class="mercTank" style="margin: 3px 13px 0 13px;"></div>' +
-                                '<div style="width: 130px; float: left;">' +
-                                    '<strong style="font-size: 11px; float: left; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressTwo + '</strong>' +
-                                '</div>' +
-                           '</div>');
-        }
-        
-        if (mercProgressTwo == '0') {
-            $(this).find('.mercMainHolder strong:eq(1)').css('color', '#999999');
-        } else if (mercProgressTwo == '25') {
-            $(this).find('.mercMainHolder strong:eq(1)').replaceWith('<div class="mercCheckSmallRight"></div>');
-        }
-        
-        if (mercProgressOne == '0') {
-            $(this).find('.mercMainHolder strong:eq(0)').css('color', '#999999');
-        } else if (mercProgressOne == '25') {
-            $(this).find('.mercMainHolder strong:eq(0)').replaceWith('<div class="mercCheckSmallLeft"></div>');
-        }
-        
-        if($(this).parent().hasClass('bod_listing')) {
-            $(this).find('.mercMainHolder').css('background-color', '#EAD791');
-            $(this).find('.mercTank').css('background-position', 'center bottom');
-        }
-    });
-}
-
-function mercTrackerWar() {
-    var mercenaryProgress = era.storage.get('MercenaryProgress', {});
-
-    if (!mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
-
-    var neededProgress = {};
-
-    for (var i in mercenaryProgress.countryProgress) {
-        neededProgress[mercenaryProgress.countryProgress[i].country] = mercenaryProgress.countryProgress[i].progress;
-    }
-    
-    $('#battle_listing li').each(function() {
-        if ($(this).parent().hasClass('victory_listing')) return;
-        
-        var mercProgressOne = neededProgress[$(this).find('.side_flags:eq(0)').attr('title')];
-        var mercProgressTwo = neededProgress[$(this).find('.side_flags:eq(1)').attr('title')];
-        
-        if(mercProgressOne == '25' && mercProgressTwo == '25') {
-            $(this).append('<div class="mercTrackerHolder" style="width: 106px;">' +
-                                '<div style="width: 28px; float: left;">' +
-                                    '&nbsp;' +
-                                '</div>' +
-                                '<div class="mercCheckRight" style="margin: 16px 16px 0 16px;"></div>' +
-                                '<div style="width: 28px; float: left;">' +
-                                    '&nbsp;' +
-                                '</div>' +
-                           '</div>');
-        } else {
-            $(this).append('<div class="mercTrackerHolder" style="width: 106px;">' +
-                                '<div style="width: 28px; float: left; text-align: center;">' +
-                                    '<strong style="font-size: 11px; color: #9e0b0f; margin-top: 15px; font-weight: bold; width: 28px; margin-left: 0px;">' + mercProgressOne + '</strong>' +
-                                '</div>' +
-                                '<div class="tank_img" style="margin: 16px 13px 0 13px;"></div>' +
-                                '<div style="width: 28px; float: left; text-align: center;">' +
-                                    '<strong style="font-size: 11px; color: #9e0b0f; margin-top: 15px; font-weight: bold; width: 28px; margin-left: 0px;">' + mercProgressTwo + '</strong>' +
-                                '</div>' +
-                           '</div>');
-        }
-        
-        if (mercProgressTwo == '0') {
-            $(this).find('.mercTrackerHolder strong:eq(1)').css('color', '#999999');
-        } else if (mercProgressTwo == '25') {
-            $(this).find('.mercTrackerHolder strong:eq(1)').replaceWith('<div class="mercCheckRight"></div>');
-        }
-        
-        if (mercProgressOne == '0') {
-            $(this).find('.mercTrackerHolder strong:eq(0)').css('color', '#999999');
-        } else if (mercProgressOne == '25') {
-            $(this).find('.mercTrackerHolder strong:eq(0)').replaceWith('<div class="mercCheckLeft"></div>');
-        }
-        
-        if($(this).parent().hasClass('bod_listing')) {
-            $(this).find('.tank_img').css('background-position', 'left bottom');
-        }
-    });
-}
-
-function mercTrackerRes() {
-    var mercenaryProgress = era.storage.get('MercenaryProgress', {});
-
-    if (!mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
-
-    var neededProgress = {};
-
-    neededProgress[id_countryName[$('.listing.resistance a:first').attr('href').split('/').pop()]] = 0;
-    neededProgress[id_countryName[$('.listing.resistance a:last').attr('href').split('/').pop()]] = 0;
-
-    for (var i in mercenaryProgress.countryProgress) {
-        neededProgress.hasOwnProperty(mercenaryProgress.countryProgress[i].country) && (neededProgress[mercenaryProgress.countryProgress[i].country] = mercenaryProgress.countryProgress[i].progress);
-    }
-    
-    var mercProgressOne = neededProgress[id_countryName[$('.listing.resistance a:first').attr('href').split('/').pop()]];
-    var mercProgressTwo = neededProgress[id_countryName[$('.listing.resistance a:last').attr('href').split('/').pop()]];
-    
-    $('.listing.resistance strong:eq(0)').after('<strong style="font-size: 11px; color: #9e0b0f; font-weight: bold; width: 35%; right: 0px; left: auto;"><div style="float: left;">' + mercProgressTwo + '</div></strong>');
-    $('.listing.resistance strong:eq(0)').before('<strong style="font-size: 11px; color: #9e0b0f; font-weight: bold; width: 35%; left: 0px;"><div style="float: right;">' + mercProgressOne + '</div></strong>');
-    
-    if (mercProgressTwo == '0') {
-        $('.listing.resistance strong:eq(2)').css('color', '#999999');
-    } else if (mercProgressTwo == '25') {
-        $('.listing.resistance strong:eq(2)').empty().append($('<div>', {class: 'mercCheckRight', style: 'margin: 8px 0px 0px 0px;'}));
-    }
-    
-    if (mercProgressOne == '0') {
-        $('.listing.resistance strong:eq(0)').css('color', '#999999');
-    } else if (mercProgressOne == '25') {
-        $('.listing.resistance strong:eq(0)').empty().append($('<div>', {class: 'mercCheckLeft', style: 'margin: 8px 0px 0px 0px;'}));
-    }
-}
-
-function mercTrackerBattle() {
-    var mercenaryProgress = era.storage.get('MercenaryProgress', {});
-
-    if (!mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
-
-    var neededProgress = {};
-
-    neededProgress[$('#pvp_header .country.left_side h3').html().replace('Resistance Force Of ', '')] = 0;
-    neededProgress[$('#pvp_header .country.right_side h3').html().replace('Resistance Force Of ', '')] = 0;
-
-    for (var i in mercenaryProgress.countryProgress) {
-        neededProgress.hasOwnProperty(mercenaryProgress.countryProgress[i].country) && (neededProgress[mercenaryProgress.countryProgress[i].country] = mercenaryProgress.countryProgress[i].progress);
-    }
-
-    var mercProgressOne = neededProgress[$('#pvp_header .country.left_side h3').html().replace('Resistance Force Of ', '')];
-    var mercProgressTwo = neededProgress[$('#pvp_header .country.right_side h3').html().replace('Resistance Force Of ', '')];
-    
-    $('#pvp_header .country.left_side').append('<div style="font-size: 14px; color: #9e0b0f; font-weight: bold; float: left; position: absolute; left: 130px; top: 20px;">' + mercProgressOne + '</div>');
-    $('#pvp_header .country.right_side').append('<div style="font-size: 14px; color: #9e0b0f; font-weight: bold; float: left; position: absolute; right: 130px; top: 20px;">' + mercProgressTwo + '</strong>');
-    
-    if (mercProgressOne == '0') {
-        $('#pvp_header .country.left_side div:last').css('color', '#999999');
-    } else if (mercProgressOne == '25') {
-        $('#pvp_header .country.left_side div:last').replaceWith('<div class="mercCheckRight" style="float: left; margin-top: 8px; margin-left: 10px;"></div>');
-    }
-    
-    if (mercProgressTwo == '0') {
-        $('#pvp_header .country.right_side div:last').css('color', '#999999');
-    } else if (mercProgressTwo == '25') {
-        $('#pvp_header .country.right_side div:last').replaceWith('<div class="mercCheckRight" style="float: right; margin-top: 8px; margin-right: 10px;"></div>');
-    }
-}
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -- Improved employees page ------------------------------------------------------------------------------------------
-function improveEmployees() {
-    $('.list_group .listing').each(function() {
-        var employeeId = $(this).prev().attr('id').split('_')[2];
-        
-        var employeeName = $(this).find('.employee_info .employee_entry strong').html();
-        $(this).find('.employee_info .employee_entry strong').replaceWith('<p style="float: left; margin-left: 8px; margin-top: 14px; color: #333; font-size: 11px; font-weight: bold; text-shadow: white 0 1px 0; width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + employeeName + '</p>');
-        
-        $(this).find('.employee_info .employee_entry').css({'position': 'relative', 'z-index': '1'});
-        $(this).find('.employee_info').append('<div class="citizen_actions">' +
-                                                            '<a href="http://www.erepublik.com/' + era.hostLang + '/main/messages-compose/' + employeeId + '" class="action_message tip" original-title="Send message">Send message</a>' +
-                                                            '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/donate-items/' + employeeId + '" class="action_donate tip" original-title="Donate">Donate</a>' +
-                                                        '</div>');
-    });
-    
-    $('#remove_mode').click(function() {
-        if($(this).hasClass('active')) {
-            $('.list_group .listing .employee_info .citizen_actions').each(function() {
-                $(this).fadeOut();
-            });
-        } else {
-            $('.list_group .listing .employee_info .citizen_actions').each(function() {
-                $(this).fadeIn();
+            $(document).ajaxSuccess(function (event, requestData, settings) {
+                if (settings.url.match(/older/gi) != null ) {
+                    $('.post_actions').each(function() {
+                        $(this).find('.shareDot').each(function() {
+                            $(this).remove();
+                        });
+                        
+                        $(this).find('.shareButton').each(function() {
+                            $(this).remove();
+                        });
+                        
+                        $(this).find('.shareUrl').each(function() {
+                            $(this).parent().remove();
+                        });
+                        
+                        var postId = $(this).parent().parent().attr('id').split('_')[1];
+                        
+                        if ($('#show_friends_feed').hasClass('active')) {
+                            $(this).append('<span class="shareDot">· </span>' +
+                                            '<a class="shareButton" href="javascript:;">Share</a>' +
+                                            '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
+                                                '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?viewPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
+                                            '</div>');
+                        } else {
+                            $(this).append('<span class="shareDot">· </span>' +
+                                            '<a class="shareButton" href="javascript:;">Share</a>' +
+                                            '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
+                                                '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?unitPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
+                                            '</div>');
+                        }
+                    });
+                    
+                    $('.shareButton').each(function() {
+                        $(this).click(function() {
+                            $(this).addClass('act');
+                            
+                            $('.post_actions').each(function() {
+                                if(!$(this).find('.shareButton').hasClass('act')) {
+                                    if($(this).find('.shareUrl').css('opacity') != '0') {
+                                        $(this).find('.shareUrl').animate({'opacity':'0'}, 300, "linear", function() {
+                                            $(this).hide();
+                                            $(this).parent().animate({'height':'0'}, 200, "linear", function() {
+                                                $(this).hide();
+                                            });
+                                        });
+                                    }
+                                }
+                            });
+                            
+                            $(this).removeClass('act');
+                            
+                            if($(this).next().css('height') == '0px') {
+                                $(this).next().show();
+                                $(this).next().animate({'height':'25'}, 200, "linear", function() {
+                                    $(this).find('.shareUrl').show();
+                                    $(this).find('.shareUrl').animate({'opacity':'1'}, 300).focus().select();
+                                    $(this).find('.shareUrl').click(function() {
+                                        $(this).select();
+                                    });
+                                });
+                            } else {
+                                $(this).next().find('.shareUrl').animate({'opacity':'0'}, 300, "linear", function() {
+                                    $(this).hide();
+                                    $(this).parent().animate({'height':'0'}, 200, "linear", function() {
+                                        $(this).hide();
+                                    });
+                                });
+                            }
+                        });
+                    });
+                    
+                    if ($('#citizen_older_feeds #lessCitizenPosts').length < 1) {
+                        $('#citizen_older_feeds').append('<a id="lessCitizenPosts" class="blueButtonArrowUp" title=""><span>&nbsp;</span></a>');
+                    
+                        $('#lessCitizenPosts').click(function() {
+                            $('.wall_post_list li:gt(9)').each(function() {
+                                $(this).hide();
+                            });
+                        });
+                    }
+                    if ($('#group_older_feeds #lessGroupPosts').length < 1) {
+                        $('#group_older_feeds').append('<a id="lessGroupPosts" class="blueButtonArrowUp" title=""><span>&nbsp;</span></a>');
+                    
+                        $('#lessGroupPosts').click(function() {
+                            $('.wall_post_list li:gt(9)').each(function() {
+                                $(this).hide();
+                            });
+                        });
+                    }
+                }
             });
         }
-    });
-}
-// ---------------------------------------------------------------------------------------------------------------------
+    },
 
-// -- Improved my places -----------------------------------------------------------------------------------------------
-function companySelector() {
-    $('#selectAll, #selectFactory, #selectRaw').click(function() {
-        switch ($(this).attr('id')) {
-            case 'selectAll': var s = '.list_group'; var t = ['Select all companies', 'Deselect all companies']; break;
-            case 'selectFactory': var s = '.list_group > .upgradeable'; var t = ['Select all factories', 'Deselect all factories']; break;
-            case 'selectRaw': var s = '.list_group > :not(.upgradeable)'; var t = ['Select all raw companies', 'Deselect all raw companies']; break;
-        }
-
-        if ($(this).hasClass('eractive')) {
-            $(s + ' .owner_work.active').click();
-            $(this).removeClass('eractive').attr('title', t[0]);
-        } else {
-            $(s + ' .owner_work:not(.active)').click();
-            $(this).addClass('eractive').attr('title', t[1]);
-        }
-    });
-
-    $('#selectFood, #selectWeapon, #selectFoodRaw, #selectWeaponRaw').click(function() {
-        var eractive = $(this).hasClass('eractive');
-
-        switch ($(this).attr('id')) {
-            case 'selectFood': var s = '7'; var t = ['Select all food factories', 'Deselect all food factories']; var m = 0; break;
-            case 'selectWeapon': var s = '12'; var t = ['Select all weapon factories', 'Deselect all weapon factories']; var m = 0; break;
-            case 'selectFoodRaw': var s = '7'; var t = ['Select all food raw companies', 'Deselect all food raw companies']; var m = 1; break;
-            case 'selectWeaponRaw': var s = '12'; var t = ['Select all weapon raw companies', 'Deselect all weapon raw companies']; var m = 1; break;
-        }
-
-        $(m == 0 ? '.list_group > .upgradeable' : '.list_group > :not(.upgradeable)').each(function() {
-            if (s == $(this).find('.c4 img').attr('src').split('/')[6]) {
-                if (eractive) $(this).find('.owner_work.active').click();
-                else $(this).find('.owner_work:not(.active)').click();
+    loadShoutScript: {
+        o: function() {
+            if (document.getElementById('eRAShoutScript')) {
+                return;
             }
-        });
-
-        if (eractive) $(this).removeClass('eractive').attr('title', t[0]);
-        else $(this).addClass('eractive').attr('title', t[1]);
-    });
-}
-
-function improveCompanies() {
-    $('.area h4').css('position', 'relative').append(
-        '<div class="area_buttons" style="top: 0; left: 110px; position: absolute;">' +
-            '<a id="selectAll" href="javascript:;" class="grey_plastic" title="Select all companies" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 4px;">' +
-                '<img src="' + allCompanies + '" alt="">' +
-            '</a>' +
-            '<a id="selectFactory" href="javascript:;" class="grey_plastic left_pos" title="Select all factories" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 10px;">' +
-                '<img src="' + allFactories + '" alt="">' +
-            '</a>' +
-            '<a id="selectRaw" href="javascript:;" class="grey_plastic right_pos" title="Select all raw companies" style="display: inline-block; float: none; vertical-align: -9px; margin-left: -1px;">' +
-                '<img src="' + allRaw + '" alt="">' +
-            '</a>' +
-            '<a id="selectFood" href="javascript:;" class="grey_plastic left_pos" title="Select all food factories" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 10px;">' +
-                '<img src="http://www.erepublik.com/images/icons/industry/1/q6.png" alt="">' +
-            '</a>' +
-            '<a id="selectWeapon" href="javascript:;" class="grey_plastic mid" title="Select all weapon factories" style="display: inline-block; float: none; vertical-align: -9px;">' +
-                '<img src="http://www.erepublik.com/images/icons/industry/2/q6.png" alt="">' +
-            '</a>' +
-            '<a id="selectFoodRaw" href="javascript:;" class="grey_plastic mid" title="Select all food raw companies" style="display: inline-block; float: none; vertical-align: -9px;">' +
-                '<img src="http://www.erepublik.com/images/icons/industry/7/default.png" alt="">' +
-            '</a>' +
-            '<a id="selectWeaponRaw" href="javascript:;" class="grey_plastic right_pos" title="Select all weapon raw companies" style="display: inline-block; float: none; vertical-align: -9px;">' +
-                '<img src="http://www.erepublik.com/images/icons/industry/12/default.png" alt="">' +
-            '</a>' +
-        '</div>'
-    );
-
-    $('.listing_holder').css('margin-top', '8px');
-
-    var script = document.createElement('script');
-    script.type  = 'text/javascript';
-    script.text = '(' + companySelector + ')();'
-    document.getElementsByTagName('head')[0].appendChild(script);
-}
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
-* The main function.
-*/
-function Main() {
-
-    /**
-    * Always delete corrupted values.
-    */
-    era.storage.init();
-
-    /**
-    * Only run if the user is signed in.
-    */
-    if (!document.getElementById('large_sidebar')) return false;
-
-    /**
-    * Determine the character id.
-    * Only run if it's valid.
-    */
-    era.characterId = parseInt($('#large_sidebar .user_section a:eq(0)').attr('href').split('/')[6]);
-    if (isNaN(era.characterId)) era.characterId = $('#large_sidebar .user_section a:eq(0)').attr('href').split('/')[4];
-    if (isNaN(era.characterId)) throw new TypeError('Character id is not number. Possible html change.');
-
-    era.addStyle(
-        '.customMenuHolder { padding: 0px 2px 2px 2px; float: left; margin-left: 3px; width: 944px; }' +
-        '.customMenuElemHolder { border-radius: 0px 0px 5px 5px; background-color: #eeeeee; float: left; width: 118px; height: 20px; text-align: center; color: #7F7F7F; cursor: default; vertical-align: middle; line-height: 20px; font-size: 11px; }' +
-        '.customMenuElement { border-radius: 0px 0px 5px 5px; background-color: #eeeeee; padding: 2px; float: left; width: 114px; height: 16px; text-align: center; color: #7F7F7F; cursor: pointer; vertical-align: middle; line-height: 16px; font-size: 11px; }' +
-        '.customMenuElement:hover { background: #505050; color: #D8D8D8; }' +
-        '.customMenuElementAdd { border-radius: 0px 0px 5px 5px; background-color: #eeeeee; padding: 2px; float: left; width: 114px; height: 16px; text-align: center; color: #CCCCCC; cursor: pointer; vertical-align: middle; line-height: 16px; font-size: 11px; }' +
-        '.customMenuElementAdd:hover { background: #CCCCCC; color: #D8D8D8; }' +
-        '.customMenuPrompt { box-shadow: 0px 0px 5px #9F9F9F; border-radius: 5px 5px 5px 5px; background: url(' + loadingBackImg + ') repeat scroll 0 0 transparent; border: 1px solid #bbbbbb; display: none; height: 200px; position: absolute; margin-left: 10%; margin-right: auto; width: 400px; z-index: 999999; top: 250px; }' +
-
-        '.infoHolder { background: url(' + infoImg + ') no-repeat scroll 0px 0px transparent; height: 12px; width: 12px; display: inline; float: left; margin-left: 2px; margin-top: -34px; cursor: pointer; }' +
-        '.infoHolder:hover { background: url(' + infoImgHover + ') no-repeat scroll 0px 0px transparent; }' +
-        '.infoHolder .infoContent { box-shadow: 0px 0px 5px #9F9F9F; border-radius: 7px 7px 7px 7px; background: url(' + loadingBackImg + ') repeat scroll 0 0 transparent; display: none; height: 310px; position: fixed; margin: -155px -150px; width: 300px; z-index: 999999; top: 50%; left: 50%; font-size: 11px; }' +
-        '.infoHolder:hover .infoContent { display: inline; z-index: 9999; }' +
-        '.infoHolder:hover .infoContent table tr td { padding: 5px 10px 5px 10px; }' +
-        
-        '#optionsContentMain { box-shadow: 0px 0px 5px #9F9F9F; border-radius: 7px 7px 7px 7px; background: url(' + loadingBackImg + ') repeat scroll 0 0 transparent; display: none; height: 500px; position: fixed; margin: -250px -275px; width: 550px; z-index: 999999; top: 50%; left: 50%; }' +
-        '#optionsContentMain .optionsInnerHeader { border-radius: 7px 7px 0px 0px; background: url(' + linksHeader + ') no-repeat scroll 0 0 transparent; float: left; height: 35px; width: 100%; }' +
-        '#optionsContentMain .optionsInnerContent { float: left; margin-top: 10px; margin-left: 10px; margin-right: 10px; width: 500px; padding: 0px 15px; }' +
-        '#optionsContentMain .optionsInnerVersion { clear: both; bottom: -5px; font-size: 9px; margin-left: 10px; margin-right: 10px; padding: 50px 15px 0px 15px; position: relative; text-align: center; cursor: default; }' +
-        '#optionsContentMain .optionsInnerFooter { border-top: 1px solid #CCCCCC; bottom: -10px; clear: both; font-size: 10px; margin-left: 10px; margin-right: 10px; padding: 10px 15px; position: relative; text-align: center;  cursor: default; }' +
-        '#optionsContentMain .optionsInnerItem { clear: both; float: left; width: 225px; }' +
-        '#optionsContentMain .optionsInnerItem:hover { font-weight: bold; background: none repeat scroll 0 0 #FFFFCC; }' +
-        '#optionsContentMain .optionsInnerItemRight { float: right; width: 225px; }' +
-        '#optionsContentMain .optionsInnerItemRight:hover { font-weight: bold; background: none repeat scroll 0 0 #FFFFCC; }' +
-        '#optionsContentMain .optionsInnerItemLabel { float: left; vertical-align: middle; line-height: 20px; margin-bottom: 5px; margin-right: 10px; margin-left: 10px; padding-top: 5px; width: 180px; cursor: default; }' +
-        '#optionsContentMain .optionsInnerItemLabel_QuickLinks { float: left; vertical-align: middle; line-height: 20px; margin-bottom: 2px; padding-top: 3px; margin-right: 0px; margin-left: 0px; width: 100%; cursor: pointer; border-top: 1px solid #CCCCCC; }' +
-        '#optionsContentMain .optionsInnerItemLabel_QuickLinks:hover { font-weight: bold; background: none repeat scroll 0 0 #FFFFCC; }' +
-        
-        '.profitTable { background: url("http://www.erepublik.com/images/parts/back_el_secondh.png") repeat-x scroll left bottom transparent; cursor: default; border-top: 1px solid #eeeeee; border-bottom: 1px solid #dddddd; padding: 10px 0px 10px 0px; }' +
-        '.dayProfitTable { background: url("http://www.erepublik.com/images/parts/bg_el_days.png") repeat-x scroll left bottom transparent; cursor: default; border-bottom: 1px solid #cccccc; padding: 7px 0px 7px 0px; }' +
-
-        '.menuRight { float: right; }' +
-        '.menuItem:hover { background-color: #CCCCCC; }' +
-        
-        '.menuWindow { box-shadow: 0px 0px 5px #9F9F9F; border-radius: 7px 7px 7px 7px; background: url(' + loadingBackImg + ') repeat scroll 0 0 transparent; display: none; height: 600px; position: fixed; margin: -300px -352px; width: 705px; z-index: 999999; top: 50%; left: 50%; }' +
-        '.closeButton { background: url("http://www.erepublik.com/images/parts/remove_upper_inventory_hover.png") no-repeat scroll 0 0 transparent; float: right; height: 10px; margin: 5px; text-indent: -9999px; width: 10px; }' +
-        '.menuWindowHeader { border-radius: 5px 0px 0px 0px; background: url(' + linksHeader + ') no-repeat scroll 0 0 transparent; float: left; height: 35px; width: 100%; }' +
-        '.menuWindowContent { float: left; padding: 5px; }' +
-        '.menuWindowContentTable { display: table; }' +
-        '.menuWindowContentRow { display: table-row-group; }' +
-        '.menuWindowContentCell { display: table-cell; padding: 3px; }' +
-
-        '.miniInventoryHolder { background: url(' + sideBoxes + ') no-repeat scroll 0 0 #FFFFFF; float: left; margin-bottom: 7px; width: 153px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; height: auto !important; padding-top: 5px; }' +
-        '.miniInventoryHolder .itemCountHolder { clear: both; float: left; line-height: 26px; margin-left: 6px; width: 142px; border-bottom: 1px solid #DEDEDE; }' +
-        '.miniInventoryHolder .itemCountHolder img { float: left; width: 26px; height: 26px; margin-left: 1px; margin-right: 6px; }' +
-        '.miniInventoryHolder .itemCountHolder .itemCount { text-align: center; color: grey; line-height: 30px; }' +
-        
-        '.miniInventoryHolder .marketDropHolder { clear: both; float: left; line-height: 26px; margin-left: 6px; width: 142px; border-bottom: 1px solid #DEDEDE; display: none; }' +
-        '.miniInventoryHolder .marketDropHolder img { float: left; width: 26px; height: 26px; margin-left: 1px; margin-right: 6px; }' +
-        '.miniInventoryHolder .marketDropHolder .itemCount { text-align: center; color: grey; line-height: 30px; }' +
-        
-        '.miniInventoryHolder .monCountHolder { clear: both; float: left; line-height: 26px; margin-left: 6px; width: 142px; border-bottom: 1px solid #DEDEDE; }' +
-        '.miniInventoryHolder .monCountHolder img { float: left; margin-left: 1px; margin-right: 6px; margin-top: 6px; }' +
-        '.miniInventoryHolder .monCountHolder .itemCount { text-align: center; color: grey; line-height: 30px; }' +
-        
-        '.miniInventoryHolder .monDropHolder { clear: both; float: left; line-height: 26px; margin-left: 6px; width: 142px; border-bottom: 1px solid #DEDEDE; display: none; }' +
-        '.miniInventoryHolder .monDropHolder img { float: left; margin-left: 1px; margin-right: 6px; margin-top: 6px; }' +
-        '.miniInventoryHolder .monDropHolder .itemCount { text-align: center; color: grey; line-height: 30px; }' +
-        
-        '.taxTbl { background-color: #BAE7F9; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; border-top-right-radius: 5px; border-top-left-radius: 5px; display: block; float: left; margin-top: 11px; margin-left: 15px; position: relative; width: 730px; }' +
-        '.taxTbl table { background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #95D4ED; margin: 5px auto; width: 718px; }' +
-        '.taxTbl table th { background: none repeat scroll 0 0 #F7FCFF; }' +
-        '.taxTbl table tbody tr:hover td { background-color: #FFFFE7; }' +
-        '.taxTbl table td { border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-bottom: 5px; padding-left: 25px; padding-top: 5px; }' +
-        '.taxLink { cursor: pointer; }' +
-        '.taxLink .taxLinkHolder { border: 2px solid #CFEFFB; border-radius: 3px 3px 3px 3px; position: absolute; margin-top: -7px; display: none; z-index: 100; }' +
-        '.taxLink:hover .taxLinkHolder { display: block; }' +
-        '.taxLink .taxLinkHolder .taxLinkItemTransparent { background: none repeat scroll 0 0 transparent; text-align: center; height: 25px; }' +
-        '.taxLink .taxLinkHolder .taxLinkItem { background-color: #FFFFE7; text-align: center; }' +
-        '.taxLink .taxLinkHolder .taxLinkItem:hover { background-color: #F7FCFF !important; }' +
-        
-        '.battleHealth { color: #E3E3E3; font-size: 11px; font-weight: bold; position: absolute; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6); top: 0; width: 100%; opacity: 1; }' +
-        
-        '#large_sidebar a.newLogout { background: none repeat scroll 0 0 #FF8888; border: 1px solid #FF0000; border-radius: 3px 3px 3px 3px; color: #FFFFFF; display: inline; float: left; font-weight: bold; padding: 4px; text-align: center; width: 58px; margin-left: 40px; }' +
-        '#large_sidebar a.newLogout:hover { background: none repeat scroll 0 0 #FF6666; }' +
-        
-        '#marketplace table tbody td.m_quantity { text-align: center; }' +
-        '#marketplace table tbody td.m_provider { width: 138px; }' +
-        
-        '.hitsNeededHolder { position: absolute; text-align: center; background-color: #333333; width: 92px; border-radius: 7px 0px 0px 7px; margin-top: 12px; margin-left: -95px; padding: 5px 0px 5px 5px; }' +
-        '.hitsNeededTitle { font-weight: bold; color: white; }' +
-        '.hitsNeededNumber { line-height: 13px; text-shadow: 0 -1px 0 #6E9C08; text-align: center; height: 16px; font-size: 10px; display: inline; padding: 0 4px 0 4px; background-color: #83b70b; border-radius: 3px; color: #FFFFFF; }' +
-        
-        '.regionLink { background: none repeat scroll 0 0 transparent !important; height: auto !important; left: 0px !important; margin: 0 !important; }' +
-        
-        '.influValueHolder { margin-left: 2px; float: left; margin-right: 5px; width: auto; display: inline; line-height: 44px; text-align: center; padding-right: 2px; }' +
-        '.influValueHolder .influValue { background: url("/images/parts/shadow.gif") repeat-x scroll center top #FFFFFF; border-color: #AEAEAE #C8C8C8 #E3E3E3; border-radius: 3px 3px 3px 3px; border-style: solid; border-width: 1px; color: #333333; padding: 4px; text-align: center; width: 35px; font-size: 10px; }' +
-        '.influValueHolder .influValue:focus { background: none repeat scroll 0 0 #FFFFCC; }' +
-
-        '.influGoldHolder { margin-left: 2px; float: right; margin-right: 5px; width: 60px; display: inline; line-height: 44px; text-align: center; }' +
-        '.influGoldHolder .influValue { background: url("/images/parts/shadow.gif") repeat-x scroll center top #FFFFFF; border-color: #AEAEAE #C8C8C8 #E3E3E3; border-radius: 3px 3px 3px 3px; border-style: solid; border-width: 1px; color: #333333; padding: 4px; text-align: center; width: 40px; font-size: 10px; }' +
-        '.influGoldHolder .influValue:focus { background: none repeat scroll 0 0 #FFFFCC; }' +
-        '.influNaturalHolder { margin-left: 2px; float: left; margin-right: 5px; width: 20px; display: inline; line-height: 44px; text-align: center; }' +
-        '.influNaturalHolder .influCheckbox { width: 13px; height: 13px; padding: 0; margin: 0; vertical-align: middle; position: relative; top: -1px; overflow: hidden; }' +
-        '.influTable { width: 510px; }' +
-        '.influTable .influImageCell { width: 35px; }' +
-        '.influTable .influValueCell { width: 44px; font-size: 10px; font-weight: bold; color: #666666; }' +
-        '.influTable .influImageCell .influImage { width: 30px; height: 35px; margin: 5px 0px 0px 0px; }' +
-        
-        '.mMarketButton { border-radius: 3px; background: none no-repeat scroll left center #e9f5fa; border: medium none; color: #3C8FA7; cursor: pointer; font-size: 12px; line-height: 32px; padding: 0 6px 1px 6px; text-align: left; height: 32px; }' +
-        
-        '.topNewsItem { display: block; float: left; margin-bottom: 10px; width: 333px; border-bottom: 1px solid #E0E0E0; }' +
-        
-        '.oldNewsSwitchHolder { border-bottom: 1px solid #E0E0E0; float: left; margin-bottom: 10px; padding: 0 2px 0; width: 333px; }' +
-        '.oldNewsSwitch { background-color: #EEEEEE; border-radius: 5px 5px 0 0; color: #7F7F7F; cursor: pointer; float: left; font-size: 12px; font-weight: bold; height: 24px; line-height: 24px; margin: 0 1px; padding: 2px; text-align: center; vertical-align: middle; }' +
-        '.oldNewsSwitch:hover { background-color: #505050; color: #D8D8D8; }' +
-        '.oldNewsSwitchActive { background-color: #505050; border-radius: 5px 5px 0 0; color: #D8D8D8; cursor: pointer; float: left; font-size: 12px; font-weight: bold; height: 24px; line-height: 24px; margin: 0 1px; padding: 2px; text-align: center; vertical-align: middle; }' +
-        
-        '.eventsHolder { display: block; float: left; width: 333px; }' +
-        '.eventsItem { border-bottom: 1px solid #EFEDED; display: block; float: left; margin-bottom: 10px; padding-bottom: 10px; width: 333px; cursor: default; }' +
-        '.eventsDetailHolder { display: block; float: left; margin-bottom: 0; padding-bottom: 0px; width: 273px; }' +
-        '.eventsTitle { color: #333; display: block; line-height: 18px; width: 273px; font-size: 12px; margin-top: 2px; float: left; }' +
-        '.eventsDetails { color: #999; font-size: 11px; margin-top: 2px; width: 273px; float: left; }' +
-        '.eventsIcon { background: url(' + militaryEventsIcons + ') no-repeat scroll 0 0 transparent; display: block; float: left; height: 30px; padding: 8px 9px 0 0; text-align: center; width: 48px; }' +
-        
-        '.greyButton { background-image: url(' + greyButtonImg + '); background-position: right 0; background-repeat: no-repeat; color: #3B5B74; display: inline; float: left; font-size: 11px !important; height: 28px; line-height: 26px; margin-left: 5px; outline: medium none; position: relative; text-shadow: 0 1px 0 #FFFFFF; z-index: 100; text-decoration: none !important; }' +
-        '.greyButton:hover { background-position: right -28px; }' +
-        '.greyButton:active { background-position: right -56px; }' +
-        '.greyButton span { background-image: url(' + greyButtonImg + '); background-position: left 0; background-repeat: no-repeat; color: #3B5B74; cursor: pointer; display: inline; float: left; font-size: 11px !important; position: relative; right: 5px; white-space: nowrap; font-weight: bold; line-height: 26px; margin-right: 8px; padding-left: 13px; text-decoration: none !important; }' +
-        '.greyButton:hover span { background-position: left -28px; }' +
-        '.greyButton:active span { background-position: left -56px; }' +
-        
-        '.greyButtonArrowUp { background-image: url(' + greyButtonArrowUp + '); background-position: right 0; background-repeat: no-repeat; color: #3B5B74; display: inline; float: left; font-size: 11px !important; height: 28px; line-height: 26px; margin-left: 5px; outline: medium none; position: relative; text-shadow: 0 1px 0 #FFFFFF; z-index: 100; text-decoration: none !important; padding-left: 5px; }' +
-        '.greyButtonArrowUp:hover { background-position: right -28px; }' +
-        '.greyButtonArrowUp:active { background-position: right -56px; }' +
-        '.greyButtonArrowUp span { background-image: url(' + greyButtonArrowUp + '); background-position: left 0; background-repeat: no-repeat; color: #3B5B74; cursor: pointer; display: inline; float: left; font-size: 11px !important; position: relative; right: 5px; white-space: nowrap; font-weight: bold; line-height: 26px; margin-right: 2px; padding-left: 18px; text-decoration: none !important; }' +
-        '.greyButtonArrowUp:hover span { background-position: left -28px; }' +
-        '.greyButtonArrowUp:active span { background-position: left -56px; }' +
-        
-        '.blueButtonArrowUp { background-image: url(' + blueButtonArrowUp + '); background-position: right 0; background-repeat: no-repeat; color: #3B5B74; display: inline; float: left; font-size: 11px !important; height: 27px; line-height: 25px; margin-left: 5px; outline: medium none; position: relative; text-shadow: 0 1px 0 #FFFFFF; z-index: 100; text-decoration: none !important; padding-left: 5px; }' +
-        '.blueButtonArrowUp:hover { background-position: right -27px; }' +
-        '.blueButtonArrowUp:active { background-position: right -54px; }' +
-        '.blueButtonArrowUp span { background-image: url(' + blueButtonArrowUp + '); background-position: left 0; background-repeat: no-repeat; color: #3B5B74; cursor: pointer; display: inline; float: left; font-size: 11px !important; position: relative; right: 5px; white-space: nowrap; font-weight: bold; line-height: 26px; margin-right: 2px; padding-left: 18px; text-decoration: none !important; }' +
-        '.blueButtonArrowUp:hover span { background-position: left -27px; }' +
-        '.blueButtonArrowUp:active span { background-position: left -54px; }' +
-        
-        '.dtTipsy { display: none; font-size: 10px; left: -13px; padding: 5px; position: absolute; top: -12px; width: 114px; z-index: 999999; opacity: 0.8; }' +
-        '.dtTipsy-inner { background-color: #000000; color: #FFFFFF; max-width: 200px; padding: 5px 8px 4px; text-align: center; text-shadow: 0 1px 1px #000000; border-radius: 3px 3px 3px 3px; z-index: 999999; }' +
-        '.dtTipsy-arrow { background-image: url("http://www.erepublik.com/images/modules/_components/tipsy/tipsy.gif"); background-position: left bottom; background-repeat: no-repeat; height: 5px; position: absolute; width: 9px; left: 50%; margin-left: -4px; bottom: 0; z-index: 999999; }' +
-        
-        '.dailyTrackerHolder { width: 98px; height: 58px; display: block; position: absolute; left: 12px; bottom: 15px; background-image: url(' + dailyTrackerBack + '); cursor: default; }' +
-        '.dailyTrackerHolder .dailyTrackerInner { color: #a8a6a4; bottom: 8px; position: absolute; right: 15px; width: auto; font-size: 15px; font-weight: bold; cursor: default; }' +
-        '.dailyTrackerHolder:hover .dtTipsy { display: block; }' +
-        
-        '.neSign { margin-top: 11px; left: 25px; top: 12px; position: absolute; }' +
-        '.neSignRight { margin-top: 11px; left: 24px; top: 12px; position: absolute; }' +
-        
-        '#battle_listing .natural_sign { position: absolute; top: 12px; }' +
-        '#battle_listing .natural_sign.one { left: 22px; }' +
-        '#battle_listing .natural_sign.two { left: 70px; }' +
-        '#battle_listing.full_width .natural_sign.two { left: 14px; }' +
-        
-        '.entity .nameholder { float: left; display: block; margin-right: 10px; padding-top: 0px; position: relative; }' +
-        
-        'ul.achiev .hinter .country_list li em { float: left; position: inherit; opacity: 1; }' +
-        'ul.achiev .hinter .country_list li img { opacity: 1; }' +
-        'ul.achiev .hinter .country_list li small { color: #666666; }' +
-        
-        '.mercHolder { clear: both; float: left; line-height: 26px; width: 100%; }' +
-        '.mercDropHolder { clear: both; float: left; line-height: 14px; width: 153px; display: none; }' +
-        
-        '.mercBarBg { float: left; width: 136px; height: 21px; margin: 5px 0px 8px 11px; position: relative; background-image: url(' + mercBarBgImg + '); background-repeat: no-repeat; background-position: right; }' +
-        '.mercBarProgress { width: auto; float: left; height: 17px; margin-top: 2px; left: -2px; position: absolute; z-index: 2; background-image: url(' + mercBarProgressImg + '); background-repeat: no-repeat; background-position: right; }' +
-        
-        '.mercList { width: 143px; padding: 5px 0px 5px 10px; float: left; background: transparent; list-style: none; }' +
-        '.mercList li { float: left; padding: 0; margin: 0 0 6px; height: auto; width: 47px; position: relative; display: block; text-align: center; }' +
-        '.mercList li img { float: left; margin-right: 5px; opacity: 1; -moz-opacity: 1; }' +
-        '.mercList li small { float: left; color: #666666; font-size: 10px; text-shadow: rgba(255,255,255,0.4) 0 1px 0; }' +
-        '.mercList li em { position: inherit; float: left; width: 40px; font-size: 10px; text-align: center; font-weight: bold; text-shadow: rgba(255, 255, 255, 0.4) 0 1px 0; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; -moz-box-shadow: rgba(255,255,255,0.4) 0 1px 0; -webkit-box-shadow: rgba(255,255,255,0.4) 0 1px 0; -o-box-shadow: rgba(255,255,255,0.4) 0 1px 0; box-shadow: rgba(255,255,255,0.4) 0 1px 0; background: #EEE08A; background-color: #E8D45D; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #eee08a), color-stop(0, #e8d45d)); background-image: -webkit-linear-gradient(center bottom, #eee08a 0%, #e8d45d 100%); background-image: -moz-linear-gradient(top, #eee08a 0%, #e8d45d 100%); background-image: -o-linear-gradient(top, #eee08a 0%, #e8d45d 100%); background-image: -ms-linear-gradient(top, #eee08a 0%, #e8d45d 100%); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#eee08ae\', endColorstr=\'#e8d45d\',GradientType=1 ); -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#eee08a\', endColorstr=\'#e8d45d\')"; background-image: linear-gradient(top, #eee08a 0%,#e8d45d 100%); color: #695E1E; top: 0; left: 0; height: 15px; opacity: 1; -moz-opacity: 0; -ms-fiter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; filter: alpha(opacity=0); -webkit-transition: all 0.2s ease-in; -moz-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; transition: all 0.2s ease-in; }' +
-        
-        '.mercTrackerHolder { float: right; margin-right: 15px; }' +
-        '.mercVs { float: left; margin: 15px 5px 0 5px; font-size: 10px; color: #5A8931; }' +
-        '.mercCheckLeft { width: 18px; height: 14px; background-image: url(' + mercCheckImg + '); background-position: left top; background-repeat: no-repeat; float: right; display: block; margin: 16px 5px 0 5px; }' +
-        '.mercCheckRight { width: 18px; height: 14px; background-image: url(' + mercCheckImg + '); background-position: left top; background-repeat: no-repeat; float: left; display: block; margin: 16px 5px 0 5px; }' +
-        '.mercCheckSmallLeft { width: 15px; height: 12px; background-image: url(' + mercCheckImgSmall + '); background-position: center top; background-repeat: no-repeat; float: right; display: block; margin: 2px; }' +
-        '.mercCheckSmallRight { width: 15px; height: 12px; background-image: url(' + mercCheckImgSmall + '); background-position: center top; background-repeat: no-repeat; float: left; display: block; margin: 2px; }' +
-        '.mercTank { width: 28px; height: 10px; background-image: url(' + mercTankImg + '); background-position: center top; background-repeat: no-repeat; float: left; display: block; line-height: 10px; }' +
-        '.mercMainHolder { clear: both; float: left; width: 100%; height: 16px; background-color: #D4EDC0; padding-right: 10px; margin-left: -10px; text-align: center; }' +
-        
-        'table.offers td { white-space: nowrap; }' +
-        
-        '.employee_info .citizen_actions { position: absolute; left: 190px; margin-top: 2px; z-index: 0; }' +
-        '.employee_info .citizen_actions a { float: left; display: inline; width: 24px; height: 25px; text-indent: -9999px; background-image: url("http://www.erepublik.com/images/modules/citizenprofile/citizen_profile_icons.png"); margin-right: 4px; margin-top: 2px; clear: both; }' +
-        '.employee_info .citizen_actions a.action_message { background-position: -24px 0; }' +
-        '.employee_info .citizen_actions a.action_message:hover { background-position: -24px -25px; }' +
-        '.employee_info .citizen_actions a.action_message:active { background-position: -24px -50px; }' +
-        '.employee_info .citizen_actions a.action_donate { background-position: -48px 0; }' +
-        '.employee_info .citizen_actions a.action_donate:hover { background-position: -48px -25px; }' +
-        '.employee_info .citizen_actions a.action_donate:active { background-position: -48px -50px; }' +
-        
-        '#citizen_feed h6 em { color: #000000; }' +
-        
-        '.citizen_military .stat .userProgress { width: 196px; margin: 4px 7px; height: 5px; float: left; clear: both; position: relative; background: url(' + progressBarImg + ') no-repeat scroll 0 0 transparent; }' +
-        '.citizen_military .stat .userProgress .progressBar { float: left; height: 5px; width: auto; background: url(' + progressBarImg + ') no-repeat scroll 0 -5px transparent; }' +
-        '.citizen_military .stat .userProgress .progressBar span { float: right; width: 1px; height: 5px; background: url(' + progressBarImg + ') no-repeat scroll 0 -5px transparent; }' +
-        
-        '.manager_dashboard .grey_plastic.top_left { -moz-border-radius-topleft: 4px; -webkit-border-radius: 4px 0 0 0; border-radius: 4px 0 0 0; }' +
-        '.manager_dashboard .grey_plastic.top_right { -moz-border-radius-topright: 4px; -webkit-border-radius: 0 4px 0 0; border-radius: 0 4px 0 0; }' +
-        '.manager_dashboard .grey_plastic.bottom_left { -moz-border-radius-bottomleft: 4px; -webkit-border-radius: 0 0 0 4px; border-radius: 0 0 0 4px; }' +
-        '.manager_dashboard .grey_plastic.bottom_right { -moz-border-radius-bottomright: 4px; -webkit-border-radius: 0 0 4px 0; border-radius: 0 0 4px 0; }' +
-        
-        '.manager_dashboard .list .resourceHolder { float: left; width: 702px; height: auto; padding: 8px; border: 1px solid #CFDDE8; border-top: 1px solid #C5D2DD; background: #D5E3EF; margin-bottom: 10px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; -webkit-box-shadow: 0 1px 1px #C8D8E5 inset,0 1px 0 rgba(255,255,255,0.7); -moz-box-shadow: 0 1px 1px #C8D8E5 inset,0 1px 0 rgba(255,255,255,0.7); box-shadow: 0 1px 1px #C8D8E5 inset,0 1px 0 rgba(255,255,255,0.7); }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonus li { float: left; width: 42px; height: 54px; margin-left: 10px; position: relative; background-color: #E1E1E1; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #FFFFFF), color-stop(0, #E1E1E1)); background-image: -webkit-linear-gradient(center bottom, #FFFFFF 0%, #E1E1E1 100%); background-image: -moz-linear-gradient(top, #FFFFFF 0%, #E1E1E1 100%); background-image: -o-linear-gradient(top, #FFFFFF 0%, #E1E1E1 100%); background-image: linear-gradient(top, #FFFFFF 0%,#E1E1E1 100%); -moz-box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; -webkit-box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonus li:first-child { margin-left: 0; }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonus li.disabled { opacity: 0.4; -moz-opacity: 0.4; }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonus li img { position: absolute; top: 4px; left: 9px; width: 25px; height: 25px; image-rendering: optimizeQuality; }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonus li.disabled img { opacity: 0.4; -moz-opacity: 0.2; }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonus li strong { display: block; text-align: center; width: 36px; height: 16px; background: #E1E1E1; position: absolute; line-height: 18px; left: 3px; color: #666666; font-size: 11px; bottom: 4px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; -webkit-box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; -moz-box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonus li.disabled strong { color: #BFD2E0; text-shadow: rgba(0, 0, 0, 0.4) 0 1px 1px; line-height: 16px; }' +
-        
-        '.manager_dashboard .list .resourceHolder .resourceBonusTotal { float: right; width: 81px; height: 54px; position: relative; background-color: #E1E1E1; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, white), color-stop(0, #E1E1E1)); background-image: -webkit-linear-gradient(center bottom, white 0%, #E1E1E1 100%); background-image: -moz-linear-gradient(top, white 0%, #E1E1E1 100%); background-image: -o-linear-gradient(top, white 0%, #E1E1E1 100%); background-image: linear-gradient(top, white 0%,#E1E1E1 100%); -moz-box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; -webkit-box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonusTotal li { float: left; width: 78px; height: 27px; margin-left: 3px; position: relative; }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonusTotal li img { position: absolute; top: 0px; left: 3px; width: 25px; height: 25px; image-rendering: optimizeQuality; }' +
-        '.manager_dashboard .list .resourceHolder .resourceBonusTotal li strong { display: block; text-align: center; width: 36px; height: 22px; background: #E1E1E1; position: absolute; line-height: 22px; right: 3px; color: #666666; font-size: 11px; top: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; -webkit-box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; -moz-box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; }' +
-        
-        '.manager_dashboard .list .area .listing_holder .heading .area_options .area_buttons { height: 45px; text-align: center; width: auto; position: absolute; }' +
-        '.manager_dashboard .grey_plastic img { float: left; width: 17px; height: 17px; }' +
-        
-        '.manager_dashboard .companyArrow.grey_plastic { position: absolute; right: 0px; width: 13px; height: 56px; display: block; -moz-border-radius: 0; -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0; padding: 1px; cursor: pointer; background-color: #D1D1D1; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #EFEFEF), color-stop(0, #D1D1D1)); background-image: -webkit-linear-gradient(center bottom, #EFEFEF 0%, #D1D1D1 100%); background-image: -moz-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: -o-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: -ms-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: linear-gradient(top, #EFEFEF 0%,#D1D1D1 100%); border: 1px solid #D5D5D5; border-bottom: 1px solid #B9B9B9; -webkit-box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; -moz-box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; }' +
-        '.manager_dashboard .companyArrow.grey_plastic:active { box-shadow: rgba(0,0,0,0.1) 0 1px 1px inset,rgba(0,0,0,0.1) 0 2px 1px; }' +
-        '.manager_dashboard .companyArrow.grey_plastic.active { box-shadow: rgba(0,0,0,0.1) 0 1px 1px inset,rgba(0,0,0,0.1) 0 2px 1px; }' +
-        '.manager_dashboard .companyArrow.grey_plastic img { float: left; width: 13px; height: 56px; margin: auto auto;}' +
-        '.manager_dashboard .companyArrow.grey_plastic:active img { opacity: 0.6; }' +
-        '.manager_dashboard .companyArrow.grey_plastic.active img { opacity: 0.6; }' +
-        
-        '.manager_dashboard .companyCalc { float: left; clear: both; width: 100%; display: none; padding-bottom: 5px; border-top: 1px solid #EDEDED; background: url(http://www.erepublik.com/images/modules/manager/dashboard_end.png) no-repeat scroll bottom center #F5F5F5; }' +
-        
-        '.manager_dashboard .companyCalc table td input { width: 70px; height: 14px; border: 1px solid #E0E0E0; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; font-family: Arial,sans-serif; float: left; position: relative; clear: both; font-size: 11px; outline: none; padding: 6px 5px; color: #4D4D4D; font-weight: bold; -moz-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; -webkit-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; -o-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; box-shadow: inset 0px 1px 3px #F2F2F2,0 1px 0 #FFFFFF; -webkit-transition: border 0.25s ease-in-out,-webkit-box-shadow 0.25s ease-in-out; -moz-transition: border 0.25s ease-in-out,-moz-box-shadow 0.25s ease-in-out; -o-transition: border 0.25s ease-in-out,-o-box-shadow 0.25s ease-in-out; transition: border 0.25s ease-in-out,box-shadow 0.25s ease-in-out; -webkit-appearance: none; resize: none; }' +
-        '.manager_dashboard .companyCalc table td input:focus { border: 1px solid #EEBE4C; -moz-box-shadow: 0px 0px 3px #F1CA7F; -webkit-box-shadow: 0px 0px 3px #F1CA7F; -o-box-shadow: 0px 0px 3px #F1CA7F; box-shadow: 0px 0px 3px #F1CA7F; }' +
-        '.manager_dashboard .companyCalc table td .sectionTitle { font-size: 11px; margin-bottom: 3px; color: #5A5A5A; text-shadow: #FFFFFF 0px 1px 0px; float: left; clear: both; margin-top: -10px; cursor: default; }' +
-        '.manager_dashboard .companyCalc table td.disabled .sectionTitle { color: #C6C6C6; }' +
-        '.manager_dashboard .companyCalc table td .currencySign { float: left; color: #88AFC9; font-size: 11px; font-weight: bold; margin-top: 8px; margin-left: 5px; text-shadow: #FFFFFF 0px 1px 0px; cursor: default; }' +
-        '.manager_dashboard .companyCalc table td .currencySignGold { float: left; color: #B2B2B2; font-size: 11px; font-weight: bold; margin-left: 5px; text-shadow: #FFFFFF 0px 1px 0px; cursor: default; }' +
-        '.manager_dashboard .companyCalc table td.disabled .currencySign { color: #C6C6C6; }' +
-        '.manager_dashboard .companyCalc table td .totalValue { float: left; clear: both; font-size: 16px; font-weight: bold; vertical-align: text-bottom; line-height: 28px; margin-left: 5px; color: #666666; text-shadow: #FFFFFF 0px 1px 0px; }' +
-        '.manager_dashboard .companyCalc table td .totalValueGold { float: left; clear: both; font-size: 11px; font-weight: bold; vertical-align: text-bottom; margin-left: 5px; color: #B2B2B2; text-shadow: #FFFFFF 0px 1px 0px; }' +
-        
-        '.manager_dashboard .prodMarket { width: 50px; height: 26px; border: 1px solid #E0E0E0; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; font-family: Arial,sans-serif; float: left; position: relative; font-size: 11px; outline: none; padding-left: 4px; color: #4D4D4D; font-weight: bold; -moz-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; -webkit-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; -o-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; box-shadow: inset 0px 1px 3px #F2F2F2,0 1px 0 #FFFFFF; -webkit-transition: border 0.25s ease-in-out,-webkit-box-shadow 0.25s ease-in-out; -moz-transition: border 0.25s ease-in-out,-moz-box-shadow 0.25s ease-in-out; -o-transition: border 0.25s ease-in-out,-o-box-shadow 0.25s ease-in-out; transition: border 0.25s ease-in-out,box-shadow 0.25s ease-in-out; resize: none; background-color: #FFFFFF; }' +
-        
-        '.manager_dashboard .marketArrow.grey_plastic { position: absolute; right: 0px; width: 13px; height: 22px; display: block; -moz-border-radius-topright: 3px; -moz-border-radius-bottomright: 3px; -webkit-border-radius: 0 3px 3px 0; border-radius: 0 3px 3px 0; padding: 1px; cursor: pointer; background-color: #D1D1D1; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #EFEFEF), color-stop(0, #D1D1D1)); background-image: -webkit-linear-gradient(center bottom, #EFEFEF 0%, #D1D1D1 100%); background-image: -moz-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: -o-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: -ms-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: linear-gradient(top, #EFEFEF 0%,#D1D1D1 100%); border: 1px solid #D5D5D5; border-bottom: 1px solid #B9B9B9; -webkit-box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; -moz-box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; }' +
-        '.manager_dashboard .marketArrow.grey_plastic:active { box-shadow: rgba(0,0,0,0.1) 0 1px 1px inset,rgba(0,0,0,0.1) 0 2px 1px; }' +
-        '.manager_dashboard .marketArrow.grey_plastic.active { box-shadow: rgba(0,0,0,0.1) 0 1px 1px inset,rgba(0,0,0,0.1) 0 2px 1px; }' +
-        '.manager_dashboard .marketArrow.grey_plastic img { float: left; width: 13px; height: 22px; margin: auto auto;}' +
-        '.manager_dashboard .marketArrow.grey_plastic:active img { opacity: 0.6; }' +
-        '.manager_dashboard .marketArrow.grey_plastic.active img { opacity: 0.6; }' +
-        
-        '.manager_dashboard .marketSelect { width: 202px; float: left; display: none; position: absolute; z-index: 105; -moz-box-shadow: 0px 1px 3px #f2f2f2; -webkit-box-shadow: 0px 1px 3px #f2f2f2; -o-box-shadow: 0px 1px 3px #f2f2f2; box-shadow: 0px 1px 3px #f2f2f2; }' +
-        '.manager_dashboard .marketSelect .marketSelectContent { width: 200px; float: left; clear: both; background-color: white; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; border: 1px solid #E0E0E0;}' +
-        '.manager_dashboard .marketSelect .marketSelectContent .marketSelectRepeat { position: relative; float: left; max-height: 173px; overflow: auto; overflow-x: hidden; width: 200px; }' +
-        '.manager_dashboard .marketSelect .marketSelectContent ul { float: left; }' +
-        '.manager_dashboard .marketSelect .marketSelectContent ul li { float: left; clear: both; width: 200px; border-bottom: 1px solid #ededed; }' +
-        '.manager_dashboard .marketSelect .marketSelectContent ul li a { float: left; width: 188px; padding: 6px; color: #4F4F4F; }' +
-        '.manager_dashboard .marketSelect .marketSelectContent ul li a:hover { background-color: #FBFBFB; }' +
-        '.manager_dashboard .marketSelect .marketSelectContent ul li:first-child a { -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; -webkit-border-radius: 5px 5px 0 0; border-radius: 5px 5px 0 0; }' +
-        '.manager_dashboard .marketSelect .marketSelectContent ul li:last-child a { -moz-border-radius-bottomleft: 5px; -moz-border-radius-bottomright: 5px; -webkit-border-radius: 0 0 5px 5px; border-radius: 0 0 5px 5px; }' +
-        '.manager_dashboard .marketSelect .marketSelectContent ul li img { float: left; margin-left: 6px; }' +
-        '.manager_dashboard .marketSelect .marketSelectContent ul li span { float: left; font-weight: bold; font-size: 11px; margin-left: 6px; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }' +
-
-        '@-webkit-keyframes nodeInserted {' +
-            'from { clip: rect(1px, auto, auto, auto); }' +
-            'to { clip: rect(0px, auto, auto, auto); }' +
-        '}' +
-        '@-moz-keyframes nodeInserted {' +
-            'from { clip: rect(1px, auto, auto, auto); }' +
-            'to { clip: rect(0px, auto, auto, auto); }' +
-        '}'
-    );
-
-    /**
-    * Alter the content area and show the eRA button.
-    */
-    era.options.renderButton();
-
-    /**
-    * Show Twitter button.
-    */
-    era.options.renderTwitter();
-
-    /**
-    * Show Facebook button.
-    */
-    era.options.renderFacebook();
-
-    /**
-    * Show Google button.
-    */
-    era.options.renderGoogle();
-
-    /**
-    * Maintain option values.
-    */
-    era.options.init();
-    era.settings = era.storage.get('Options');
-
-    /**
-    * Remove mission alert animation.
-    */
-    era.settings.sidebar && $('#point').remove();
-
-    /**
-    * Run scroll blocker.
-    */
-    era.scrollBlocker.init();
-
-    /**
-    * Show options window when eRA button clicked.
-    */
-    $(document).on('click', '#optionsContent', function(e) {
-        e.stopPropagation();
-        era.options.renderOptions(era.settings);
-    });
-
-    era.hostLang = location.href.split('/')[3].split('?')[0];
-    era.characterLevel = parseInt($('.user_level b').html());
-    era.characterCurrency = $('.currency_amount span').text();
-    era.characterMoney = parseFloat($('#large_sidebar .currency_amount strong').text().match(/\d+\.?\d*/g).join(''));
-    era.characterGold = parseFloat($('#large_sidebar .gold_amount strong').text().match(/\d+\.?\d*/g).join(''));
-
-    era.settings.sidebar && $('#experienceTooltip').css('width', '122px');
-
-    /**
-    * Show custom menu rows.
-    */
-    (!era.settings.hasOwnProperty('menu1') || era.settings.menu1 != false) && era.customMenu.renderTop();
-    (!era.settings.hasOwnProperty('menu2') || era.settings.menu2 != false) && era.customMenu.renderBottom();
-
-    /**
-    * Maintain influence log values.
-    */
-    era.erepDay = parseInt($('.eday strong').html().replace(',', ''));
-    era.influenceLog.init();
-
-    era.exchangeRate.init();
-
-    /**
-    * Sidebar improvements.
-    */
-    era.settings.sidebar && era.addStyle(
-        '.inventoryHolder {' +
-            'float: left;' +
-            'width: 149px;' +
-            'margin: ' + ($('#large_sidebar .sidebar_banners_area').length ? '0' : '15px') + ' 3px 0 3px;' +
-            'padding: 10px;' +
-            '-moz-border-radius: 5px;' +
-            '-webkit-border-radius: 5px;' +
-            'border-radius: 5px;' +
-            'border: 1px solid rgba(255,255,255,0.9);' +
-            'background-color: #f0efef;' +
-            'background-color: rgba(233,233,233,0.8);' +
-            'z-index: 10;' +
-            'box-shadow: 0px 0px 7px rgba(230,230,230,0.9);' +
-        '}'
-    );
-    era.settings.sidebar && $('#optionsHolder').before('<div class="inventoryHolder"><a href="http://www.erepublik.com/' + era.hostLang + '/economy/inventory"></a></div>');
-
-    era.settings.sidebar && era.inventoryPageProcessor.subscribers.push(era.miniInventory.o);
-    era.settings.sidebar && era.inventoryPageProcessor.o();
-
-    era.settings.sidebar && era.monetaryOffersFetcher.subscribers.push(era.miniMonetary.o);
-    era.settings.sidebar && era.monetaryOffersFetcher.o();
-
-    era.settings.sidebar && era.profilePageProcessor.subscribers.push(era.miniMercenary.o);
-
-    /**
-    * Mercenary tracker.
-    */
-    $('#homepage_feed').length && era.profilePageProcessor.subscribers.push(mercTrackerMain);
-    location.href.indexOf('military/battlefield/') >= 0 && era.profilePageProcessor.subscribers.push(mercTrackerBattle);
-    location.href.indexOf('military/campaigns') >= 0 && era.profilePageProcessor.subscribers.push(mercTrackerWar);
-    location.href.indexOf('wars/show/') >= 0 && era.profilePageProcessor.subscribers.push(mercTrackerRes);
- 
-    era.profilePageProcessor.o();
-
-    $('#homepage_feed').length && era.naturalEnemyFetcher.subscribers.push(changeFlagsMain);
-    location.href.indexOf('military/campaigns') >= 0 && era.naturalEnemyFetcher.subscribers.push(changeFlagsWar);
-
-    era.naturalEnemyFetcher.o();
-
-    if (era.settings.subs){
-        era.subscriptions.subscribers.push(era.subscriptions.compare);
-        era.subscriptions.o();
-    }
-
-    eRAopt = era.storage.get('Options');
-
-    linkRegions();
-    improveShouts();
-    dailyTrackerGet();
-
-    era.settings.battlefield && location.href.indexOf('military/battlefield/') >= 0 && era.battlefield.o();
-    era.settings.market && location.href.indexOf('economy/market') >= 0 && era.enchantMarket.o();
-    era.settings.profile && location.href.indexOf('citizen/profile/') >= 0 && era.improveProfile.o();
-    era.settings.mmarket && location.href.indexOf('economy/exchange-market') >= 0 && era.monetaryMarket.o();
-    
-    var pagesFunctions = [
-        {p: 'main/search/', f: era.searchRedirect.o},
-        {p: 'economy/inventory', f: enchantInventory},
-        {p: 'economy/inventory', f: taxTable},
-        {p: 'article/', f: era.changeComments.o},
-        {p: 'economy/citizen-accounts/', f: storageTab},
-        {p: 'citizen/edit/profile', f: storageTab},
-        {p: 'citizen/change-residence', f: storageTab},
-        {p: 'main/messages-inbox', f: betterMessages},
-        {p: 'economy/manage-employees/', f: improveEmployees},
-        {p: 'economy/myCompanies', f: improveCompanies}
-    ];
-
-    pagesFunctions.forEach(function(v) {
-        if (location.href.substr(location.href.indexOf('/', location.href.indexOf('/') + 2) + 1 + era.hostLang.length + 1).substr(0, v.p.length) == v.p) {
-            v.f();
+            var headID = document.getElementsByTagName('head')[0];
+            script = document.createElement('script');
+            script.id = 'eRAShoutScript';
+            script.type = 'text/javascript';
+            script.appendChild(document.createTextNode('('+ era.shoutScript.o +')();'));
+            headID.appendChild(script);
         }
-    });
+    },
 
-    $('.banner_place').insertAfter('#content');
-    $('.banner_place').css({clear: 'left', 'float': 'left', marginTop: (!era.chrome ? 1 : 0) + 3 + 'px'});
+    dailyTrackerGet: {
+        o: function() {
+            if (eRAopt['dotrack'] == false || $('#homepage_feed').html() == undefined) {
+                return;
+            }
+            
+            var eToday = parseFloat($('.eday strong').html().replace(/,/gi, ''));
+            
+            if ($('#orderContainer').html() != undefined) {
+                if ($('#orderContainer big').html() == undefined) {
+                    eRAdaily = {};
+                    eRAdaily['eDay'] = eToday;
+                    eRAdaily['Battlefield'] = '0';
+                    eRAdaily['Country'] = '0';
+                    eRAdaily['Progress'] = '25';
+                    
+                    era.storage.set('Dod', eRAdaily);
+                    
+                    return;
+                }
+            } else {
+                eRAdaily = {};
+                eRAdaily['eDay'] = eToday;
+                eRAdaily['Battlefield'] = '0';
+                eRAdaily['Country'] = '0';
+                eRAdaily['Progress'] = '0';
+                
+                era.storage.set('Dod', eRAdaily);
+                
+                return;
+            }
+            
+            var dailyBattle = $('#orderContainer a:eq(0)').attr('href').split('/')[4];
+            var dailyCountry = countryName_id[$('#orderContainer strong').html().replace('Fight for ', '').split(' in ')[0]];
+            var dailyProgress = $('#orderContainer big').html().split('/')[0];
+            
+            eRAdaily = era.storage.get('Dod', {});
+            
+            if (eRAdaily['eDay'] == undefined || eRAdaily['eDay'] != eToday || eRAdaily['Progress'] == undefined || eRAdaily['Progress'] <= parseFloat(dailyProgress)) {
+                eRAdaily = {};
+                eRAdaily['eDay'] = eToday;
+                eRAdaily['Battlefield'] = dailyBattle;
+                eRAdaily['Country'] = dailyCountry;
+                eRAdaily['Progress'] = dailyProgress;
+                
+                era.storage.set('Dod', eRAdaily);
+            }
+        }
+    },
 
-    era.renderStyle();
+    storageTab: {
+        o: function() {
+            $('.citizen_menu').append('<li>' +
+                                            '<a href="http://www.erepublik.com/en/economy/inventory" title="Storage">Storage</a>' +
+                                        '</li>');
+        }
+    },
 
-    return true;
+    mercTrackerMain: {
+        o: function() {
+            var mercenaryProgress = era.storage.get('MercenaryProgress', {});
 
-}
+            if (!mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
+
+            var neededProgress = {};
+
+            $('#battle_listing li .side_flags').each(function() {
+                neededProgress[$(this).attr('title')] = 0;
+            });
+
+            for (var i in mercenaryProgress.countryProgress) {
+                neededProgress.hasOwnProperty(mercenaryProgress.countryProgress[i].country) && (neededProgress[mercenaryProgress.countryProgress[i].country] = mercenaryProgress.countryProgress[i].progress);
+            }
+
+            $('#battle_listing li').each(function() {
+                $(this).css('height', '61px');
+                
+                var mercProgressOne = neededProgress[$(this).find('.side_flags:eq(0)').attr('title')];
+                var mercProgressTwo = neededProgress[$(this).find('.side_flags:eq(1)').attr('title')];
+
+                if(mercProgressOne == 25 && mercProgressTwo == 25) {
+                    $(this).append('<div class="mercMainHolder">' +
+                                        '<div style="width: 157px; float: left;">' +
+                                            '&nbsp;' +
+                                        '</div>' +
+                                        '<div class="mercCheckSmallRight"></div>' +
+                                        '<div style="width: 147px; float: left;">' +
+                                            '&nbsp;' +
+                                        '</div>' +
+                                   '</div>');
+                } else {
+                    $(this).append('<div class="mercMainHolder">' +
+                                        '<div style="width: 139px; float: left;">' +
+                                            '<strong style="font-size: 11px; float: right; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressOne + '</strong>' +
+                                        '</div>' +
+                                        '<div class="mercTank" style="margin: 3px 13px 0 13px;"></div>' +
+                                        '<div style="width: 130px; float: left;">' +
+                                            '<strong style="font-size: 11px; float: left; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressTwo + '</strong>' +
+                                        '</div>' +
+                                   '</div>');
+                }
+                
+                if (mercProgressTwo == '0') {
+                    $(this).find('.mercMainHolder strong:eq(1)').css('color', '#999999');
+                } else if (mercProgressTwo == '25') {
+                    $(this).find('.mercMainHolder strong:eq(1)').replaceWith('<div class="mercCheckSmallRight"></div>');
+                }
+                
+                if (mercProgressOne == '0') {
+                    $(this).find('.mercMainHolder strong:eq(0)').css('color', '#999999');
+                } else if (mercProgressOne == '25') {
+                    $(this).find('.mercMainHolder strong:eq(0)').replaceWith('<div class="mercCheckSmallLeft"></div>');
+                }
+                
+                if($(this).parent().hasClass('bod_listing')) {
+                    $(this).find('.mercMainHolder').css('background-color', '#EAD791');
+                    $(this).find('.mercTank').css('background-position', 'center bottom');
+                }
+            });
+        }
+    },
+
+    mercTrackerWar: {
+        o: function() {
+            var mercenaryProgress = era.storage.get('MercenaryProgress', {});
+
+            if (!mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
+
+            var neededProgress = {};
+
+            for (var i in mercenaryProgress.countryProgress) {
+                neededProgress[mercenaryProgress.countryProgress[i].country] = mercenaryProgress.countryProgress[i].progress;
+            }
+            
+            $('#battle_listing li').each(function() {
+                if ($(this).parent().hasClass('victory_listing')) return;
+                
+                var mercProgressOne = neededProgress[$(this).find('.side_flags:eq(0)').attr('title')];
+                var mercProgressTwo = neededProgress[$(this).find('.side_flags:eq(1)').attr('title')];
+                
+                if(mercProgressOne == '25' && mercProgressTwo == '25') {
+                    $(this).append('<div class="mercTrackerHolder" style="width: 106px;">' +
+                                        '<div style="width: 28px; float: left;">' +
+                                            '&nbsp;' +
+                                        '</div>' +
+                                        '<div class="mercCheckRight" style="margin: 16px 16px 0 16px;"></div>' +
+                                        '<div style="width: 28px; float: left;">' +
+                                            '&nbsp;' +
+                                        '</div>' +
+                                   '</div>');
+                } else {
+                    $(this).append('<div class="mercTrackerHolder" style="width: 106px;">' +
+                                        '<div style="width: 28px; float: left; text-align: center;">' +
+                                            '<strong style="font-size: 11px; color: #9e0b0f; margin-top: 15px; font-weight: bold; width: 28px; margin-left: 0px;">' + mercProgressOne + '</strong>' +
+                                        '</div>' +
+                                        '<div class="tank_img" style="margin: 16px 13px 0 13px;"></div>' +
+                                        '<div style="width: 28px; float: left; text-align: center;">' +
+                                            '<strong style="font-size: 11px; color: #9e0b0f; margin-top: 15px; font-weight: bold; width: 28px; margin-left: 0px;">' + mercProgressTwo + '</strong>' +
+                                        '</div>' +
+                                   '</div>');
+                }
+                
+                if (mercProgressTwo == '0') {
+                    $(this).find('.mercTrackerHolder strong:eq(1)').css('color', '#999999');
+                } else if (mercProgressTwo == '25') {
+                    $(this).find('.mercTrackerHolder strong:eq(1)').replaceWith('<div class="mercCheckRight"></div>');
+                }
+                
+                if (mercProgressOne == '0') {
+                    $(this).find('.mercTrackerHolder strong:eq(0)').css('color', '#999999');
+                } else if (mercProgressOne == '25') {
+                    $(this).find('.mercTrackerHolder strong:eq(0)').replaceWith('<div class="mercCheckLeft"></div>');
+                }
+                
+                if($(this).parent().hasClass('bod_listing')) {
+                    $(this).find('.tank_img').css('background-position', 'left bottom');
+                }
+            });
+        }
+    },
+
+    mercTrackerRes: {
+        o: function() {
+            var mercenaryProgress = era.storage.get('MercenaryProgress', {});
+
+            if (!mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
+
+            var neededProgress = {};
+
+            neededProgress[id_countryName[$('.listing.resistance a:first').attr('href').split('/').pop()]] = 0;
+            neededProgress[id_countryName[$('.listing.resistance a:last').attr('href').split('/').pop()]] = 0;
+
+            for (var i in mercenaryProgress.countryProgress) {
+                neededProgress.hasOwnProperty(mercenaryProgress.countryProgress[i].country) && (neededProgress[mercenaryProgress.countryProgress[i].country] = mercenaryProgress.countryProgress[i].progress);
+            }
+            
+            var mercProgressOne = neededProgress[id_countryName[$('.listing.resistance a:first').attr('href').split('/').pop()]];
+            var mercProgressTwo = neededProgress[id_countryName[$('.listing.resistance a:last').attr('href').split('/').pop()]];
+            
+            $('.listing.resistance strong:eq(0)').after('<strong style="font-size: 11px; color: #9e0b0f; font-weight: bold; width: 35%; right: 0px; left: auto;"><div style="float: left;">' + mercProgressTwo + '</div></strong>');
+            $('.listing.resistance strong:eq(0)').before('<strong style="font-size: 11px; color: #9e0b0f; font-weight: bold; width: 35%; left: 0px;"><div style="float: right;">' + mercProgressOne + '</div></strong>');
+            
+            if (mercProgressTwo == '0') {
+                $('.listing.resistance strong:eq(2)').css('color', '#999999');
+            } else if (mercProgressTwo == '25') {
+                $('.listing.resistance strong:eq(2)').empty().append($('<div>', {class: 'mercCheckRight', style: 'margin: 8px 0px 0px 0px;'}));
+            }
+            
+            if (mercProgressOne == '0') {
+                $('.listing.resistance strong:eq(0)').css('color', '#999999');
+            } else if (mercProgressOne == '25') {
+                $('.listing.resistance strong:eq(0)').empty().append($('<div>', {class: 'mercCheckLeft', style: 'margin: 8px 0px 0px 0px;'}));
+            }
+        }
+    },
+
+    mercTrackerBattle: {
+        o: function() {
+            var mercenaryProgress = era.storage.get('MercenaryProgress', {});
+
+            if (!mercenaryProgress.hasOwnProperty('countryProgress') || 'object' != typeof mercenaryProgress.countryProgress) return;
+
+            var neededProgress = {};
+
+            neededProgress[$('#pvp_header .country.left_side h3').html().replace('Resistance Force Of ', '')] = 0;
+            neededProgress[$('#pvp_header .country.right_side h3').html().replace('Resistance Force Of ', '')] = 0;
+
+            for (var i in mercenaryProgress.countryProgress) {
+                neededProgress.hasOwnProperty(mercenaryProgress.countryProgress[i].country) && (neededProgress[mercenaryProgress.countryProgress[i].country] = mercenaryProgress.countryProgress[i].progress);
+            }
+
+            var mercProgressOne = neededProgress[$('#pvp_header .country.left_side h3').html().replace('Resistance Force Of ', '')];
+            var mercProgressTwo = neededProgress[$('#pvp_header .country.right_side h3').html().replace('Resistance Force Of ', '')];
+            
+            $('#pvp_header .country.left_side').append('<div style="font-size: 14px; color: #9e0b0f; font-weight: bold; float: left; position: absolute; left: 130px; top: 20px;">' + mercProgressOne + '</div>');
+            $('#pvp_header .country.right_side').append('<div style="font-size: 14px; color: #9e0b0f; font-weight: bold; float: left; position: absolute; right: 130px; top: 20px;">' + mercProgressTwo + '</strong>');
+            
+            if (mercProgressOne == '0') {
+                $('#pvp_header .country.left_side div:last').css('color', '#999999');
+            } else if (mercProgressOne == '25') {
+                $('#pvp_header .country.left_side div:last').replaceWith('<div class="mercCheckRight" style="float: left; margin-top: 8px; margin-left: 10px;"></div>');
+            }
+            
+            if (mercProgressTwo == '0') {
+                $('#pvp_header .country.right_side div:last').css('color', '#999999');
+            } else if (mercProgressTwo == '25') {
+                $('#pvp_header .country.right_side div:last').replaceWith('<div class="mercCheckRight" style="float: right; margin-top: 8px; margin-right: 10px;"></div>');
+            }
+        }
+    },
+
+    improveEmployees: {
+        o: function() {
+            $('.list_group .listing').each(function() {
+                var employeeId = $(this).prev().attr('id').split('_')[2];
+                
+                var employeeName = $(this).find('.employee_info .employee_entry strong').html();
+                $(this).find('.employee_info .employee_entry strong').replaceWith('<p style="float: left; margin-left: 8px; margin-top: 14px; color: #333; font-size: 11px; font-weight: bold; text-shadow: white 0 1px 0; width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + employeeName + '</p>');
+                
+                $(this).find('.employee_info .employee_entry').css({'position': 'relative', 'z-index': '1'});
+                $(this).find('.employee_info').append('<div class="citizen_actions">' +
+                                                                    '<a href="http://www.erepublik.com/' + era.hostLang + '/main/messages-compose/' + employeeId + '" class="action_message tip" original-title="Send message">Send message</a>' +
+                                                                    '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/donate-items/' + employeeId + '" class="action_donate tip" original-title="Donate">Donate</a>' +
+                                                                '</div>');
+            });
+            
+            $('#remove_mode').click(function() {
+                if($(this).hasClass('active')) {
+                    $('.list_group .listing .employee_info .citizen_actions').each(function() {
+                        $(this).fadeOut();
+                    });
+                } else {
+                    $('.list_group .listing .employee_info .citizen_actions').each(function() {
+                        $(this).fadeIn();
+                    });
+                }
+            });
+        }
+    },
+
+    companySelector: {
+        o: function() {
+            $('#selectAll, #selectFactory, #selectRaw').click(function() {
+                switch ($(this).attr('id')) {
+                    case 'selectAll': var s = '.list_group'; var t = ['Select all companies', 'Deselect all companies']; break;
+                    case 'selectFactory': var s = '.list_group > .upgradeable'; var t = ['Select all factories', 'Deselect all factories']; break;
+                    case 'selectRaw': var s = '.list_group > :not(.upgradeable)'; var t = ['Select all raw companies', 'Deselect all raw companies']; break;
+                }
+
+                if ($(this).hasClass('eractive')) {
+                    $(s + ' .owner_work.active').click();
+                    $(this).removeClass('eractive').attr('title', t[0]);
+                } else {
+                    $(s + ' .owner_work:not(.active)').click();
+                    $(this).addClass('eractive').attr('title', t[1]);
+                }
+            });
+
+            $('#selectFood, #selectWeapon, #selectFoodRaw, #selectWeaponRaw').click(function() {
+                var eractive = $(this).hasClass('eractive');
+
+                switch ($(this).attr('id')) {
+                    case 'selectFood': var s = '7'; var t = ['Select all food factories', 'Deselect all food factories']; var m = 0; break;
+                    case 'selectWeapon': var s = '12'; var t = ['Select all weapon factories', 'Deselect all weapon factories']; var m = 0; break;
+                    case 'selectFoodRaw': var s = '7'; var t = ['Select all food raw companies', 'Deselect all food raw companies']; var m = 1; break;
+                    case 'selectWeaponRaw': var s = '12'; var t = ['Select all weapon raw companies', 'Deselect all weapon raw companies']; var m = 1; break;
+                }
+
+                $(m == 0 ? '.list_group > .upgradeable' : '.list_group > :not(.upgradeable)').each(function() {
+                    if (s == $(this).find('.c4 img').attr('src').split('/')[6]) {
+                        if (eractive) $(this).find('.owner_work.active').click();
+                        else $(this).find('.owner_work:not(.active)').click();
+                    }
+                });
+
+                if (eractive) $(this).removeClass('eractive').attr('title', t[0]);
+                else $(this).addClass('eractive').attr('title', t[1]);
+            });
+        }
+    },
+
+    improveCompanies: {
+        o: function() {
+            $('.area h4').css('position', 'relative').append(
+                '<div class="area_buttons" style="top: 0; left: 110px; position: absolute;">' +
+                    '<a id="selectAll" href="javascript:;" class="grey_plastic" title="Select all companies" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 4px;">' +
+                        '<img src="' + allCompanies + '" alt="">' +
+                    '</a>' +
+                    '<a id="selectFactory" href="javascript:;" class="grey_plastic left_pos" title="Select all factories" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 10px;">' +
+                        '<img src="' + allFactories + '" alt="">' +
+                    '</a>' +
+                    '<a id="selectRaw" href="javascript:;" class="grey_plastic right_pos" title="Select all raw companies" style="display: inline-block; float: none; vertical-align: -9px; margin-left: -1px;">' +
+                        '<img src="' + allRaw + '" alt="">' +
+                    '</a>' +
+                    '<a id="selectFood" href="javascript:;" class="grey_plastic left_pos" title="Select all food factories" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 10px;">' +
+                        '<img src="http://www.erepublik.com/images/icons/industry/1/q6.png" alt="">' +
+                    '</a>' +
+                    '<a id="selectWeapon" href="javascript:;" class="grey_plastic mid" title="Select all weapon factories" style="display: inline-block; float: none; vertical-align: -9px;">' +
+                        '<img src="http://www.erepublik.com/images/icons/industry/2/q6.png" alt="">' +
+                    '</a>' +
+                    '<a id="selectFoodRaw" href="javascript:;" class="grey_plastic mid" title="Select all food raw companies" style="display: inline-block; float: none; vertical-align: -9px;">' +
+                        '<img src="http://www.erepublik.com/images/icons/industry/7/default.png" alt="">' +
+                    '</a>' +
+                    '<a id="selectWeaponRaw" href="javascript:;" class="grey_plastic right_pos" title="Select all weapon raw companies" style="display: inline-block; float: none; vertical-align: -9px;">' +
+                        '<img src="http://www.erepublik.com/images/icons/industry/12/default.png" alt="">' +
+                    '</a>' +
+                '</div>'
+            );
+
+            $('.listing_holder').css('margin-top', '8px');
+
+            var script = document.createElement('script');
+            script.type  = 'text/javascript';
+            script.text = '(' + era.companySelector.o + ')();'
+            document.getElementsByTagName('head')[0].appendChild(script);
+        }
+    },
+
+    Main: {
+        o: function() {
+
+            /**
+            * Always delete corrupted values.
+            */
+            era.storage.init();
+
+            /**
+            * Only run if the user is signed in.
+            */
+            if (!document.getElementById('large_sidebar')) return false;
+
+            /**
+            * Determine the character id.
+            * Only run if it's valid.
+            */
+            era.characterId = parseInt($('#large_sidebar .user_section a:eq(0)').attr('href').split('/')[6]);
+            if (isNaN(era.characterId)) era.characterId = $('#large_sidebar .user_section a:eq(0)').attr('href').split('/')[4];
+            if (isNaN(era.characterId)) throw new TypeError('Character id is not number. Possible html change.');
+
+            era.addStyle(
+                '.customMenuHolder { padding: 0px 2px 2px 2px; float: left; margin-left: 3px; width: 944px; }' +
+                '.customMenuElemHolder { border-radius: 0px 0px 5px 5px; background-color: #eeeeee; float: left; width: 118px; height: 20px; text-align: center; color: #7F7F7F; cursor: default; vertical-align: middle; line-height: 20px; font-size: 11px; }' +
+                '.customMenuElement { border-radius: 0px 0px 5px 5px; background-color: #eeeeee; padding: 2px; float: left; width: 114px; height: 16px; text-align: center; color: #7F7F7F; cursor: pointer; vertical-align: middle; line-height: 16px; font-size: 11px; }' +
+                '.customMenuElement:hover { background: #505050; color: #D8D8D8; }' +
+                '.customMenuElementAdd { border-radius: 0px 0px 5px 5px; background-color: #eeeeee; padding: 2px; float: left; width: 114px; height: 16px; text-align: center; color: #CCCCCC; cursor: pointer; vertical-align: middle; line-height: 16px; font-size: 11px; }' +
+                '.customMenuElementAdd:hover { background: #CCCCCC; color: #D8D8D8; }' +
+                '.customMenuPrompt { box-shadow: 0px 0px 5px #9F9F9F; border-radius: 5px 5px 5px 5px; background: url(' + loadingBackImg + ') repeat scroll 0 0 transparent; border: 1px solid #bbbbbb; display: none; height: 200px; position: absolute; margin-left: 10%; margin-right: auto; width: 400px; z-index: 999999; top: 250px; }' +
+
+                '.infoHolder { background: url(' + infoImg + ') no-repeat scroll 0px 0px transparent; height: 12px; width: 12px; display: inline; float: left; margin-left: 2px; margin-top: -34px; cursor: pointer; }' +
+                '.infoHolder:hover { background: url(' + infoImgHover + ') no-repeat scroll 0px 0px transparent; }' +
+                '.infoHolder .infoContent { box-shadow: 0px 0px 5px #9F9F9F; border-radius: 7px 7px 7px 7px; background: url(' + loadingBackImg + ') repeat scroll 0 0 transparent; display: none; height: 310px; position: fixed; margin: -155px -150px; width: 300px; z-index: 999999; top: 50%; left: 50%; font-size: 11px; }' +
+                '.infoHolder:hover .infoContent { display: inline; z-index: 9999; }' +
+                '.infoHolder:hover .infoContent table tr td { padding: 5px 10px 5px 10px; }' +
+                
+                '#optionsContentMain { box-shadow: 0px 0px 5px #9F9F9F; border-radius: 7px 7px 7px 7px; background: url(' + loadingBackImg + ') repeat scroll 0 0 transparent; display: none; height: 500px; position: fixed; margin: -250px -275px; width: 550px; z-index: 999999; top: 50%; left: 50%; }' +
+                '#optionsContentMain .optionsInnerHeader { border-radius: 7px 7px 0px 0px; background: url(' + linksHeader + ') no-repeat scroll 0 0 transparent; float: left; height: 35px; width: 100%; }' +
+                '#optionsContentMain .optionsInnerContent { float: left; margin-top: 10px; margin-left: 10px; margin-right: 10px; width: 500px; padding: 0px 15px; }' +
+                '#optionsContentMain .optionsInnerVersion { clear: both; bottom: -5px; font-size: 9px; margin-left: 10px; margin-right: 10px; padding: 50px 15px 0px 15px; position: relative; text-align: center; cursor: default; }' +
+                '#optionsContentMain .optionsInnerFooter { border-top: 1px solid #CCCCCC; bottom: -10px; clear: both; font-size: 10px; margin-left: 10px; margin-right: 10px; padding: 10px 15px; position: relative; text-align: center;  cursor: default; }' +
+                '#optionsContentMain .optionsInnerItem { clear: both; float: left; width: 225px; }' +
+                '#optionsContentMain .optionsInnerItem:hover { font-weight: bold; background: none repeat scroll 0 0 #FFFFCC; }' +
+                '#optionsContentMain .optionsInnerItemRight { float: right; width: 225px; }' +
+                '#optionsContentMain .optionsInnerItemRight:hover { font-weight: bold; background: none repeat scroll 0 0 #FFFFCC; }' +
+                '#optionsContentMain .optionsInnerItemLabel { float: left; vertical-align: middle; line-height: 20px; margin-bottom: 5px; margin-right: 10px; margin-left: 10px; padding-top: 5px; width: 180px; cursor: default; }' +
+                '#optionsContentMain .optionsInnerItemLabel_QuickLinks { float: left; vertical-align: middle; line-height: 20px; margin-bottom: 2px; padding-top: 3px; margin-right: 0px; margin-left: 0px; width: 100%; cursor: pointer; border-top: 1px solid #CCCCCC; }' +
+                '#optionsContentMain .optionsInnerItemLabel_QuickLinks:hover { font-weight: bold; background: none repeat scroll 0 0 #FFFFCC; }' +
+                
+                '.profitTable { background: url("http://www.erepublik.com/images/parts/back_el_secondh.png") repeat-x scroll left bottom transparent; cursor: default; border-top: 1px solid #eeeeee; border-bottom: 1px solid #dddddd; padding: 10px 0px 10px 0px; }' +
+                '.dayProfitTable { background: url("http://www.erepublik.com/images/parts/bg_el_days.png") repeat-x scroll left bottom transparent; cursor: default; border-bottom: 1px solid #cccccc; padding: 7px 0px 7px 0px; }' +
+
+                '.menuRight { float: right; }' +
+                '.menuItem:hover { background-color: #CCCCCC; }' +
+                
+                '.menuWindow { box-shadow: 0px 0px 5px #9F9F9F; border-radius: 7px 7px 7px 7px; background: url(' + loadingBackImg + ') repeat scroll 0 0 transparent; display: none; height: 600px; position: fixed; margin: -300px -352px; width: 705px; z-index: 999999; top: 50%; left: 50%; }' +
+                '.closeButton { background: url("http://www.erepublik.com/images/parts/remove_upper_inventory_hover.png") no-repeat scroll 0 0 transparent; float: right; height: 10px; margin: 5px; text-indent: -9999px; width: 10px; }' +
+                '.menuWindowHeader { border-radius: 5px 0px 0px 0px; background: url(' + linksHeader + ') no-repeat scroll 0 0 transparent; float: left; height: 35px; width: 100%; }' +
+                '.menuWindowContent { float: left; padding: 5px; }' +
+                '.menuWindowContentTable { display: table; }' +
+                '.menuWindowContentRow { display: table-row-group; }' +
+                '.menuWindowContentCell { display: table-cell; padding: 3px; }' +
+
+                '.miniInventoryHolder { background: url(' + sideBoxes + ') no-repeat scroll 0 0 #FFFFFF; float: left; margin-bottom: 7px; width: 153px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; height: auto !important; padding-top: 5px; }' +
+                '.miniInventoryHolder .itemCountHolder { clear: both; float: left; line-height: 26px; margin-left: 6px; width: 142px; border-bottom: 1px solid #DEDEDE; }' +
+                '.miniInventoryHolder .itemCountHolder img { float: left; width: 26px; height: 26px; margin-left: 1px; margin-right: 6px; }' +
+                '.miniInventoryHolder .itemCountHolder .itemCount { text-align: center; color: grey; line-height: 30px; }' +
+                
+                '.miniInventoryHolder .marketDropHolder { clear: both; float: left; line-height: 26px; margin-left: 6px; width: 142px; border-bottom: 1px solid #DEDEDE; display: none; }' +
+                '.miniInventoryHolder .marketDropHolder img { float: left; width: 26px; height: 26px; margin-left: 1px; margin-right: 6px; }' +
+                '.miniInventoryHolder .marketDropHolder .itemCount { text-align: center; color: grey; line-height: 30px; }' +
+                
+                '.miniInventoryHolder .monCountHolder { clear: both; float: left; line-height: 26px; margin-left: 6px; width: 142px; border-bottom: 1px solid #DEDEDE; }' +
+                '.miniInventoryHolder .monCountHolder img { float: left; margin-left: 1px; margin-right: 6px; margin-top: 6px; }' +
+                '.miniInventoryHolder .monCountHolder .itemCount { text-align: center; color: grey; line-height: 30px; }' +
+                
+                '.miniInventoryHolder .monDropHolder { clear: both; float: left; line-height: 26px; margin-left: 6px; width: 142px; border-bottom: 1px solid #DEDEDE; display: none; }' +
+                '.miniInventoryHolder .monDropHolder img { float: left; margin-left: 1px; margin-right: 6px; margin-top: 6px; }' +
+                '.miniInventoryHolder .monDropHolder .itemCount { text-align: center; color: grey; line-height: 30px; }' +
+                
+                '.taxTbl { background-color: #BAE7F9; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; border-top-right-radius: 5px; border-top-left-radius: 5px; display: block; float: left; margin-top: 11px; margin-left: 15px; position: relative; width: 730px; }' +
+                '.taxTbl table { background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #95D4ED; margin: 5px auto; width: 718px; }' +
+                '.taxTbl table th { background: none repeat scroll 0 0 #F7FCFF; }' +
+                '.taxTbl table tbody tr:hover td { background-color: #FFFFE7; }' +
+                '.taxTbl table td { border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-bottom: 5px; padding-left: 25px; padding-top: 5px; }' +
+                '.taxLink { cursor: pointer; }' +
+                '.taxLink .taxLinkHolder { border: 2px solid #CFEFFB; border-radius: 3px 3px 3px 3px; position: absolute; margin-top: -7px; display: none; z-index: 100; }' +
+                '.taxLink:hover .taxLinkHolder { display: block; }' +
+                '.taxLink .taxLinkHolder .taxLinkItemTransparent { background: none repeat scroll 0 0 transparent; text-align: center; height: 25px; }' +
+                '.taxLink .taxLinkHolder .taxLinkItem { background-color: #FFFFE7; text-align: center; }' +
+                '.taxLink .taxLinkHolder .taxLinkItem:hover { background-color: #F7FCFF !important; }' +
+                
+                '.battleHealth { color: #E3E3E3; font-size: 11px; font-weight: bold; position: absolute; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6); top: 0; width: 100%; opacity: 1; }' +
+                
+                '#large_sidebar a.newLogout { background: none repeat scroll 0 0 #FF8888; border: 1px solid #FF0000; border-radius: 3px 3px 3px 3px; color: #FFFFFF; display: inline; float: left; font-weight: bold; padding: 4px; text-align: center; width: 58px; margin-left: 40px; }' +
+                '#large_sidebar a.newLogout:hover { background: none repeat scroll 0 0 #FF6666; }' +
+                
+                '#marketplace table tbody td.m_quantity { text-align: center; }' +
+                '#marketplace table tbody td.m_provider { width: 138px; }' +
+                
+                '.hitsNeededHolder { position: absolute; text-align: center; background-color: #333333; width: 92px; border-radius: 7px 0px 0px 7px; margin-top: 12px; margin-left: -95px; padding: 5px 0px 5px 5px; }' +
+                '.hitsNeededTitle { font-weight: bold; color: white; }' +
+                '.hitsNeededNumber { line-height: 13px; text-shadow: 0 -1px 0 #6E9C08; text-align: center; height: 16px; font-size: 10px; display: inline; padding: 0 4px 0 4px; background-color: #83b70b; border-radius: 3px; color: #FFFFFF; }' +
+                
+                '.regionLink { background: none repeat scroll 0 0 transparent !important; height: auto !important; left: 0px !important; margin: 0 !important; }' +
+                
+                '.influValueHolder { margin-left: 2px; float: left; margin-right: 5px; width: auto; display: inline; line-height: 44px; text-align: center; padding-right: 2px; }' +
+                '.influValueHolder .influValue { background: url("/images/parts/shadow.gif") repeat-x scroll center top #FFFFFF; border-color: #AEAEAE #C8C8C8 #E3E3E3; border-radius: 3px 3px 3px 3px; border-style: solid; border-width: 1px; color: #333333; padding: 4px; text-align: center; width: 35px; font-size: 10px; }' +
+                '.influValueHolder .influValue:focus { background: none repeat scroll 0 0 #FFFFCC; }' +
+
+                '.influGoldHolder { margin-left: 2px; float: right; margin-right: 5px; width: 60px; display: inline; line-height: 44px; text-align: center; }' +
+                '.influGoldHolder .influValue { background: url("/images/parts/shadow.gif") repeat-x scroll center top #FFFFFF; border-color: #AEAEAE #C8C8C8 #E3E3E3; border-radius: 3px 3px 3px 3px; border-style: solid; border-width: 1px; color: #333333; padding: 4px; text-align: center; width: 40px; font-size: 10px; }' +
+                '.influGoldHolder .influValue:focus { background: none repeat scroll 0 0 #FFFFCC; }' +
+                '.influNaturalHolder { margin-left: 2px; float: left; margin-right: 5px; width: 20px; display: inline; line-height: 44px; text-align: center; }' +
+                '.influNaturalHolder .influCheckbox { width: 13px; height: 13px; padding: 0; margin: 0; vertical-align: middle; position: relative; top: -1px; overflow: hidden; }' +
+                '.influTable { width: 510px; }' +
+                '.influTable .influImageCell { width: 35px; }' +
+                '.influTable .influValueCell { width: 44px; font-size: 10px; font-weight: bold; color: #666666; }' +
+                '.influTable .influImageCell .influImage { width: 30px; height: 35px; margin: 5px 0px 0px 0px; }' +
+                
+                '.mMarketButton { border-radius: 3px; background: none no-repeat scroll left center #e9f5fa; border: medium none; color: #3C8FA7; cursor: pointer; font-size: 12px; line-height: 32px; padding: 0 6px 1px 6px; text-align: left; height: 32px; }' +
+                
+                '.topNewsItem { display: block; float: left; margin-bottom: 10px; width: 333px; border-bottom: 1px solid #E0E0E0; }' +
+                
+                '.oldNewsSwitchHolder { border-bottom: 1px solid #E0E0E0; float: left; margin-bottom: 10px; padding: 0 2px 0; width: 333px; }' +
+                '.oldNewsSwitch { background-color: #EEEEEE; border-radius: 5px 5px 0 0; color: #7F7F7F; cursor: pointer; float: left; font-size: 12px; font-weight: bold; height: 24px; line-height: 24px; margin: 0 1px; padding: 2px; text-align: center; vertical-align: middle; }' +
+                '.oldNewsSwitch:hover { background-color: #505050; color: #D8D8D8; }' +
+                '.oldNewsSwitchActive { background-color: #505050; border-radius: 5px 5px 0 0; color: #D8D8D8; cursor: pointer; float: left; font-size: 12px; font-weight: bold; height: 24px; line-height: 24px; margin: 0 1px; padding: 2px; text-align: center; vertical-align: middle; }' +
+                
+                '.eventsHolder { display: block; float: left; width: 333px; }' +
+                '.eventsItem { border-bottom: 1px solid #EFEDED; display: block; float: left; margin-bottom: 10px; padding-bottom: 10px; width: 333px; cursor: default; }' +
+                '.eventsDetailHolder { display: block; float: left; margin-bottom: 0; padding-bottom: 0px; width: 273px; }' +
+                '.eventsTitle { color: #333; display: block; line-height: 18px; width: 273px; font-size: 12px; margin-top: 2px; float: left; }' +
+                '.eventsDetails { color: #999; font-size: 11px; margin-top: 2px; width: 273px; float: left; }' +
+                '.eventsIcon { background: url(' + militaryEventsIcons + ') no-repeat scroll 0 0 transparent; display: block; float: left; height: 30px; padding: 8px 9px 0 0; text-align: center; width: 48px; }' +
+                
+                '.greyButton { background-image: url(' + greyButtonImg + '); background-position: right 0; background-repeat: no-repeat; color: #3B5B74; display: inline; float: left; font-size: 11px !important; height: 28px; line-height: 26px; margin-left: 5px; outline: medium none; position: relative; text-shadow: 0 1px 0 #FFFFFF; z-index: 100; text-decoration: none !important; }' +
+                '.greyButton:hover { background-position: right -28px; }' +
+                '.greyButton:active { background-position: right -56px; }' +
+                '.greyButton span { background-image: url(' + greyButtonImg + '); background-position: left 0; background-repeat: no-repeat; color: #3B5B74; cursor: pointer; display: inline; float: left; font-size: 11px !important; position: relative; right: 5px; white-space: nowrap; font-weight: bold; line-height: 26px; margin-right: 8px; padding-left: 13px; text-decoration: none !important; }' +
+                '.greyButton:hover span { background-position: left -28px; }' +
+                '.greyButton:active span { background-position: left -56px; }' +
+                
+                '.greyButtonArrowUp { background-image: url(' + greyButtonArrowUp + '); background-position: right 0; background-repeat: no-repeat; color: #3B5B74; display: inline; float: left; font-size: 11px !important; height: 28px; line-height: 26px; margin-left: 5px; outline: medium none; position: relative; text-shadow: 0 1px 0 #FFFFFF; z-index: 100; text-decoration: none !important; padding-left: 5px; }' +
+                '.greyButtonArrowUp:hover { background-position: right -28px; }' +
+                '.greyButtonArrowUp:active { background-position: right -56px; }' +
+                '.greyButtonArrowUp span { background-image: url(' + greyButtonArrowUp + '); background-position: left 0; background-repeat: no-repeat; color: #3B5B74; cursor: pointer; display: inline; float: left; font-size: 11px !important; position: relative; right: 5px; white-space: nowrap; font-weight: bold; line-height: 26px; margin-right: 2px; padding-left: 18px; text-decoration: none !important; }' +
+                '.greyButtonArrowUp:hover span { background-position: left -28px; }' +
+                '.greyButtonArrowUp:active span { background-position: left -56px; }' +
+                
+                '.blueButtonArrowUp { background-image: url(' + blueButtonArrowUp + '); background-position: right 0; background-repeat: no-repeat; color: #3B5B74; display: inline; float: left; font-size: 11px !important; height: 27px; line-height: 25px; margin-left: 5px; outline: medium none; position: relative; text-shadow: 0 1px 0 #FFFFFF; z-index: 100; text-decoration: none !important; padding-left: 5px; }' +
+                '.blueButtonArrowUp:hover { background-position: right -27px; }' +
+                '.blueButtonArrowUp:active { background-position: right -54px; }' +
+                '.blueButtonArrowUp span { background-image: url(' + blueButtonArrowUp + '); background-position: left 0; background-repeat: no-repeat; color: #3B5B74; cursor: pointer; display: inline; float: left; font-size: 11px !important; position: relative; right: 5px; white-space: nowrap; font-weight: bold; line-height: 26px; margin-right: 2px; padding-left: 18px; text-decoration: none !important; }' +
+                '.blueButtonArrowUp:hover span { background-position: left -27px; }' +
+                '.blueButtonArrowUp:active span { background-position: left -54px; }' +
+                
+                '.dtTipsy { display: none; font-size: 10px; left: -13px; padding: 5px; position: absolute; top: -12px; width: 114px; z-index: 999999; opacity: 0.8; }' +
+                '.dtTipsy-inner { background-color: #000000; color: #FFFFFF; max-width: 200px; padding: 5px 8px 4px; text-align: center; text-shadow: 0 1px 1px #000000; border-radius: 3px 3px 3px 3px; z-index: 999999; }' +
+                '.dtTipsy-arrow { background-image: url("http://www.erepublik.com/images/modules/_components/tipsy/tipsy.gif"); background-position: left bottom; background-repeat: no-repeat; height: 5px; position: absolute; width: 9px; left: 50%; margin-left: -4px; bottom: 0; z-index: 999999; }' +
+                
+                '.dailyTrackerHolder { width: 98px; height: 58px; display: block; position: absolute; left: 12px; bottom: 15px; background-image: url(' + dailyTrackerBack + '); cursor: default; }' +
+                '.dailyTrackerHolder .dailyTrackerInner { color: #a8a6a4; bottom: 8px; position: absolute; right: 15px; width: auto; font-size: 15px; font-weight: bold; cursor: default; }' +
+                '.dailyTrackerHolder:hover .dtTipsy { display: block; }' +
+                
+                '.neSign { margin-top: 11px; left: 25px; top: 12px; position: absolute; }' +
+                '.neSignRight { margin-top: 11px; left: 24px; top: 12px; position: absolute; }' +
+                
+                '#battle_listing .natural_sign { position: absolute; top: 12px; }' +
+                '#battle_listing .natural_sign.one { left: 22px; }' +
+                '#battle_listing .natural_sign.two { left: 70px; }' +
+                '#battle_listing.full_width .natural_sign.two { left: 14px; }' +
+                
+                '.entity .nameholder { float: left; display: block; margin-right: 10px; padding-top: 0px; position: relative; }' +
+                
+                'ul.achiev .hinter .country_list li em { float: left; position: inherit; opacity: 1; }' +
+                'ul.achiev .hinter .country_list li img { opacity: 1; }' +
+                'ul.achiev .hinter .country_list li small { color: #666666; }' +
+                
+                '.mercHolder { clear: both; float: left; line-height: 26px; width: 100%; }' +
+                '.mercDropHolder { clear: both; float: left; line-height: 14px; width: 153px; display: none; }' +
+                
+                '.mercBarBg { float: left; width: 136px; height: 21px; margin: 5px 0px 8px 11px; position: relative; background-image: url(' + mercBarBgImg + '); background-repeat: no-repeat; background-position: right; }' +
+                '.mercBarProgress { width: auto; float: left; height: 17px; margin-top: 2px; left: -2px; position: absolute; z-index: 2; background-image: url(' + mercBarProgressImg + '); background-repeat: no-repeat; background-position: right; }' +
+                
+                '.mercList { width: 143px; padding: 5px 0px 5px 10px; float: left; background: transparent; list-style: none; }' +
+                '.mercList li { float: left; padding: 0; margin: 0 0 6px; height: auto; width: 47px; position: relative; display: block; text-align: center; }' +
+                '.mercList li img { float: left; margin-right: 5px; opacity: 1; -moz-opacity: 1; }' +
+                '.mercList li small { float: left; color: #666666; font-size: 10px; text-shadow: rgba(255,255,255,0.4) 0 1px 0; }' +
+                '.mercList li em { position: inherit; float: left; width: 40px; font-size: 10px; text-align: center; font-weight: bold; text-shadow: rgba(255, 255, 255, 0.4) 0 1px 0; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; -moz-box-shadow: rgba(255,255,255,0.4) 0 1px 0; -webkit-box-shadow: rgba(255,255,255,0.4) 0 1px 0; -o-box-shadow: rgba(255,255,255,0.4) 0 1px 0; box-shadow: rgba(255,255,255,0.4) 0 1px 0; background: #EEE08A; background-color: #E8D45D; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #eee08a), color-stop(0, #e8d45d)); background-image: -webkit-linear-gradient(center bottom, #eee08a 0%, #e8d45d 100%); background-image: -moz-linear-gradient(top, #eee08a 0%, #e8d45d 100%); background-image: -o-linear-gradient(top, #eee08a 0%, #e8d45d 100%); background-image: -ms-linear-gradient(top, #eee08a 0%, #e8d45d 100%); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#eee08ae\', endColorstr=\'#e8d45d\',GradientType=1 ); -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#eee08a\', endColorstr=\'#e8d45d\')"; background-image: linear-gradient(top, #eee08a 0%,#e8d45d 100%); color: #695E1E; top: 0; left: 0; height: 15px; opacity: 1; -moz-opacity: 0; -ms-fiter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; filter: alpha(opacity=0); -webkit-transition: all 0.2s ease-in; -moz-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; transition: all 0.2s ease-in; }' +
+                
+                '.mercTrackerHolder { float: right; margin-right: 15px; }' +
+                '.mercVs { float: left; margin: 15px 5px 0 5px; font-size: 10px; color: #5A8931; }' +
+                '.mercCheckLeft { width: 18px; height: 14px; background-image: url(' + mercCheckImg + '); background-position: left top; background-repeat: no-repeat; float: right; display: block; margin: 16px 5px 0 5px; }' +
+                '.mercCheckRight { width: 18px; height: 14px; background-image: url(' + mercCheckImg + '); background-position: left top; background-repeat: no-repeat; float: left; display: block; margin: 16px 5px 0 5px; }' +
+                '.mercCheckSmallLeft { width: 15px; height: 12px; background-image: url(' + mercCheckImgSmall + '); background-position: center top; background-repeat: no-repeat; float: right; display: block; margin: 2px; }' +
+                '.mercCheckSmallRight { width: 15px; height: 12px; background-image: url(' + mercCheckImgSmall + '); background-position: center top; background-repeat: no-repeat; float: left; display: block; margin: 2px; }' +
+                '.mercTank { width: 28px; height: 10px; background-image: url(' + mercTankImg + '); background-position: center top; background-repeat: no-repeat; float: left; display: block; line-height: 10px; }' +
+                '.mercMainHolder { clear: both; float: left; width: 100%; height: 16px; background-color: #D4EDC0; padding-right: 10px; margin-left: -10px; text-align: center; }' +
+                
+                'table.offers td { white-space: nowrap; }' +
+                
+                '.employee_info .citizen_actions { position: absolute; left: 190px; margin-top: 2px; z-index: 0; }' +
+                '.employee_info .citizen_actions a { float: left; display: inline; width: 24px; height: 25px; text-indent: -9999px; background-image: url("http://www.erepublik.com/images/modules/citizenprofile/citizen_profile_icons.png"); margin-right: 4px; margin-top: 2px; clear: both; }' +
+                '.employee_info .citizen_actions a.action_message { background-position: -24px 0; }' +
+                '.employee_info .citizen_actions a.action_message:hover { background-position: -24px -25px; }' +
+                '.employee_info .citizen_actions a.action_message:active { background-position: -24px -50px; }' +
+                '.employee_info .citizen_actions a.action_donate { background-position: -48px 0; }' +
+                '.employee_info .citizen_actions a.action_donate:hover { background-position: -48px -25px; }' +
+                '.employee_info .citizen_actions a.action_donate:active { background-position: -48px -50px; }' +
+                
+                '#citizen_feed h6 em { color: #000000; }' +
+                
+                '.citizen_military .stat .userProgress { width: 196px; margin: 4px 7px; height: 5px; float: left; clear: both; position: relative; background: url(' + progressBarImg + ') no-repeat scroll 0 0 transparent; }' +
+                '.citizen_military .stat .userProgress .progressBar { float: left; height: 5px; width: auto; background: url(' + progressBarImg + ') no-repeat scroll 0 -5px transparent; }' +
+                '.citizen_military .stat .userProgress .progressBar span { float: right; width: 1px; height: 5px; background: url(' + progressBarImg + ') no-repeat scroll 0 -5px transparent; }' +
+                
+                '.manager_dashboard .grey_plastic.top_left { -moz-border-radius-topleft: 4px; -webkit-border-radius: 4px 0 0 0; border-radius: 4px 0 0 0; }' +
+                '.manager_dashboard .grey_plastic.top_right { -moz-border-radius-topright: 4px; -webkit-border-radius: 0 4px 0 0; border-radius: 0 4px 0 0; }' +
+                '.manager_dashboard .grey_plastic.bottom_left { -moz-border-radius-bottomleft: 4px; -webkit-border-radius: 0 0 0 4px; border-radius: 0 0 0 4px; }' +
+                '.manager_dashboard .grey_plastic.bottom_right { -moz-border-radius-bottomright: 4px; -webkit-border-radius: 0 0 4px 0; border-radius: 0 0 4px 0; }' +
+                
+                '.manager_dashboard .list .resourceHolder { float: left; width: 702px; height: auto; padding: 8px; border: 1px solid #CFDDE8; border-top: 1px solid #C5D2DD; background: #D5E3EF; margin-bottom: 10px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; -webkit-box-shadow: 0 1px 1px #C8D8E5 inset,0 1px 0 rgba(255,255,255,0.7); -moz-box-shadow: 0 1px 1px #C8D8E5 inset,0 1px 0 rgba(255,255,255,0.7); box-shadow: 0 1px 1px #C8D8E5 inset,0 1px 0 rgba(255,255,255,0.7); }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonus li { float: left; width: 42px; height: 54px; margin-left: 10px; position: relative; background-color: #E1E1E1; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #FFFFFF), color-stop(0, #E1E1E1)); background-image: -webkit-linear-gradient(center bottom, #FFFFFF 0%, #E1E1E1 100%); background-image: -moz-linear-gradient(top, #FFFFFF 0%, #E1E1E1 100%); background-image: -o-linear-gradient(top, #FFFFFF 0%, #E1E1E1 100%); background-image: linear-gradient(top, #FFFFFF 0%,#E1E1E1 100%); -moz-box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; -webkit-box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonus li:first-child { margin-left: 0; }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonus li.disabled { opacity: 0.4; -moz-opacity: 0.4; }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonus li img { position: absolute; top: 4px; left: 9px; width: 25px; height: 25px; image-rendering: optimizeQuality; }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonus li.disabled img { opacity: 0.4; -moz-opacity: 0.2; }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonus li strong { display: block; text-align: center; width: 36px; height: 16px; background: #E1E1E1; position: absolute; line-height: 18px; left: 3px; color: #666666; font-size: 11px; bottom: 4px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; -webkit-box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; -moz-box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonus li.disabled strong { color: #BFD2E0; text-shadow: rgba(0, 0, 0, 0.4) 0 1px 1px; line-height: 16px; }' +
+                
+                '.manager_dashboard .list .resourceHolder .resourceBonusTotal { float: right; width: 81px; height: 54px; position: relative; background-color: #E1E1E1; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, white), color-stop(0, #E1E1E1)); background-image: -webkit-linear-gradient(center bottom, white 0%, #E1E1E1 100%); background-image: -moz-linear-gradient(top, white 0%, #E1E1E1 100%); background-image: -o-linear-gradient(top, white 0%, #E1E1E1 100%); background-image: linear-gradient(top, white 0%,#E1E1E1 100%); -moz-box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; -webkit-box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; box-shadow: rgba(0,0,0,0.2) 0 1px 0,rgba(0,0,0,0.1) 0 0 1px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonusTotal li { float: left; width: 78px; height: 27px; margin-left: 3px; position: relative; }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonusTotal li img { position: absolute; top: 0px; left: 3px; width: 25px; height: 25px; image-rendering: optimizeQuality; }' +
+                '.manager_dashboard .list .resourceHolder .resourceBonusTotal li strong { display: block; text-align: center; width: 36px; height: 22px; background: #E1E1E1; position: absolute; line-height: 22px; right: 3px; color: #666666; font-size: 11px; top: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; -webkit-box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; -moz-box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; box-shadow: rgba(255,255,255,0.5) 0 1px 0,rgba(0,0,0,0.1) 0 2px 2px inset,rgba(0,0,0,0.1) 0 1px 0px inset; }' +
+                
+                '.manager_dashboard .list .area .listing_holder .heading .area_options .area_buttons { height: 45px; text-align: center; width: auto; position: absolute; }' +
+                '.manager_dashboard .grey_plastic img { float: left; width: 17px; height: 17px; }' +
+                
+                '.manager_dashboard .companyArrow.grey_plastic { position: absolute; right: 0px; width: 13px; height: 56px; display: block; -moz-border-radius: 0; -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0; padding: 1px; cursor: pointer; background-color: #D1D1D1; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #EFEFEF), color-stop(0, #D1D1D1)); background-image: -webkit-linear-gradient(center bottom, #EFEFEF 0%, #D1D1D1 100%); background-image: -moz-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: -o-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: -ms-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: linear-gradient(top, #EFEFEF 0%,#D1D1D1 100%); border: 1px solid #D5D5D5; border-bottom: 1px solid #B9B9B9; -webkit-box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; -moz-box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; }' +
+                '.manager_dashboard .companyArrow.grey_plastic:active { box-shadow: rgba(0,0,0,0.1) 0 1px 1px inset,rgba(0,0,0,0.1) 0 2px 1px; }' +
+                '.manager_dashboard .companyArrow.grey_plastic.active { box-shadow: rgba(0,0,0,0.1) 0 1px 1px inset,rgba(0,0,0,0.1) 0 2px 1px; }' +
+                '.manager_dashboard .companyArrow.grey_plastic img { float: left; width: 13px; height: 56px; margin: auto auto;}' +
+                '.manager_dashboard .companyArrow.grey_plastic:active img { opacity: 0.6; }' +
+                '.manager_dashboard .companyArrow.grey_plastic.active img { opacity: 0.6; }' +
+                
+                '.manager_dashboard .companyCalc { float: left; clear: both; width: 100%; display: none; padding-bottom: 5px; border-top: 1px solid #EDEDED; background: url(http://www.erepublik.com/images/modules/manager/dashboard_end.png) no-repeat scroll bottom center #F5F5F5; }' +
+                
+                '.manager_dashboard .companyCalc table td input { width: 70px; height: 14px; border: 1px solid #E0E0E0; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; font-family: Arial,sans-serif; float: left; position: relative; clear: both; font-size: 11px; outline: none; padding: 6px 5px; color: #4D4D4D; font-weight: bold; -moz-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; -webkit-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; -o-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; box-shadow: inset 0px 1px 3px #F2F2F2,0 1px 0 #FFFFFF; -webkit-transition: border 0.25s ease-in-out,-webkit-box-shadow 0.25s ease-in-out; -moz-transition: border 0.25s ease-in-out,-moz-box-shadow 0.25s ease-in-out; -o-transition: border 0.25s ease-in-out,-o-box-shadow 0.25s ease-in-out; transition: border 0.25s ease-in-out,box-shadow 0.25s ease-in-out; -webkit-appearance: none; resize: none; }' +
+                '.manager_dashboard .companyCalc table td input:focus { border: 1px solid #EEBE4C; -moz-box-shadow: 0px 0px 3px #F1CA7F; -webkit-box-shadow: 0px 0px 3px #F1CA7F; -o-box-shadow: 0px 0px 3px #F1CA7F; box-shadow: 0px 0px 3px #F1CA7F; }' +
+                '.manager_dashboard .companyCalc table td .sectionTitle { font-size: 11px; margin-bottom: 3px; color: #5A5A5A; text-shadow: #FFFFFF 0px 1px 0px; float: left; clear: both; margin-top: -10px; cursor: default; }' +
+                '.manager_dashboard .companyCalc table td.disabled .sectionTitle { color: #C6C6C6; }' +
+                '.manager_dashboard .companyCalc table td .currencySign { float: left; color: #88AFC9; font-size: 11px; font-weight: bold; margin-top: 8px; margin-left: 5px; text-shadow: #FFFFFF 0px 1px 0px; cursor: default; }' +
+                '.manager_dashboard .companyCalc table td .currencySignGold { float: left; color: #B2B2B2; font-size: 11px; font-weight: bold; margin-left: 5px; text-shadow: #FFFFFF 0px 1px 0px; cursor: default; }' +
+                '.manager_dashboard .companyCalc table td.disabled .currencySign { color: #C6C6C6; }' +
+                '.manager_dashboard .companyCalc table td .totalValue { float: left; clear: both; font-size: 16px; font-weight: bold; vertical-align: text-bottom; line-height: 28px; margin-left: 5px; color: #666666; text-shadow: #FFFFFF 0px 1px 0px; }' +
+                '.manager_dashboard .companyCalc table td .totalValueGold { float: left; clear: both; font-size: 11px; font-weight: bold; vertical-align: text-bottom; margin-left: 5px; color: #B2B2B2; text-shadow: #FFFFFF 0px 1px 0px; }' +
+                
+                '.manager_dashboard .prodMarket { width: 50px; height: 26px; border: 1px solid #E0E0E0; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; font-family: Arial,sans-serif; float: left; position: relative; font-size: 11px; outline: none; padding-left: 4px; color: #4D4D4D; font-weight: bold; -moz-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; -webkit-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; -o-box-shadow: 0px 1px 3px #F2F2F2 inset,0 1px 0 #FFFFFF; box-shadow: inset 0px 1px 3px #F2F2F2,0 1px 0 #FFFFFF; -webkit-transition: border 0.25s ease-in-out,-webkit-box-shadow 0.25s ease-in-out; -moz-transition: border 0.25s ease-in-out,-moz-box-shadow 0.25s ease-in-out; -o-transition: border 0.25s ease-in-out,-o-box-shadow 0.25s ease-in-out; transition: border 0.25s ease-in-out,box-shadow 0.25s ease-in-out; resize: none; background-color: #FFFFFF; }' +
+                
+                '.manager_dashboard .marketArrow.grey_plastic { position: absolute; right: 0px; width: 13px; height: 22px; display: block; -moz-border-radius-topright: 3px; -moz-border-radius-bottomright: 3px; -webkit-border-radius: 0 3px 3px 0; border-radius: 0 3px 3px 0; padding: 1px; cursor: pointer; background-color: #D1D1D1; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #EFEFEF), color-stop(0, #D1D1D1)); background-image: -webkit-linear-gradient(center bottom, #EFEFEF 0%, #D1D1D1 100%); background-image: -moz-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: -o-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: -ms-linear-gradient(top, #EFEFEF 0%, #D1D1D1 100%); background-image: linear-gradient(top, #EFEFEF 0%,#D1D1D1 100%); border: 1px solid #D5D5D5; border-bottom: 1px solid #B9B9B9; -webkit-box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; -moz-box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; box-shadow: rgba(255,255,255,0.8) 0 1px 0 inset,rgba(255,255,255,0.3) 0 -1px 0 inset,rgba(0,0,0,0.1) 0 1px 1px; }' +
+                '.manager_dashboard .marketArrow.grey_plastic:active { box-shadow: rgba(0,0,0,0.1) 0 1px 1px inset,rgba(0,0,0,0.1) 0 2px 1px; }' +
+                '.manager_dashboard .marketArrow.grey_plastic.active { box-shadow: rgba(0,0,0,0.1) 0 1px 1px inset,rgba(0,0,0,0.1) 0 2px 1px; }' +
+                '.manager_dashboard .marketArrow.grey_plastic img { float: left; width: 13px; height: 22px; margin: auto auto;}' +
+                '.manager_dashboard .marketArrow.grey_plastic:active img { opacity: 0.6; }' +
+                '.manager_dashboard .marketArrow.grey_plastic.active img { opacity: 0.6; }' +
+                
+                '.manager_dashboard .marketSelect { width: 202px; float: left; display: none; position: absolute; z-index: 105; -moz-box-shadow: 0px 1px 3px #f2f2f2; -webkit-box-shadow: 0px 1px 3px #f2f2f2; -o-box-shadow: 0px 1px 3px #f2f2f2; box-shadow: 0px 1px 3px #f2f2f2; }' +
+                '.manager_dashboard .marketSelect .marketSelectContent { width: 200px; float: left; clear: both; background-color: white; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; border: 1px solid #E0E0E0;}' +
+                '.manager_dashboard .marketSelect .marketSelectContent .marketSelectRepeat { position: relative; float: left; max-height: 173px; overflow: auto; overflow-x: hidden; width: 200px; }' +
+                '.manager_dashboard .marketSelect .marketSelectContent ul { float: left; }' +
+                '.manager_dashboard .marketSelect .marketSelectContent ul li { float: left; clear: both; width: 200px; border-bottom: 1px solid #ededed; }' +
+                '.manager_dashboard .marketSelect .marketSelectContent ul li a { float: left; width: 188px; padding: 6px; color: #4F4F4F; }' +
+                '.manager_dashboard .marketSelect .marketSelectContent ul li a:hover { background-color: #FBFBFB; }' +
+                '.manager_dashboard .marketSelect .marketSelectContent ul li:first-child a { -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; -webkit-border-radius: 5px 5px 0 0; border-radius: 5px 5px 0 0; }' +
+                '.manager_dashboard .marketSelect .marketSelectContent ul li:last-child a { -moz-border-radius-bottomleft: 5px; -moz-border-radius-bottomright: 5px; -webkit-border-radius: 0 0 5px 5px; border-radius: 0 0 5px 5px; }' +
+                '.manager_dashboard .marketSelect .marketSelectContent ul li img { float: left; margin-left: 6px; }' +
+                '.manager_dashboard .marketSelect .marketSelectContent ul li span { float: left; font-weight: bold; font-size: 11px; margin-left: 6px; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }' +
+
+                '@-webkit-keyframes nodeInserted {' +
+                    'from { clip: rect(1px, auto, auto, auto); }' +
+                    'to { clip: rect(0px, auto, auto, auto); }' +
+                '}' +
+                '@-moz-keyframes nodeInserted {' +
+                    'from { clip: rect(1px, auto, auto, auto); }' +
+                    'to { clip: rect(0px, auto, auto, auto); }' +
+                '}'
+            );
+
+            /**
+            * Alter the content area and show the eRA button.
+            */
+            era.options.renderButton();
+
+            /**
+            * Show Twitter button.
+            */
+            era.options.renderTwitter();
+
+            /**
+            * Show Facebook button.
+            */
+            era.options.renderFacebook();
+
+            /**
+            * Show Google button.
+            */
+            era.options.renderGoogle();
+
+            /**
+            * Maintain option values.
+            */
+            era.options.init();
+            era.settings = era.storage.get('Options');
+
+            /**
+            * Remove mission alert animation.
+            */
+            era.settings.sidebar && $('#point').remove();
+
+            /**
+            * Run scroll blocker.
+            */
+            era.scrollBlocker.init();
+
+            /**
+            * Show options window when eRA button clicked.
+            */
+            $(document).on('click', '#optionsContent', function(e) {
+                e.stopPropagation();
+                era.options.renderOptions(era.settings);
+            });
+
+            era.hostLang = location.href.split('/')[3].split('?')[0];
+            era.characterLevel = parseInt($('.user_level b').html());
+            era.characterCurrency = $('.currency_amount span').text();
+            era.characterMoney = parseFloat($('#large_sidebar .currency_amount strong').text().match(/\d+\.?\d*/g).join(''));
+            era.characterGold = parseFloat($('#large_sidebar .gold_amount strong').text().match(/\d+\.?\d*/g).join(''));
+
+            era.settings.sidebar && $('#experienceTooltip').css('width', '122px');
+
+            /**
+            * Show custom menu rows.
+            */
+            (!era.settings.hasOwnProperty('menu1') || era.settings.menu1 != false) && era.customMenu.renderTop();
+            (!era.settings.hasOwnProperty('menu2') || era.settings.menu2 != false) && era.customMenu.renderBottom();
+
+            /**
+            * Maintain influence log values.
+            */
+            era.erepDay = parseInt($('.eday strong').html().replace(',', ''));
+            era.influenceLog.init();
+
+            era.exchangeRate.init();
+
+            /**
+            * Sidebar improvements.
+            */
+            era.settings.sidebar && era.addStyle(
+                '.inventoryHolder {' +
+                    'float: left;' +
+                    'width: 149px;' +
+                    'margin: ' + ($('#large_sidebar .sidebar_banners_area').length ? '0' : '15px') + ' 3px 0 3px;' +
+                    'padding: 10px;' +
+                    '-moz-border-radius: 5px;' +
+                    '-webkit-border-radius: 5px;' +
+                    'border-radius: 5px;' +
+                    'border: 1px solid rgba(255,255,255,0.9);' +
+                    'background-color: #f0efef;' +
+                    'background-color: rgba(233,233,233,0.8);' +
+                    'z-index: 10;' +
+                    'box-shadow: 0px 0px 7px rgba(230,230,230,0.9);' +
+                '}'
+            );
+            era.settings.sidebar && $('#optionsHolder').before('<div class="inventoryHolder"><a href="http://www.erepublik.com/' + era.hostLang + '/economy/inventory"></a></div>');
+
+            era.settings.sidebar && era.inventoryPageProcessor.subscribers.push(era.miniInventory.o);
+            era.settings.sidebar && era.inventoryPageProcessor.o();
+
+            era.settings.sidebar && era.monetaryOffersFetcher.subscribers.push(era.miniMonetary.o);
+            era.settings.sidebar && era.monetaryOffersFetcher.o();
+
+            era.settings.sidebar && era.profilePageProcessor.subscribers.push(era.miniMercenary.o);
+
+            /**
+            * Mercenary tracker.
+            */
+            $('#homepage_feed').length && era.profilePageProcessor.subscribers.push(era.mercTrackerMain.o);
+            location.href.indexOf('military/battlefield/') >= 0 && era.profilePageProcessor.subscribers.push(era.mercTrackerBattle.o);
+            location.href.indexOf('military/campaigns') >= 0 && era.profilePageProcessor.subscribers.push(era.mercTrackerWar.o);
+            location.href.indexOf('wars/show/') >= 0 && era.profilePageProcessor.subscribers.push(era.mercTrackerRes.o);
+         
+            era.profilePageProcessor.o();
+
+            $('#homepage_feed').length && era.naturalEnemyFetcher.subscribers.push(era.changeFlagsMain.o);
+            location.href.indexOf('military/campaigns') >= 0 && era.naturalEnemyFetcher.subscribers.push(era.changeFlagsWar.o);
+
+            era.naturalEnemyFetcher.o();
+
+            if (era.settings.subs){
+                era.subscriptions.subscribers.push(era.subscriptions.compare);
+                era.subscriptions.o();
+            }
+
+            eRAopt = era.storage.get('Options');
+
+            era.linkRegions.o();
+            era.improveShouts.o();
+            era.dailyTrackerGet.o();
+
+            era.settings.battlefield && location.href.indexOf('military/battlefield/') >= 0 && era.battlefield.o();
+            era.settings.market && location.href.indexOf('economy/market') >= 0 && era.enchantMarket.o();
+            era.settings.profile && location.href.indexOf('citizen/profile/') >= 0 && era.improveProfile.o();
+            era.settings.mmarket && location.href.indexOf('economy/exchange-market') >= 0 && era.monetaryMarket.o();
+            
+            var pagesFunctions = [
+                {p: 'main/search/', f: era.searchRedirect.o},
+                {p: 'economy/inventory', f: era.enchantInventory.o},
+                {p: 'economy/inventory', f: era.taxTable.o},
+                {p: 'article/', f: era.changeComments.o},
+                {p: 'economy/citizen-accounts/', f: era.storageTab.o},
+                {p: 'citizen/edit/profile', f: era.storageTab.o},
+                {p: 'citizen/change-residence', f: era.storageTab.o},
+                {p: 'main/messages-inbox', f: era.betterMessages.o},
+                {p: 'economy/manage-employees/', f: era.improveEmployees.o},
+                {p: 'economy/myCompanies', f: era.improveCompanies.o}
+            ];
+
+            pagesFunctions.forEach(function(v) {
+                if (location.href.substr(location.href.indexOf('/', location.href.indexOf('/') + 2) + 1 + era.hostLang.length + 1).substr(0, v.p.length) == v.p) {
+                    v.f();
+                }
+            });
+
+            $('.banner_place').insertAfter('#content');
+            $('.banner_place').css({clear: 'left', 'float': 'left', marginTop: (!era.chrome ? 1 : 0) + 3 + 'px'});
+
+            era.renderStyle();
+
+            return true;
+
+        }
+    }
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 if (!era.chrome) {
     self.port.on('getUrlsDone', function(response) {
@@ -4425,7 +4439,7 @@ if (!era.chrome) {
             window[era.images[i]] = response['img/' + era.images[i] + '.png'];
         }
 
-        Main();
+        era.Main.o();
     });
 
     self.port.on('syncStorageUpDone', function() {
@@ -4449,7 +4463,7 @@ if (!era.chrome) {
                 window[era.images[i]] = chrome.extension.getURL('data/img/' + era.images[i] + '.png');
             }
 
-            Main();
+            era.Main.o();
         });
     });
 }
