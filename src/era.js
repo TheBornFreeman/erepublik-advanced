@@ -3288,10 +3288,7 @@ var era = {
                                             '</tr>');
             });
             
-            $('#taxTable tbody td').each(function() {
-                var cellWidth = $(this).width();
-                $(this).find('.taxLinkHolder').width(cellWidth - 4);
-            });
+            $('#taxTable .taxLinkHolder').css('width', '65px');
         }
     },
 
