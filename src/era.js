@@ -3929,25 +3929,25 @@ var era = {
             $('.area h4').css('position', 'relative').append(
                 '<div class="area_buttons" style="top: 0; left: 110px; position: absolute;">' +
                     '<a id="selectAll" href="javascript:;" class="grey_plastic" title="Select all companies" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 4px;">' +
-                        '<img src="' + allCompanies + '" alt="">' +
+                        '<img src="' + allCompanies + '" alt="" width="25" height="25">' +
                     '</a>' +
                     '<a id="selectFactory" href="javascript:;" class="grey_plastic left_pos" title="Select all factories" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 10px;">' +
-                        '<img src="' + allFactories + '" alt="">' +
+                        '<img src="' + allFactories + '" alt="" width="25" height="25">' +
                     '</a>' +
                     '<a id="selectRaw" href="javascript:;" class="grey_plastic right_pos" title="Select all raw companies" style="display: inline-block; float: none; vertical-align: -9px; margin-left: -1px;">' +
-                        '<img src="' + allRaw + '" alt="">' +
+                        '<img src="' + allRaw + '" alt="" width="25" height="25">' +
                     '</a>' +
                     '<a id="selectFood" href="javascript:;" class="grey_plastic left_pos" title="Select all food factories" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 10px;">' +
-                        '<img src="http://www.erepublik.com/images/icons/industry/1/q6.png" alt="">' +
+                        '<img src="http://www.erepublik.com/images/icons/industry/1/q6.png" alt="" width="25" height="25">' +
                     '</a>' +
                     '<a id="selectWeapon" href="javascript:;" class="grey_plastic mid" title="Select all weapon factories" style="display: inline-block; float: none; vertical-align: -9px;">' +
-                        '<img src="http://www.erepublik.com/images/icons/industry/2/q6.png" alt="">' +
+                        '<img src="http://www.erepublik.com/images/icons/industry/2/q6.png" alt="" width="25" height="25">' +
                     '</a>' +
                     '<a id="selectFoodRaw" href="javascript:;" class="grey_plastic mid" title="Select all food raw companies" style="display: inline-block; float: none; vertical-align: -9px;">' +
-                        '<img src="http://www.erepublik.com/images/icons/industry/7/default.png" alt="">' +
+                        '<img src="http://www.erepublik.com/images/icons/industry/7/default.png" alt="" width="25" height="25">' +
                     '</a>' +
                     '<a id="selectWeaponRaw" href="javascript:;" class="grey_plastic right_pos" title="Select all weapon raw companies" style="display: inline-block; float: none; vertical-align: -9px;">' +
-                        '<img src="http://www.erepublik.com/images/icons/industry/12/default.png" alt="">' +
+                        '<img src="http://www.erepublik.com/images/icons/industry/12/default.png" alt="" width="25" height="25">' +
                     '</a>' +
                 '</div>'
             );
