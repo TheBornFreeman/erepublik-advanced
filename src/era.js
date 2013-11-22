@@ -2532,102 +2532,61 @@ var era = {
             }
             // --
 
-            var killDetected = false;
+            $('body').append($('<div>', {id: 'fightHappened', style: 'display: none;'}));
 
-            // Log hits.
-            if ($('#xp_gained').length) {
-                var hitObserverState = 0;
+            (new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type != 'childList' || !mutation.addedNodes.length) return;
 
-                $('#fight_btn').click(function() {
-                    hitObserverState = 0;
-                });
+                    var data = JSON.parse($(mutation.target).text()),
+                        influenceLog = era.storage.get('Influence', {})
+                    ;
 
-                (new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        if (!hitObserverState && mutation.type == 'childList') hitObserverState = 1;
-                        else if (!hitObserverState && mutation.type == 'attributes') hitObserverState = 2;
-                        else if (!hitObserverState) hitObserverState = 3;
+                    if (data.error || data.message != 'ENEMY_KILLED') return;
 
-                        if (!killDetected || hitObserverState == 3) return;
+                    // Log hits.
+                    influenceLog[era.erepDay].Hits += ~~data.hits;
+                    // --
 
-                        hitObserverState = 3;
-
-                        var influenceLog = era.storage.get('Influence', {});
-                        influenceLog[era.erepDay].Hits += ~~$(mutation.target).text();
-                        era.storage.set('Influence', influenceLog);
-                    });    
-                })).observe(document.querySelector('#xp_gained'), {attributes: true, childList: true, characterData: true});
-            }
-            // --
-
-            // Log influence and kill
-            // Update daily order progress data and display.
-            // Update left side mercenary tracker.
-            if ($('#influence_added').length) {
-                var killObserverState = 0;
-
-                $('#fight_btn').click(function() {
-                    killObserverState = 0;
-                    killDetected = false;
-                });
-
-                (new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        if (!killObserverState && mutation.type == 'childList') killObserverState = 1;
-                        else if (!killObserverState) killObserverState = 2;
-
-                        if (killObserverState == 2) return;
-
-                        killDetected = true;
-                        $('#xp_gained').attr('trigger', 'refresh');
-                        killObserverState = 2;
-
-                        $('#pvp_header .country.left_side div:last').each(function() {
-                            if (!$(this).hasClass('mercCheckRight')) {
-                                var v = $(this).text() * 1 + 1;
-                                v < 25 ? $(this).text(v).css('color', '#9e0b0f') : $(this).replaceWith('<div class="mercCheckRight" style="float: left; margin-top: 8px; margin-right: 10px;"></div>');
-                            }
-                        });
-
-                        var influenceLog = era.storage.get('Influence', {});
-                        influenceLog[era.erepDay].Kills++;
-                        influenceLog[era.erepDay].Influence += ~~$(mutation.target).text().match(/\d+\.?\d*/g).join('');
-                        era.storage.set('Influence', influenceLog);
-
-                        if (era.settings.dotrack) {
-                            var dod = era.storage.get('Dod', {});
-                            dod.Progress < 25 && dod.Battlefield == location.href.split('/')[6] && dod.Country == countryName_id[$('#pvp_header .country.left_side h3').text().replace('Resistance Force Of ', '')] && $('#dailyTracker').text(++dod.Progress + ' / 25');
-                            era.storage.set('Dod', dod);
+                    // Log influence and kill
+                    // Update daily order progress data and display.
+                    // Update left side mercenary tracker.
+                    $('#pvp_header .country.left_side div:last').each(function() {
+                        if (!$(this).hasClass('mercCheckRight')) {
+                            var v = $(this).text() * 1 + 1;
+                            v < 25 ? $(this).text(v).css('color', '#9e0b0f') : $(this).replaceWith('<div class="mercCheckRight" style="float: left; margin-top: 8px; margin-right: 10px;"></div>');
                         }
-                    });    
-                })).observe(document.querySelector('#influence_added'), {attributes: true, childList: true, characterData: true});
-            }
-            // --
+                    });
 
-            // Log rank.
-            if ($('#gained_rank').length) {
-                var rankObserverState = 0;
+                    influenceLog[era.erepDay].Kills++;
+                    influenceLog[era.erepDay].Influence += ~~data.user.givenDamage + Math.floor(~~data.user.givenDamage / 10) * data.oldEnemy.isNatural;
 
-                $('#fight_btn').click(function() {
-                    rankObserverState = 0;
+                    if (era.settings.dotrack) {
+                        var dod = era.storage.get('Dod', {});
+                        dod.Progress < 25 && dod.Battlefield == location.href.split('/')[6] && dod.Country == countryName_id[$('#pvp_header .country.left_side h3').text().replace('Resistance Force Of ', '')] && $('#dailyTracker').text(++dod.Progress + ' / 25');
+                        era.storage.set('Dod', dod);
+                    }
+                    // --
+
+                    // Log rank.
+                    influenceLog[era.erepDay].Rank += ~~data.user.earnedRankPoints;
+                    // --
+
+                    era.storage.set('Influence', influenceLog);
+                });    
+            })).observe(document.querySelector('#fightHappened'), {attributes: true, childList: true, characterData: true});
+
+            function fightTracker($) {
+                $(document).ajaxSuccess(function(event, request, options) {
+                    if (!/military\/fight-sh[o]+t/i.test(options.url) || request.status != 200) return;
+                    $('#fightHappened').text(request.responseText);
                 });
-
-                (new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        if (!rankObserverState && mutation.type == 'childList') rankObserverState = 1;
-                        else if (!rankObserverState) rankObserverState = 2;
-
-                        if (rankObserverState == 2) return;
-
-                        rankObserverState = 2;
-
-                        var influenceLog = era.storage.get('Influence', {});
-                        influenceLog[era.erepDay].Rank += ~~$(mutation.target).text().match(/\d+\.?\d*/g).join('');
-                        era.storage.set('Influence', influenceLog);
-                    });    
-                })).observe(document.querySelector('#gained_rank'), {attributes: true, childList: true, characterData: true});
             }
-            // --
+
+            var script = document.createElement('script');
+            script.type  = 'text/javascript';
+            script.text = '(' + fightTracker + ')(jQuery);'
+            document.getElementsByTagName('head')[0].appendChild(script);
         }
     },
 
