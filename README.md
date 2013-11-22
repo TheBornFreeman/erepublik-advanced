@@ -1,5 +1,5 @@
 ## Release Information
-eRepublik Advanced 4.2.7dev
+eRepublik Advanced 4.2.7
 
 ### Official extensions
 Here are the links for the official extensions built from this repository.

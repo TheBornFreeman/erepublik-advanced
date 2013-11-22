@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.2.7dev
+## 4.2.7 (2013-11-22)
 
 - [2: Military campaigns list on homepage: undefined Mercenary Progress under resistance wars.](https://github.com/TheBornFreeman/erepublik-advanced/issues/2)
 - [8: Message modification buttons are in the way of textarea expansion.](https://github.com/TheBornFreeman/erepublik-advanced/issues/8)

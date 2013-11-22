@@ -3,8 +3,8 @@
  */
 var era = {
 
-    version: '4.2.7dev',
-    releaseDate: '17. Nov 2013.',
+    version: '4.2.7',
+    releaseDate: '22. Nov 2013.',
 
     /**
     * Recognized ID in the host system.
