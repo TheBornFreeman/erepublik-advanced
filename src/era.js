@@ -2542,35 +2542,39 @@ var era = {
                         influenceLog = era.storage.get('Influence', {})
                     ;
 
-                    if (data.error || data.message != 'ENEMY_KILLED') return;
+                    if (data.error) return;
 
-                    // Log hits.
-                    influenceLog[era.erepDay].Hits += ~~data.hits;
-                    // --
+                    if (data.hasOwnProperty('bomb') && data.message == 'OK') {
+                        influenceLog[era.erepDay].Influence += ~~data.bomb.damage;
+                    } else if (data.message == 'ENEMY_KILLED') {
+                        // Log hits.
+                        influenceLog[era.erepDay].Hits += ~~data.hits;
+                        // --
 
-                    // Log influence and kill
-                    // Update daily order progress data and display.
-                    // Update left side mercenary tracker.
-                    $('#pvp_header .country.left_side div:last').each(function() {
-                        if (!$(this).hasClass('mercCheckRight')) {
-                            var v = $(this).text() * 1 + 1;
-                            v < 25 ? $(this).text(v).css('color', '#9e0b0f') : $(this).replaceWith('<div class="mercCheckRight" style="float: left; margin-top: 8px; margin-right: 10px;"></div>');
+                        // Log influence and kill
+                        // Update daily order progress data and display.
+                        // Update left side mercenary tracker.
+                        $('#pvp_header .country.left_side div:last').each(function() {
+                            if (!$(this).hasClass('mercCheckRight')) {
+                                var v = $(this).text() * 1 + 1;
+                                v < 25 ? $(this).text(v).css('color', '#9e0b0f') : $(this).replaceWith('<div class="mercCheckRight" style="float: left; margin-top: 8px; margin-right: 10px;"></div>');
+                            }
+                        });
+
+                        influenceLog[era.erepDay].Kills++;
+                        influenceLog[era.erepDay].Influence += ~~data.user.givenDamage + Math.floor(~~data.user.givenDamage / 10) * data.oldEnemy.isNatural;
+
+                        if (era.settings.dotrack) {
+                            var dod = era.storage.get('Dod', {});
+                            dod.Progress < 25 && dod.Battlefield == location.href.split('/')[6] && dod.Country == countryName_id[$('#pvp_header .country.left_side h3').text().replace('Resistance Force Of ', '')] && $('#dailyTracker').text(++dod.Progress + ' / 25');
+                            era.storage.set('Dod', dod);
                         }
-                    });
+                        // --
 
-                    influenceLog[era.erepDay].Kills++;
-                    influenceLog[era.erepDay].Influence += ~~data.user.givenDamage + Math.floor(~~data.user.givenDamage / 10) * data.oldEnemy.isNatural;
-
-                    if (era.settings.dotrack) {
-                        var dod = era.storage.get('Dod', {});
-                        dod.Progress < 25 && dod.Battlefield == location.href.split('/')[6] && dod.Country == countryName_id[$('#pvp_header .country.left_side h3').text().replace('Resistance Force Of ', '')] && $('#dailyTracker').text(++dod.Progress + ' / 25');
-                        era.storage.set('Dod', dod);
+                        // Log rank.
+                        influenceLog[era.erepDay].Rank += ~~data.user.earnedRankPoints;
+                        // --
                     }
-                    // --
-
-                    // Log rank.
-                    influenceLog[era.erepDay].Rank += ~~data.user.earnedRankPoints;
-                    // --
 
                     era.storage.set('Influence', influenceLog);
                 });    
@@ -2578,7 +2582,7 @@ var era = {
 
             function fightTracker($) {
                 $(document).ajaxSuccess(function(event, request, options) {
-                    if (!/military\/fight-sh[o]+t/i.test(options.url) || request.status != 200) return;
+                    if (!/military\/(fight-sh[o]+t|deploy-bomb)/i.test(options.url) || request.status != 200) return;
                     $('#fightHappened').text(request.responseText);
                 });
             }
