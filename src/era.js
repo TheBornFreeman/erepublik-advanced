@@ -2740,17 +2740,15 @@ var era = {
             $('#miniInventory1 div:last').css('border-bottom', 'none');
             $('#miniInventory3 .itemCountHolder:last').css('border-bottom', 'none');
             $('#miniInventory3 .marketDropHolder:last').css('border-bottom', 'none');
-            
-            $(document).on('mouseover mouseout', 'div[id*="itemCountHolder_"]', function(event) {
-                var thisId = $(this).attr('id').split('_')[1];
-                if (event.type == 'mouseover') {
-                    $(this).css('border-bottom', '1px solid #DEDEDE');
-                    $(this).parent().find('div[id*="marketDropHolder_' + thisId + '"]').css('display', 'block');
-                } else {
-                    $('#miniInventory3 .itemCountHolder:last').css('border-bottom', 'none');
-                    $('#miniInventory3 .marketDropHolder:last').css('border-bottom', 'none');
-                    $(this).parent().find('div[id*="marketDropHolder_' + thisId + '"]').css('display', 'none');
-                }
+
+            $('div[id*="itemCountHolder_"]').hover(function() {
+                $(this)
+                    .css('border-bottom', '1px solid #DEDEDE')
+                    .parent().find('div[id*="marketDropHolder_' + $(this).attr('id').split('_')[1] + '"]').css('display', 'block')
+                ;
+            }, function() {
+                $('#miniInventory3 .itemCountHolder:last, #miniInventory3 .marketDropHolder:last').css('border-bottom', 'none');
+                $(this).parent().find('div[id*="marketDropHolder_' + $(this).attr('id').split('_')[1] + '"]').css('display', 'none');
             });
         }
     },
@@ -2778,17 +2776,15 @@ var era = {
             
             $('#miniMonetary1 .monCountHolder:last').css('border-bottom', 'none');
             $('#miniMonetary1 .monDropHolder:last').css('border-bottom', 'none');
-            
-            $(document).on('mouseover mouseout', 'div[id*="monCountHolder_"]', function(event) {
-                var thisId = $(this).attr('id').split('_')[1];
-                if (event.type == 'mouseover') {
-                    $(this).css('border-bottom', '1px solid #DEDEDE');
-                    $(this).parent().find('div[id*="monDropHolder_' + thisId + '"]').css('display', 'block');
-                } else {
-                    $('#miniMonetary1 .monCountHolder:last').css('border-bottom', 'none');
-                    $('#miniMonetary1 .monDropHolder:last').css('border-bottom', 'none');
-                    $(this).parent().find('div[id*="monDropHolder_' + thisId + '"]').css('display', 'none');
-                }
+
+            $('div[id*="monCountHolder_"]').hover(function() {
+                $(this)
+                    .css('border-bottom', '1px solid #DEDEDE')
+                    .parent().find('div[id*="monDropHolder_' + $(this).attr('id').split('_')[1] + '"]').css('display', 'block')
+                ;
+            }, function() {
+                $('#miniMonetary1 .monCountHolder:last, #miniMonetary1 .monDropHolder:last').css('border-bottom', 'none');
+                $(this).parent().find('div[id*="monDropHolder_' + $(this).attr('id').split('_')[1] + '"]').css('display', 'none');
             });
         }
     },
