@@ -1,14 +1,10 @@
-// -- Constants --------------------------------------------------------------------------------------------------------
-var VERSION = '4.2.7dev';
-var RELEASE_DAY = '17. Nov 2013.';
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -- eRepublik Advanced -----------------------------------------------------------------------------------------------
-
 /**
  * @namespace eRepublik Advanced
  */
 var era = {
+
+    version: '4.2.7dev',
+    releaseDate: '17. Nov 2013.',
 
     /**
     * Recognized ID in the host system.
@@ -258,15 +254,15 @@ var era = {
             $('#large_sidebar').append(
                 $('<div>', {id: 'optionsHolder'}).append(
                     $('<div>', {id: 'optionsContent', class: 'optionsContent'}),
-                    $('<div>', {class: 'versionHolder', text: 'v ' + VERSION}),
+                    $('<div>', {class: 'versionHolder', text: 'v ' + era.version}),
                     $('<span>', {class: 'infoHolder'}).append(
                         $('<div>', {class: 'infoContent'}).append(
                             $('<span>', {class: 'menuWindowHeader'}),
                             $('<table>', {border: '0', cellspacing: '5px', cellpadding: '5px'}).append(
                                 $('<tr>').append($('<td>').text('Founder: ').append($('<strong>').text('Roktaal'))),
                                 $('<tr>').append($('<td>').text('Developer: ').append($('<strong>').text('frimen'))),
-                                $('<tr>').append($('<td>').text('Version: ').append($('<strong>').text('v' + VERSION))),
-                                $('<tr>').append($('<td>').text('Release date: ').append($('<strong>').text(RELEASE_DAY))),
+                                $('<tr>').append($('<td>').text('Version: ').append($('<strong>').text('v' + era.version))),
+                                $('<tr>').append($('<td>').text('Release date: ').append($('<strong>').text(era.releaseDate))),
                                 $('<tr>').append($('<td>').text('Special thanks to: ').append($('<strong>').text('SJeB, Veljkokg, nolf, ziloslav, Brdar Dragan, drcika, Boolee, Denis Cicic, hapf, Leroy Combs, Basowy, ThomasRed, RatePV and many others.'))),
                                 $('<tr>').append($('<td>', {align: 'center'}).append($('<i>').text("Software is provided 'AS IS' and without any warranty. Use on your own responsibility.")))
                             )
@@ -374,7 +370,7 @@ var era = {
                                             '<div id="resetSettings" class="optionsInnerItemLabel_QuickLinks">Reset settings and data</div>' +
                                         '</div>' +
                                     '</div>' +
-                                    '<div class="optionsInnerVersion">v' + VERSION + '</div>' +
+                                    '<div class="optionsInnerVersion">v' + era.version + '</div>' +
                                     '<div class="optionsInnerFooter">Note: After you change these settings reload current page in order for settings to take effect.</div>' +
                                 '</div>');
                 
@@ -4379,8 +4375,6 @@ var era = {
         }
     }
 };
-
-// ---------------------------------------------------------------------------------------------------------------------
 
 if (!era.chrome) {
     self.port.on('getUrlsDone', function(response) {
