@@ -3672,7 +3672,7 @@ var era = {
 
             var neededProgress = {};
 
-            $('#battle_listing li .side_flags').each(function() {
+            $('#battle_listing > ul:not(.resistance_war) li .side_flags').each(function() {
                 neededProgress[$(this).attr('title')] = 0;
             });
 
@@ -3680,7 +3680,7 @@ var era = {
                 neededProgress.hasOwnProperty(mercenaryProgress.countryProgress[i].country) && (neededProgress[mercenaryProgress.countryProgress[i].country] = mercenaryProgress.countryProgress[i].progress);
             }
 
-            $('#battle_listing li').each(function() {
+            $('#battle_listing > ul:not(.resistance_war) li').each(function() {
                 $(this).css('height', '61px');
                 
                 var mercProgressOne = neededProgress[$(this).find('.side_flags:eq(0)').attr('title')];
