@@ -2877,11 +2877,13 @@ var era = {
         o: function() {
             era.addStyle(
                 '#message_form .widearea-wrapper {' +
+                    'height: initial !important;' +
                     '-webkit-animation-duration: 0.001s;' +
                     '-webkit-animation-name: nodeInserted;' +
                     '-moz-animation-duration: 0.001s;' +
                     '-moz-animation-name: nodeInserted;' +
-                '}'
+                '}'+
+                '#citizen_message { resize: vertical; }'
             );
 
             document.addEventListener(!era.chrome ? 'animationstart' : 'webkitAnimationStart', function(e){
