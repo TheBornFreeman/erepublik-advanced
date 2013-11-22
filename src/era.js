@@ -3375,7 +3375,7 @@ var era = {
             var userCountry = currency_country[era.characterCurrency];
             
             $('#battle_listing .side_flags').each(function() {
-                var flagName = $(this).attr('src').split('/')[4].split('.')[0];
+                var flagName = $(this).attr('title');
                 
                 if (flagName == userCountry) {
                     var holder = $(this).parent();
@@ -3390,7 +3390,7 @@ var era = {
                                 $(this).wrap('<div class="opponent_holder">');
                             }
                             
-                            var neImage = '<img alt="" title="Natural enemy" src="' + neIcon + '" class="natural_sign">';
+                            var neImage = '<img alt="" title="Natural enemy" src="' + neIcon + '" class="natural_sign" style="z-index: 2;">';
                             
                             $(this).before(neImage);
                             
