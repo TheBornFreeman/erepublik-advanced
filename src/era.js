@@ -2180,12 +2180,12 @@ var era = {
                     avHit = influenceLog[era.erepDay].Hits ? ~~(influenceLog[era.erepDay].Influence / influenceLog[era.erepDay].Hits) : 0,
                     influRow0 =
                         '<tr class="current">' +
-                            '<td style="color: #666666; font-size: 11px; width: 230px; padding-left: 10px;">' + era.erepDay + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 50px;">' + influenceLog[era.erepDay].Hits + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 50px;">' + influenceLog[era.erepDay].Kills + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 70px;">' + influenceLog[era.erepDay].Influence + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 50px;">' + influenceLog[era.erepDay].Rank + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 50px;">' + avHit + '</td>' +
+                            '<td style="color: #666666; font-size: 11px; width: 230px; padding-left: 10px;">' + numeral(era.erepDay).format('0,0') + '</td>' +
+                            '<td style="color: #666666; font-size: 11px; width: 50px; padding: 5px;">' + numeral(influenceLog[era.erepDay].Hits).format('0,0') + '</td>' +
+                            '<td style="color: #666666; font-size: 11px; width: 50px; padding: 5px;">' + numeral(influenceLog[era.erepDay].Kills).format('0,0') + '</td>' +
+                            '<td style="color: #666666; font-size: 11px; width: 70px; padding: 5px;">' + numeral(influenceLog[era.erepDay].Influence).format('0,0') + '</td>' +
+                            '<td style="color: #666666; font-size: 11px; width: 50px; padding: 5px;">' + numeral(influenceLog[era.erepDay].Rank).format('0,0') + '</td>' +
+                            '<td style="color: #666666; font-size: 11px; width: 50px; padding: 5px;">' + numeral(avHit).format('0,0') + '</td>' +
                         '</tr>'
                     ;
                 
@@ -2330,12 +2330,12 @@ var era = {
                     }
                     
                     influRow1 += '<tr class="current">' +
-                                        '<td style="color: #999999; font-size: 11px; width: 230px; padding-left: 10px;">' + cDay + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px;">' + influenceLog[cDay]['Hits'] + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px;">' + influenceLog[cDay]['Kills'] + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px; width: 70px;">' + influenceLog[cDay]['Influence'] + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px; width: 50px;">' + influenceLog[cDay]['Rank'] + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px; width: 50px;">' + avHitB + '</td>' +
+                                        '<td style="color: #999999; font-size: 11px; width: 230px; padding-left: 10px;">' + numeral(cDay).format('0,0') + '</td>' +
+                                        '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(influenceLog[cDay].Hits).format('0,0') + '</td>' +
+                                        '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(influenceLog[cDay].Kills).format('0,0') + '</td>' +
+                                        '<td style="color: #999999; font-size: 11px; width: 70px; padding: 5px;">' + numeral(influenceLog[cDay].Influence).format('0,0') + '</td>' +
+                                        '<td style="color: #999999; font-size: 11px; width: 50px; padding: 5px;">' + numeral(influenceLog[cDay].Rank).format('0,0') + '</td>' +
+                                        '<td style="color: #999999; font-size: 11px; width: 50px; padding: 5px;">' + numeral(avHitB).format('0,0') + '</td>' +
                                     '</tr>';
                     
                     hitsTotal += parseFloat(influenceLog[cDay]['Hits']);
@@ -2346,18 +2346,18 @@ var era = {
                 
                 influRow1 += '<tr class="current" style="font-weight: bold;">' +
                                 '<td style="color: #999999; font-size: 11px; width: 230px; padding-right: 30px; text-align: right;">Total</td>' +
-                                '<td style="color: #999999; font-size: 11px;">' + hitsTotal + '</td>' +
-                                '<td style="color: #999999; font-size: 11px;">' + killsTotal + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 70px;">' + influTotal + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 50px;">' + rankTotal + '</td>' +
+                                '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(hitsTotal).format('0,0') + '</td>' +
+                                '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(killsTotal).format('0,0') + '</td>' +
+                                '<td style="color: #999999; font-size: 11px; width: 70px; padding: 5px;">' + numeral(influTotal).format('0,0') + '</td>' +
+                                '<td style="color: #999999; font-size: 11px; width: 50px; padding: 5px;">' + numeral(rankTotal).format('0,0') + '</td>' +
                                 '<td style="color: #999999; font-size: 11px; width: 50px;">&nbsp;</td>' +
                             '</tr>' +
                             '<tr class="current" style="font-weight: bold;">' +
                                 '<td style="color: #999999; font-size: 11px; width: 230px; padding-right: 30px; text-align: right;">Average</td>' +
-                                '<td style="color: #999999; font-size: 11px;">' + ~~(hitsTotal / 5) + '</td>' +
-                                '<td style="color: #999999; font-size: 11px;">' + ~~(killsTotal / 5) + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 70px;">' + ~~(influTotal / 5) + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 50px;">' + ~~(rankTotal / 5) + '</td>' +
+                                '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(~~(hitsTotal / 5)).format('0,0') + '</td>' +
+                                '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(~~(killsTotal / 5)).format('0,0') + '</td>' +
+                                '<td style="color: #999999; font-size: 11px; width: 70px; padding: 5px;">' + numeral(~~(influTotal / 5)).format('0,0') + '</td>' +
+                                '<td style="color: #999999; font-size: 11px; width: 50px; padding: 5px;">' + numeral(~~(rankTotal / 5)).format('0,0') + '</td>' +
                                 '<td style="color: #999999; font-size: 11px; width: 50px;">&nbsp;</td>' +
                             '</tr>';
                 
