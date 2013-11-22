@@ -2546,6 +2546,7 @@ var era = {
 
                     if (data.hasOwnProperty('bomb') && data.message == 'OK') {
                         influenceLog[era.erepDay].Influence += ~~data.bomb.damage;
+                        influenceLog[era.erepDay].Hits += 1;
                     } else if (data.message == 'ENEMY_KILLED') {
                         // Log hits.
                         influenceLog[era.erepDay].Hits += ~~data.hits;
