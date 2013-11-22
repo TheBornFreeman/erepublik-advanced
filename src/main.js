@@ -166,6 +166,7 @@ if (bg.chrome) {
     pageMod.PageMod({
         include: ["http://www.erepublik.com/*", "http://economy.erepublik.com/*", "http://static.erepublik.com/*"],
         contentScriptFile: [self.data.url("jquery-2.0.3.min.js"), self.data.url("numeral.min.js"), self.data.url("era.js")],
+        contentScriptOptions: {database: JSON.parse(self.data.load('json/db.json'))},
         onAttach: function (worker) {
             worker.port.on('syncStorageUp', function (request) {
                 bg.syncStorageUp(JSON.parse(request.data), request.domain);
