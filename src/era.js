@@ -274,105 +274,57 @@ var era = {
 
         renderOptions: function(options) {                
             if($('#optionsContentMain').length == 0) {
-                $('body').append('<div id="optionsContentMain" class="optionsContentMain">' +
-                                    '<div class="optionsInnerHeader">' +
-                                        '<a id="optionsInnerClose" class="closeButton" title="Close" href="javascript:;">&nbsp;</a>' +
-                                    '</div>' +
-                                    '<div class="optionsInnerContent">' +
-                                        '<div class="optionsInnerItem">' +
-                                            '<div class="optionsInnerItemLabel">Market tools </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="market" type="checkbox" id="opt2" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItemRight">' +
-                                            '<div class="optionsInnerItemLabel">Automatic search redirection </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="search" type="checkbox" id="opt3" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItem">' +
-                                            '<div class="optionsInnerItemLabel">Battlefield improvements </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="battlefield" type="checkbox" id="opt4" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItemRight">' +
-                                            '<div class="optionsInnerItemLabel">Sidebar improvements </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="sidebar" type="checkbox" id="opt5" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItem">' +
-                                            '<div class="optionsInnerItemLabel">Profile page improvements </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="profile" type="checkbox" id="opt6" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItemRight">' +
-                                            '<div class="optionsInnerItemLabel">Elections page improvements </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="elections" type="checkbox" id="opt7" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItem">' +
-                                            '<div class="optionsInnerItemLabel">Inventory improvements </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="inventory" type="checkbox" id="opt8" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItemRight">' +
-                                            '<div class="optionsInnerItemLabel">Tax table on inventory page </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="taxes" type="checkbox" id="opt9" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItem">' +
-                                            '<div class="optionsInnerItemLabel">Newspaper tools </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="news" type="checkbox" id="opt12" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItemRight">' +
-                                            '<div class="optionsInnerItemLabel">Military events on main page </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="milevents" type="checkbox" id="opt14" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItem">' +
-                                            '<div class="optionsInnerItemLabel">Remove news categories </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="removecat" type="checkbox" id="opt15" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItemRight">' +
-                                            '<div class="optionsInnerItemLabel">Subscriptions icon on sidebar </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="subs" type="checkbox" id="opt16" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItem">' +
-                                            '<div class="optionsInnerItemLabel">Daily order tracker </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="dotrack" type="checkbox" id="opt17" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItemRight">' +
-                                            '<div class="optionsInnerItemLabel">Monetary market tools </div>' +
-                                            '<div style="float: left; line-height: 20px; margin-right: 10px;">' +
-                                                '<input desc="mmarket" type="checkbox" id="opt18" style="margin-top: 7px; cursor: pointer;">' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItem" style="text-align: center; float: none; width: 100%;">' +
-                                            '<div id="customQuickLinks" class="optionsInnerItemLabel_QuickLinks">Custom quick links</div>' +
-                                        '</div>' +
-                                        '<div class="optionsInnerItem" style="text-align: center; float: none; width: 100%;">' +
-                                            '<div id="resetSettings" class="optionsInnerItemLabel_QuickLinks">Reset settings and data</div>' +
-                                        '</div>' +
-                                    '</div>' +
-                                    '<div class="optionsInnerVersion">v' + era.version + '</div>' +
-                                    '<div class="optionsInnerFooter">Note: After you change these settings reload current page in order for settings to take effect.</div>' +
-                                '</div>');
+                var optionsContent = [
+                        {label: 'Market tools ', desc: 'market', id: 'opt2'},
+                        {label: 'Automatic search redirection ', desc: 'search', id: 'opt3'},
+                        {label: 'Battlefield improvements ', desc: 'battlefield', id: 'opt4'},
+                        {label: 'Sidebar improvements ', desc: 'sidebar', id: 'opt5'},
+                        {label: 'Profile page improvements ', desc: 'profile', id: 'opt6'},
+                        {label: 'Elections page improvements ', desc: 'elections', id: 'opt7'},
+                        {label: 'Inventory improvements ', desc: 'inventory', id: 'opt8'},
+                        {label: 'Tax table on inventory page ', desc: 'taxes', id: 'opt9'},
+                        {label: 'Newspaper tools ', desc: 'news', id: 'opt12'},
+                        {label: 'Military events on main page ', desc: 'milevents', id: 'opt14'},
+                        {label: 'Remove news categories ', desc: 'removecat', id: 'opt15'},
+                        {label: 'Subscriptions icon on sidebar ', desc: 'subs', id: 'opt16'},
+                        {label: 'Daily order tracker ', desc: 'dotrack', id: 'opt17'},
+                        {label: 'Monetary market tools ', desc: 'mmarket', id: 'opt18'}
+                    ],
+                    helper = false,
+                    container = []
+                ;
+
+                for (var i in optionsContent) {
+                    container.push(
+                        $('<div>', {class: helper ? 'optionsInnerItemRight' : 'optionsInnerItem'}).append(
+                            $('<div>', {class: 'optionsInnerItemLabel'}).text(optionsContent[i].label),
+                            $('<div>', {style: 'float: left; line-height: 20px; margin-right: 10px;'}).append(
+                                $('<input>', {desc: optionsContent[i].desc, type: 'checkbox', id: optionsContent[i].id, style: 'margin-top: 7px; cursor: pointer;'})
+                            )
+                        )
+                    );
+
+                    helper = !helper;
+                };
+
+                $('body').append(
+                    $('<div>', {id: 'optionsContentMain', class: 'optionsContentMain'}).append(
+                        $('<div>', {class: 'optionsInnerHeader'}).append(
+                            $('<a>', {id: 'optionsInnerClose', class: 'closeButton', title: 'Close', href: 'javascript:;', text: '&nbsp;'})
+                        ),
+                        $('<div>', {class: 'optionsInnerContent'}).append(
+                            container,
+                            $('<div>', {class: 'optionsInnerItem', style: 'text-align: center; float: none; width: 100%;'}).append(
+                                $('<div>', {id: 'customQuickLinks', class: 'optionsInnerItemLabel_QuickLinks', text: 'Custom quick links'})
+                            ),
+                            $('<div>', {class: 'optionsInnerItem', style: 'text-align: center; float: none; width: 100%;'}).append(
+                                $('<div>', {id: 'resetSettings', class: 'optionsInnerItemLabel_QuickLinks', text: 'Reset settings and data'})
+                            )
+                        ),
+                        $('<div>', {class: 'optionsInnerVersion'}).text('v' + era.version),
+                        $('<div>', {class: 'optionsInnerFooter', text: 'Note: After you change these settings reload current page in order for settings to take effect.'})
+                    )
+                );
                 
                 $('#optionsContentMain').css('display', 'block');
                 
@@ -791,7 +743,7 @@ var era = {
 
             era.ajax.get('http://www.erepublik.com/en/economy/exchange-market', function(r) {
                 var start = r.indexOf("id='_token'");
-                var data = {'_token': $('<input ' + r.substr(start, r.indexOf('/>', start) - start + 2)).val(), 'personalOffers': 0, 'page': 0, 'currencyId': (/^gold$/i.test(buy) ? 62 : 1)};
+                var data = {'_token': r.substr(start, r.indexOf('/>', start) - start + 2).match(/value='(.+)'/i)[1], 'personalOffers': 0, 'page': 0, 'currencyId': (/^gold$/i.test(buy) ? 62 : 1)};
 
                 era.ajax.post('http://www.erepublik.com/en/economy/exchange/retrieve', data, function(r) {
                     var table = $(JSON.parse(r).buy_mode).find('tbody');
@@ -969,33 +921,39 @@ var era = {
             
             $(document).on('click', 'a[id*="addTopLinkHere"]', function() {
                 var linkIdNumber = $(this).attr('id').split('_')[1];
-                
-                $('#content').append('<div id="customMenuTopPrompt_' + linkIdNumber + '" class="customMenuPrompt">' +
-                                        '<span class="menuWindowHeader">' +
-                                            '<a id="customMenuTopPromptClose_' + linkIdNumber + '" class="closeButton" title="Close" href="javascript:;">&nbsp;</a>' +
-                                        '</span>' +
-                                        '<span style="float: left; margin-left: 5%; margin-right: 5%; margin-top: 10px; padding: 5px; width: 90%;">' +
-                                            '<div style="display: block; font-size: 16px; height: 35px; padding-bottom: 10px; text-align: center; vertical-align: middle; width: 100%;">Please enter desired link title<br>and choose if you want to open it in new tab.</div>' +
-                                            '<div class="menuWindowContentTable">' +
-                                                '<div class="menuWindowContentRow">' +
-                                                    '<div class="menuWindowContentCell">Title</div>' +
-                                                    '<div class="menuWindowContentCell">&nbsp;</div>' +
-                                                '</div>' +
-                                                '<div class="menuWindowContentRow">' +
-                                                    '<div class="menuWindowContentCell"><input id="customMenuTopPromptName_' + linkIdNumber + '" type="text" size="50"></div>' +
-                                                    '<div class="menuWindowContentCell"><input id="customMenuTopPromptTarget_' + linkIdNumber + '" type="checkbox" title="Open link in new tab?"></div>' +
-                                                '</div>' +
-                                            '</div>' +
-                                            '<div style="display: block; font-size: 16px; height: 35px; padding-bottom: 10px; text-align: center; vertical-align: middle; width: 100%;">' +
-                                                '<a id="customMenuTopPromptSubmit_' + linkIdNumber + '" title="Submit" class="fluid_blue_raised_medium" style="display: inline; left: 95px; margin-top: 15px; margin-right: 15px;">' +
-                                                    '<span style="font-size: 10px; text-align: center;">Submit</span>' +
-                                                '</a>' +
-                                                '<a id="customMenuTopPromptCancel_' + linkIdNumber + '" title="Cancel" class="fluid_red_small" style="display: inline; left: 95px; margin-top: 15px;">' +
-                                                    '<span style="font-size: 10px; text-align: center;">Cancel</span>' +
-                                                '</a>' +
-                                            '</div>' +
-                                        '</span>' +
-                                    '</div>');
+
+                $('#content').append(
+                    $('<div>', {id: 'customMenuTopPrompt_' + linkIdNumber, class: 'customMenuPrompt'}).append(
+                        $('<span>', {class: 'menuWindowHeader'}).append(
+                            $('<a>', {id: 'customMenuTopPromptClose_' + linkIdNumber, class: 'closeButton', title: 'Close', href: 'javascript:;', text: '&nbsp;'})
+                        ),
+                        $('<span>', {style: 'float: left; margin-left: 5%; margin-right: 5%; margin-top: 10px; padding: 5px; width: 90%;'}).append(
+                            $('<div>', {style: 'display: block; font-size: 16px; height: 35px; padding-bottom: 10px; text-align: center; vertical-align: middle; width: 100%;', text: 'Please enter desired link title and choose if you want to open it in new tab.'}),
+                            $('<div>', {class: 'menuWindowContentTable'}).append(
+                                $('<div>', {class: 'menuWindowContentRow'}).append(
+                                    $('<div>', {class: 'menuWindowContentCell', text: 'Title'}),
+                                    $('<div>', {class: 'menuWindowContentCell'})
+                                ),
+                                $('<div>', {class: 'menuWindowContentRow'}).append(
+                                    $('<div>', {class: 'menuWindowContentCell'}).append(
+                                        $('<input>', {id: 'customMenuTopPromptName_' + linkIdNumber, type: 'text', size: 50})
+                                    ),
+                                    $('<div>', {class: 'menuWindowContentCell'}).append(
+                                        $('<input>', {id: 'customMenuTopPromptTarget_' + linkIdNumber, type: 'checkbox', title: 'Open link in new tab?'})
+                                    )
+                                )
+                            ),
+                            $('<div>', {style: 'display: block; font-size: 16px; height: 35px; padding-bottom: 10px; text-align: center; vertical-align: middle; width: 100%;'}).append(
+                                $('<a>', {id: 'customMenuTopPromptSubmit_' + linkIdNumber, title: 'Submit', class: 'fluid_blue_raised_medium', style: 'display: inline; left: 95px; margin-top: 15px; margin-right: 15px;'}).append(
+                                    $('<span>', {style: 'font-size: 10px; text-align: center;', text: 'Submit'})
+                                ),
+                                $('<a>', {id: 'customMenuTopPromptCancel_' + linkIdNumber, title: 'Cancel', class: 'fluid_red_small', style: 'display: inline; left: 95px; margin-top: 15px;'}).append(
+                                    $('<span>', {style: 'font-size: 10px; text-align: center;', text: 'Cancel'})
+                                )
+                            )
+                        )
+                    )
+                );
                 
                 $('#customMenuTopPrompt_' + linkIdNumber).css('display', 'block');
                 
@@ -1069,32 +1027,38 @@ var era = {
             $(document).on('click', 'a[id*="addLinkHere"]', function() {
                 var linkIdNumber = $(this).attr('id').split('_')[1];
                 
-                $('#content').append('<div id="customMenuPrompt_' + linkIdNumber + '" class="customMenuPrompt">' +
-                                        '<span class="menuWindowHeader">' +
-                                            '<a id="customMenuPromptClose_' + linkIdNumber + '" class="closeButton" title="Close" href="javascript:;">&nbsp;</a>' +
-                                        '</span>' +
-                                        '<span style="float: left; margin-left: 5%; margin-right: 5%; margin-top: 10px; padding: 5px; width: 90%;">' +
-                                            '<div style="display: block; font-size: 16px; height: 35px; padding-bottom: 10px; text-align: center; vertical-align: middle; width: 100%;">Please enter desired link title<br>and choose if you want to open it in new tab.</div>' +
-                                            '<div class="menuWindowContentTable">' +
-                                                '<div class="menuWindowContentRow">' +
-                                                    '<div class="menuWindowContentCell">Title</div>' +
-                                                    '<div class="menuWindowContentCell">&nbsp;</div>' +
-                                                '</div>' +
-                                                '<div class="menuWindowContentRow">' +
-                                                    '<div class="menuWindowContentCell"><input id="customMenuPromptName_' + linkIdNumber + '" type="text" size="50"></div>' +
-                                                    '<div class="menuWindowContentCell"><input id="customMenuPromptTarget_' + linkIdNumber + '" type="checkbox" title="Open link in new tab?"></div>' +
-                                                '</div>' +
-                                            '</div>' +
-                                            '<div style="display: block; font-size: 16px; height: 35px; padding-bottom: 10px; text-align: center; vertical-align: middle; width: 100%;">' +
-                                                '<a id="customMenuPromptSubmit_' + linkIdNumber + '" title="Submit" class="fluid_blue_raised_medium" style="display: inline; left: 95px; margin-top: 15px; margin-right: 15px;">' +
-                                                    '<span style="font-size: 10px; text-align: center;">Submit</span>' +
-                                                '</a>' +
-                                                '<a id="customMenuPromptCancel_' + linkIdNumber + '" title="Cancel" class="fluid_red_small" style="display: inline; left: 95px; margin-top: 15px;">' +
-                                                    '<span style="font-size: 10px; text-align: center;">Cancel</span>' +
-                                                '</a>' +
-                                            '</div>' +
-                                        '</span>' +
-                                    '</div>');
+                $('#content').append(
+                    $('<div>', {id: 'customMenuTopPrompt_' + linkIdNumber, class: 'customMenuPrompt'}).append(
+                        $('<span>', {class: 'menuWindowHeader'}).append(
+                            $('<a>', {id: 'customMenuTopPromptClose_' + linkIdNumber, class: 'closeButton', title: 'Close', href: 'javascript:;', text: '&nbsp;'})
+                        ),
+                        $('<span>', {style: 'float: left; margin-left: 5%; margin-right: 5%; margin-top: 10px; padding: 5px; width: 90%;'}).append(
+                            $('<div>', {style: 'display: block; font-size: 16px; height: 35px; padding-bottom: 10px; text-align: center; vertical-align: middle; width: 100%;', text: 'Please enter desired link title and choose if you want to open it in new tab.'}),
+                            $('<div>', {class: 'menuWindowContentTable'}).append(
+                                $('<div>', {class: 'menuWindowContentRow'}).append(
+                                    $('<div>', {class: 'menuWindowContentCell', text: 'Title'}),
+                                    $('<div>', {class: 'menuWindowContentCell'})
+                                ),
+                                $('<div>', {class: 'menuWindowContentRow'}).append(
+                                    $('<div>', {class: 'menuWindowContentCell'}).append(
+                                        $('<input>', {id: 'customMenuTopPromptName_' + linkIdNumber, type: 'text', size: 50})
+                                    ),
+                                    $('<div>', {class: 'menuWindowContentCell'}).append(
+                                        $('<input>', {id: 'customMenuTopPromptTarget_' + linkIdNumber, type: 'checkbox', title: 'Open link in new tab?'})
+                                    )
+                                )
+                            ),
+                            $('<div>', {style: 'display: block; font-size: 16px; height: 35px; padding-bottom: 10px; text-align: center; vertical-align: middle; width: 100%;'}).append(
+                                $('<a>', {id: 'customMenuTopPromptSubmit_' + linkIdNumber, title: 'Submit', class: 'fluid_blue_raised_medium', style: 'display: inline; left: 95px; margin-top: 15px; margin-right: 15px;'}).append(
+                                    $('<span>', {style: 'font-size: 10px; text-align: center;', text: 'Submit'})
+                                ),
+                                $('<a>', {id: 'customMenuTopPromptCancel_' + linkIdNumber, title: 'Cancel', class: 'fluid_red_small', style: 'display: inline; left: 95px; margin-top: 15px;'}).append(
+                                    $('<span>', {style: 'font-size: 10px; text-align: center;', text: 'Cancel'})
+                                )
+                            )
+                        )
+                    )
+                );
                 
                 $('#customMenuPrompt_' + linkIdNumber).css('display', 'block');
                 
@@ -1281,10 +1245,8 @@ var era = {
 
                 var start = r.indexOf("class='exchange_offers mine'");
 
-                if (start >= 0) {
-                    var table = '<table ' + r.substr(start, r.indexOf('</table>', start) - start + 8);
-        
-                    $(table).find('tbody > tr').each(function() {
+                if (start >= 0) {        
+                    $('<table ' + r.substr(start, r.indexOf('</table>', start) - start + 8)).find('tbody > tr').each(function() {
                         var $amount = $(this).find('td:eq(1) input');
                         offers.push({'id': $amount.attr('id').split('_')[2],'amount': $amount.val(), 'currency': $(this).find('td:eq(1) em').text(), 'rate': $(this).find('td:eq(2) input').val()});
                     });
@@ -1438,9 +1400,17 @@ var era = {
             });
 
             if (!data.hasOwnProperty('latest') || !data.hasOwnProperty('previous') || !data.latest.length || !data.previous.length || data.latest == data.previous)
-                $('.user_notify:first').append('<a href="/' + era.hostLang + '/news/subscriptions" title="New articles: 0" class="notify nalert" style="left: ' + left + 'px; background-image: url(' + subsIcon + ');"></a>');
+                $('.user_notify:first').append(
+                    $('<a>', {href: '/' + era.hostLang + '/news/subscriptions', title: 'New articles: 0', class: 'notify nalert', style: 'left: ' + left + 'px; background-image: url(' + subsIcon + ');'})
+                );
             else if (data.hasOwnProperty('latest') && data.hasOwnProperty('previous') && data.latest.length && data.previous.length && data.latest != data.previous)
-                $('.user_notify:first').append('<a href="/' + era.hostLang + '/news/subscriptions" title="New articles: 1" class="notify nalert" style="left: ' + left + 'px; background-image: url(' + subsIcon + ');"><em class="fadeInUp">1<span>&nbsp;</span></em></a>');
+                $('.user_notify:first').append(
+                    $('<a>', {href: '/' + era.hostLang + '/news/subscriptions', title: 'New articles: 1', class: 'notify nalert', style: 'left: ' + left + 'px; background-image: url(' + subsIcon + ');'}).append(
+                        $('<em>', {class: 'fadeInUp', text: '1'}).append(
+                            $('<span>')
+                        )
+                    )
+                );
         },
 
         o: function() {
@@ -1491,7 +1461,7 @@ var era = {
                 completeArray = {},
                 totalAmount = 0,
                 totalValue = 0,
-                tableAddendum = '',
+                tableAddendum = [],
                 x
             ;
 
@@ -1509,9 +1479,12 @@ var era = {
                 $row.data('eraInputMutex', true);
 
                 $(this).append(
-                    '<br/>' +
-                    '<strong id="gPrice1' + i + '" style="color: #a2a2a2;">n/a</strong>' +
-                    '<sup style="color: #a2a2a2;"><span id="gPrice2' + i + '"></span> <strong>GOLD</strong></sup>'
+                    $('<br>'),
+                    $('<strong>', {id: 'gPrice1' + i, style: 'color: #a2a2a2;', text: 'n/a'}),
+                    $('<sup>', {style: 'color: #a2a2a2;'}).append(
+                        $('<span>', {id: 'gPrice2' + i}), ' ',
+                        $('<strong>', {text: 'GOLD'})
+                    )
                 );
 
                 $('#gPrice1' + i).gold(basePrice, 5, baser);
@@ -1521,13 +1494,18 @@ var era = {
                     var hpPrice = basePrice / ~~$('#filters_summary strong:first').html();
 
                     $(this).after(
-                        '<td class="m_price stprice">' +
-                            '<strong>' + baser(hpPrice.toFixed(1)) + '</strong>' +
-                            '<sup>' + supper(hpPrice.toFixed(5)) + ' <strong>' + $(this).find('sup strong:first').text() +'</strong></sup>' +
-                            '<br/>' +
-                            '<strong style="color: #a2a2a2;" id="ghpPrice1' + i + '">n/a</strong>' +
-                            '<sup style="color: #a2a2a2;"><span id="ghpPrice2' + i + '"></span> <strong>GOLD</strong></sup>' +
-                        '</td>'
+                        $('<td>', {class: 'm_price stprice'}).append(
+                            $('<strong>').text(baser(hpPrice.toFixed(1))),
+                            $('<sup>').text(supper(hpPrice.toFixed(5))).append(
+                                ' ', $('<strong>').text($(this).find('sup strong:first').text())
+                            ),
+                            $('<br>'),
+                            $('<strong>', {style: 'color: #a2a2a2;', id: 'ghpPrice1' + i, text: 'n/a'}),
+                            $('<sup>', {style: 'color: #a2a2a2;'}).append(
+                                $('<span>', {id: 'ghpPrice2' + i}), ' ',
+                                $('<strong>', {text: 'GOLD'})
+                            )
+                        )
                     );
 
                     $('#ghpPrice1' + i).gold(hpPrice, 5, baser);
@@ -1539,14 +1517,14 @@ var era = {
                 totalValue += basePrice * qty;
 
                 $row.find('.m_quantity').css('padding', '10px').append(
-                    '<div style="margin: 1px 0 0 2px;">' +
-                        '<button title="Set total quantity" class="f_light_blue_big eraAllButton" style="cursor: pointer; outline:none; border: none; margin: 0; padding: 0; width: 27px; background: #fff url(/images/parts/fluids_map.jpg) right -526px no-repeat; height: 26px; line-height: 25px; color: #3c8fa7; float: left; font-size: 12px;">' + 
-                            '<span style="' + (!era.chrome ? 'position: relative; top: -1px; left: -3px; ' : '') + 'padding-left: 9px; background: #fff url(/images/parts/fluids_map.jpg) left -526px no-repeat; height: 26px; line-height: 25px; color: #3c8fa7; float: left; cursor: pointer; text-shadow: 0 1px 0 #fff; font-weight: bold;">A</span>'+ 
-                        '</button>' +
-                        '<button title="Set max quantity you can buy" class="f_light_blue_big eraMaxButton" style="cursor: pointer; outline:none; border: none; margin: 0; padding: 0; width: 27px; background: #fff url(/images/parts/fluids_map.jpg) right -526px no-repeat; height: 26px; line-height: 25px; color: #3c8fa7; float: left; font-size: 12px; margin-left: 1px;">' +
-                            '<span style="' + (!era.chrome ? 'position: relative; top: -1px; left: -3px; ' : '') + 'padding-left: 8px; background: #fff url(/images/parts/fluids_map.jpg) left -526px no-repeat; height: 26px; line-height: 25px; color: #3c8fa7; float: left; cursor: pointer; text-shadow: 0 1px 0 #fff; font-weight: bold;">M</span>' +
-                        '</button>' +
-                    '</div>'
+                    $('<div>', {style: 'margin: 1px 0 0 2px;'}).append(
+                        $('<button>', {title: 'Set total quantity', class: 'f_light_blue_big eraAllButton', style: 'cursor: pointer; outline:none; border: none; margin: 0; padding: 0; width: 27px; background: #fff url(/images/parts/fluids_map.jpg) right -526px no-repeat; height: 26px; line-height: 25px; color: #3c8fa7; float: left; font-size: 12px;'}).append(
+                            $('<span>', {style: (!era.chrome ? 'position: relative; top: -1px; left: -3px; ' : '') + 'padding-left: 9px; background: #fff url(/images/parts/fluids_map.jpg) left -526px no-repeat; height: 26px; line-height: 25px; color: #3c8fa7; float: left; cursor: pointer; text-shadow: 0 1px 0 #fff; font-weight: bold;', text: 'A'})
+                        ),
+                        $('<button>', {title: 'Set max quantity you can buy', class: 'f_light_blue_big eraMaxButton', style: 'cursor: pointer; outline:none; border: none; margin: 0; padding: 0; width: 27px; background: #fff url(/images/parts/fluids_map.jpg) right -526px no-repeat; height: 26px; line-height: 25px; color: #3c8fa7; float: left; font-size: 12px; margin-left: 1px;'}).append(
+                            $('<span>', {style: (!era.chrome ? 'position: relative; top: -1px; left: -3px; ' : '') + 'padding-left: 8px; background: #fff url(/images/parts/fluids_map.jpg) left -526px no-repeat; height: 26px; line-height: 25px; color: #3c8fa7; float: left; cursor: pointer; text-shadow: 0 1px 0 #fff; font-weight: bold;', text: 'M'})
+                        )
+                    )
                 );
 
                 $row.find('button.eraAllButton').hover(function() {
@@ -1598,29 +1576,36 @@ var era = {
             });
 
             for (x in completeArray) {
-                tableAddendum +=
-                    '<tr>' +
-                        '<td colspan="3" style="text-align: right; background: none repeat scroll 0 0 #FFFFEC; padding: 5px 10px 5px 0px; text-indent: 5px; width: 50px; cursor: default; border-bottom: none;">' + numeral(completeArray[x]).format('0,0') + '</td>' +
-                        '<td colspan="4" style="background: none repeat scroll 0 0 #FFFFEC; border-left: 1px solid #F7F4E1; border-bottom: none; padding: 5px 0px 5px 10px; width: 100px; cursor: default;">' +
-                            '<strong style="font-size: 18px; font-weight: normal;">' + numeral(~~x).format('0,0') + '</strong>' +
-                            '<sup>' + supper(x) + ' <strong>' + $('td.m_price:first sup strong:first').text() + '</strong></sup>' +
-                        '</td>' +
-                    '</tr>'
-                ;
+                tableAddendum.push(
+                    $('<tr>').append(
+                        $('<td>', {colspan: 3, style: 'text-align: right; background: none repeat scroll 0 0 #FFFFEC; padding: 5px 10px 5px 0px; text-indent: 5px; width: 50px; cursor: default; border-bottom: none;'}).text(numeral(completeArray[x]).format('0,0')),
+                        $('<td>', {colspan: 4, style: 'background: none repeat scroll 0 0 #FFFFEC; border-left: 1px solid #F7F4E1; border-bottom: none; padding: 5px 0px 5px 10px; width: 100px; cursor: default;'}).append(
+                            $('<strong>', {style: 'font-size: 18px; font-weight: normal;'}).text(numeral(~~x).format('0,0')),
+                            $('<sup>').text(supper(x)).append(
+                                ' ', $('<strong>').text($('td.m_price:first sup strong:first').text())
+                            )
+                        )
+                    )
+                );
             }
 
-            tableAddendum +=
-                '<tr>' +
-                    '<td colspan="3" style="text-align: right; background: none repeat scroll 0 0 #FFFFEC; padding: 10px 10px 10px 0px; text-indent: 5px; width: 50px; cursor: default; border-bottom: none; border-top: 1px solid #CCCCCC;">' + numeral(totalAmount).format('0,0') + '</td>' +
-                    '<td colspan="4" style="background: none repeat scroll 0 0 #FFFFEC; border-left: 1px solid #F7F4E1; border-bottom: none; border-top: 1px solid #CCCCCC; padding: 10px 0px 10px 10px; width: 100px; cursor: default;">' +
-                        '<strong style="font-size: 18px; font-weight: normal;">' + numeral(~~totalValue).format('0,0') + '</strong>' +
-                        '<sup>' + supper(totalValue.toFixed(2)) + ' <strong>' + $('td.m_price:first sup strong:first').text() + '</strong></sup>' +
-                        '<br/>' +
-                        '<strong style="font-size: 18px; font-weight: normal; color: #a2a2a2;" id="gTotal1">n/a</strong>' +
-                        '<sup style="color: #a2a2a2;"><span id="gTotal2"></span> <strong>GOLD</strong></sup>' +
-                    '</td>' +
-                '</tr>'
-            ;
+            tableAddendum.push(
+                $('<tr>').append(
+                    $('<td>', {colspan: 3, style: 'text-align: right; background: none repeat scroll 0 0 #FFFFEC; padding: 10px 10px 10px 0px; text-indent: 5px; width: 50px; cursor: default; border-bottom: none; border-top: 1px solid #CCCCCC;'}).text(numeral(totalAmount).format('0,0')),
+                    $('<td>', {colspan: 4, style: 'background: none repeat scroll 0 0 #FFFFEC; border-left: 1px solid #F7F4E1; border-bottom: none; border-top: 1px solid #CCCCCC; padding: 10px 0px 10px 10px; width: 100px; cursor: default;'}).append(
+                        $('<strong>', {style: 'font-size: 18px; font-weight: normal;'}).text(numeral(~~totalValue).format('0,0')),
+                        $('<sup>').text(supper(totalValue.toFixed(2))).append(
+                            ' ', $('<strong>').text($('td.m_price:first sup strong:first').text())
+                        ),
+                        $('<br>'),
+                        $('<strong>', {style: 'font-size: 18px; font-weight: normal; color: #a2a2a2;', id: 'gTotal1', text: 'n/a'}),
+                        $('<sup>').append(
+                            $('<span>', {id: 'gTotal2'}), ' ',
+                            $('<strong>', {text: 'GOLD'})
+                        )
+                    )
+                )
+            );
 
             $('td[id*="productId_"]:last').parent().after(tableAddendum);
 
@@ -1634,15 +1619,15 @@ var era = {
             era.storageTab.o();
 
             !$('.citizen_menu').append(
-                '<li>' +
-                    '<a href="http://egov4you.info/citizen/history/' + location.href.split('/')[6] + '" target="_blank" title="Citizen history">egov4you</a>' +
-                '</li>'
+                $('<li>').append(
+                    $('<a>', {href: 'http://egov4you.info/citizen/history/' + location.href.split('/')[6], target: '_blank', title: 'Citizen history', text: 'egov4you'})
+                )
             ).length && $('#content h2:first').after(
-                '<ul class="citizen_menu">' +
-                    '<li>' +
-                        '<a href="http://egov4you.info/citizen/history/' + location.href.split('/')[6] + '" target="_blank" title="Citizen history">egov4you</a>' +
-                    '</li>' +
-                '</ul>'
+                $('<ul>', {class: 'citizen_menu'}).append(
+                    $('<li>').append(
+                        $('<a>', {href: 'http://egov4you.info/citizen/history/' + location.href.split('/')[6], target: '_blank', title: 'Citizen history', text: 'egov4you'})
+                    )
+                )
             );
 
             $('ul.achiev .hinter .country_list li em').each(function() {
@@ -2179,14 +2164,14 @@ var era = {
                     influenceLog = era.storage.get('Influence', {}),
                     avHit = influenceLog[era.erepDay].Hits ? ~~(influenceLog[era.erepDay].Influence / influenceLog[era.erepDay].Hits) : 0,
                     influRow0 =
-                        '<tr class="current">' +
-                            '<td style="color: #666666; font-size: 11px; width: 230px; padding-left: 10px;">' + numeral(era.erepDay).format('0,0') + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 50px; padding: 5px;">' + numeral(influenceLog[era.erepDay].Hits).format('0,0') + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 50px; padding: 5px;">' + numeral(influenceLog[era.erepDay].Kills).format('0,0') + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 70px; padding: 5px;">' + numeral(influenceLog[era.erepDay].Influence).format('0,0') + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 50px; padding: 5px;">' + numeral(influenceLog[era.erepDay].Rank).format('0,0') + '</td>' +
-                            '<td style="color: #666666; font-size: 11px; width: 50px; padding: 5px;">' + numeral(avHit).format('0,0') + '</td>' +
-                        '</tr>'
+                        $('<tr>', {class: 'current'}).append(
+                            $('<td>', {style: 'color: #666666; font-size: 11px; width: 230px; padding-left: 10px;'}).text(numeral(era.erepDay).format('0,0')),
+                            $('<td>', {style: 'color: #666666; font-size: 11px; width: 50px; padding: 5px;'}).text(numeral(influenceLog[era.erepDay].Hits).format('0,0')),
+                            $('<td>', {style: 'color: #666666; font-size: 11px; width: 50px; padding: 5px;'}).text(numeral(influenceLog[era.erepDay].Kills).format('0,0')),
+                            $('<td>', {style: 'color: #666666; font-size: 11px; width: 70px; padding: 5px;'}).text(numeral(influenceLog[era.erepDay].Influence).format('0,0')),
+                            $('<td>', {style: 'color: #666666; font-size: 11px; width: 50px; padding: 5px;'}).text(numeral(influenceLog[era.erepDay].Rank).format('0,0')),
+                            $('<td>', {style: 'color: #666666; font-size: 11px; width: 50px; padding: 5px;'}).text(numeral(avHit).format('0,0'))
+                        )
                     ;
                 
                 var influ0 = influenceLog[era.erepDay]['Influence'];
@@ -2283,34 +2268,37 @@ var era = {
                 var tInflu8 = influenceLog[era.erepDay - 8]['Influence'];
                 var tInflu9 = influenceLog[era.erepDay - 9]['Influence'];
                 
-                $('#content .citizen_content').append('<div class="clear"></div>' +
-                                         '<h3>Influence Done</h3>' +
-                                          '<table id="influTable" border="0" width="100%" class="details">' +
-                                                '<thead>' +
-                                                    '<tr>' +
-                                                        '<th style="padding-left: 10px;">eDay</th>' +
-                                                        '<th>Hits</th>' +
-                                                        '<th>Kills</th>' +
-                                                        '<th>Influence</th>' +
-                                                        '<th>Rank</th>' +
-                                                        '<th>Av. hit</th>' +
-                                                    '</tr>' +
-                                                '</thead>' +
-                                                '<tbody>' +
-                                                    influRow0 +             
-                                                '</tbody>' +
-                                            '</table>' +
-                                            '<div class="clear"></div>' +
-                                            '<div id="influChart">' +
-                                                '<img src="http://chart.googleapis.com/chart?cht=lc&chs=504x100&chd=t:' + influ9 + ',' + influ8 + ',' + influ7 + ',' + influ6 + ',' + influ5 + ',' + influ4 + ',' + influ3 + ',' + influ2 + ',' + influ1 + ',' + influ0 + '&chco=999999&chf=c,s,fafcf7&chxs=0,999999,10,0,lt,999999,e4fad3|1,999999,10,0,lt,999999,e4fad3&chm=t' + tInflu9 + ',999999,0,0,9,,hv|t' + tInflu8 + ',999999,0,1,9,,hv|t' + tInflu7 + ',999999,0,2,9,,hv|t' + tInflu6 + ',999999,0,3,9,,hv|t' + tInflu5 + ',999999,0,4,9,,hv|t' + tInflu4 + ',999999,0,5,9,,hv|t' + tInflu3 + ',999999,0,6,9,,hv|t' + tInflu2 + ',999999,0,7,9,,hv|t' + tInflu1 + ',999999,0,8,9,,hv|t' + tInflu0 + ',999999,0,9,9,,hv|o,999999,0,-1,4&chxt=x,y&chxl=0:|' + parseFloat(era.erepDay - 9) + '|' + parseFloat(era.erepDay - 8) + '|' + parseFloat(era.erepDay - 7) + '|' + parseFloat(era.erepDay - 6) + '|' + parseFloat(era.erepDay - 5) + '|' + parseFloat(era.erepDay - 4) + '|' + parseFloat(era.erepDay - 3) + '|' + parseFloat(era.erepDay - 2) + '|' + parseFloat(era.erepDay - 1) + '|' + parseFloat(era.erepDay) + '|1:|' + ~~min_value + '|' + ~~max_value + '" style="float: left; border: 1px solid #e4fad3; padding: 15px 2px 2px; border-radius: 5px 5px 5px 5px; margin-bottom: 15px;">' +
-                                            '</div>');
+                $('#content .citizen_content').append(
+                    '<div class="clear"></div>' +
+                    '<h3>Influence Done</h3>' +
+                    '<table id="influTable" border="0" width="100%" class="details">' +
+                        '<thead>' +
+                            '<tr>' +
+                                '<th style="padding-left: 10px;">eDay</th>' +
+                                '<th>Hits</th>' +
+                                '<th>Kills</th>' +
+                                '<th>Influence</th>' +
+                                '<th>Rank</th>' +
+                                '<th>Av. hit</th>' +
+                            '</tr>' +
+                        '</thead>' +
+                        '<tbody></tbody>' +
+                    '</table>' +
+                    '<div class="clear"></div>' +
+                    '<div id="influChart"></div>'
+                );
+
+                $('#influTable tbody').append(influRow0);
+                $('#influChart').append(
+                    $('<img>', {src: 'http://chart.googleapis.com/chart?cht=lc&chs=504x100&chd=t:' + influ9 + ',' + influ8 + ',' + influ7 + ',' + influ6 + ',' + influ5 + ',' + influ4 + ',' + influ3 + ',' + influ2 + ',' + influ1 + ',' + influ0 + '&chco=999999&chf=c,s,fafcf7&chxs=0,999999,10,0,lt,999999,e4fad3|1,999999,10,0,lt,999999,e4fad3&chm=t' + tInflu9 + ',999999,0,0,9,,hv|t' + tInflu8 + ',999999,0,1,9,,hv|t' + tInflu7 + ',999999,0,2,9,,hv|t' + tInflu6 + ',999999,0,3,9,,hv|t' + tInflu5 + ',999999,0,4,9,,hv|t' + tInflu4 + ',999999,0,5,9,,hv|t' + tInflu3 + ',999999,0,6,9,,hv|t' + tInflu2 + ',999999,0,7,9,,hv|t' + tInflu1 + ',999999,0,8,9,,hv|t' + tInflu0 + ',999999,0,9,9,,hv|o,999999,0,-1,4&chxt=x,y&chxl=0:|' + parseFloat(era.erepDay - 9) + '|' + parseFloat(era.erepDay - 8) + '|' + parseFloat(era.erepDay - 7) + '|' + parseFloat(era.erepDay - 6) + '|' + parseFloat(era.erepDay - 5) + '|' + parseFloat(era.erepDay - 4) + '|' + parseFloat(era.erepDay - 3) + '|' + parseFloat(era.erepDay - 2) + '|' + parseFloat(era.erepDay - 1) + '|' + parseFloat(era.erepDay) + '|1:|' + ~~min_value + '|' + ~~max_value, style: 'float: left; border: 1px solid #e4fad3; padding: 15px 2px 2px; border-radius: 5px 5px 5px 5px; margin-bottom: 15px;'})
+                );
                 
                 hitsTotal += parseFloat(influenceLog[era.erepDay]['Hits']);
                 killsTotal += parseFloat(influenceLog[era.erepDay]['Kills']);
                 influTotal += parseFloat(influenceLog[era.erepDay]['Influence']);
                 rankTotal += parseFloat(influenceLog[era.erepDay]['Rank']);
                 
-                var influRow1 = '';
+                var influRow1 = [];
                 
                 for (var i = 1; i < 5; i++) {
                     var cDay = era.erepDay - i;
@@ -2329,14 +2317,16 @@ var era = {
                         var avHitB = 0;
                     }
                     
-                    influRow1 += '<tr class="current">' +
-                                        '<td style="color: #999999; font-size: 11px; width: 230px; padding-left: 10px;">' + numeral(cDay).format('0,0') + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(influenceLog[cDay].Hits).format('0,0') + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(influenceLog[cDay].Kills).format('0,0') + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px; width: 70px; padding: 5px;">' + numeral(influenceLog[cDay].Influence).format('0,0') + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px; width: 50px; padding: 5px;">' + numeral(influenceLog[cDay].Rank).format('0,0') + '</td>' +
-                                        '<td style="color: #999999; font-size: 11px; width: 50px; padding: 5px;">' + numeral(avHitB).format('0,0') + '</td>' +
-                                    '</tr>';
+                    influRow1.push(
+                        $('<tr>', {class: 'current'}).append(
+                            $('<td>', {style: 'color: #999999; font-size: 11px; width: 230px; padding-left: 10px;'}).text(numeral(cDay).format('0,0')),
+                            $('<td>', {style: 'color: #999999; font-size: 11px; padding: 5px;'}).text(numeral(influenceLog[cDay].Hits).format('0,0')),
+                            $('<td>', {style: 'color: #999999; font-size: 11px; padding: 5px;'}).text(numeral(influenceLog[cDay].Kills).format('0,0')),
+                            $('<td>', {style: 'color: #999999; font-size: 11px; width: 70px; padding: 5px;'}).text(numeral(influenceLog[cDay].Influence).format('0,0')),
+                            $('<td>', {style: 'color: #999999; font-size: 11px; width: 50px; padding: 5px;'}).text(numeral(influenceLog[cDay].Rank).format('0,0')),
+                            $('<td>', {style: 'color: #999999; font-size: 11px; width: 50px; padding: 5px;'}).text(numeral(avHitB).format('0,0'))
+                        )
+                    );
                     
                     hitsTotal += parseFloat(influenceLog[cDay]['Hits']);
                     killsTotal += parseFloat(influenceLog[cDay]['Kills']);
@@ -2344,35 +2334,38 @@ var era = {
                     rankTotal += parseFloat(influenceLog[cDay]['Rank']);
                 }
                 
-                influRow1 += '<tr class="current" style="font-weight: bold;">' +
-                                '<td style="color: #999999; font-size: 11px; width: 230px; padding-right: 30px; text-align: right;">Total</td>' +
-                                '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(hitsTotal).format('0,0') + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(killsTotal).format('0,0') + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 70px; padding: 5px;">' + numeral(influTotal).format('0,0') + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 50px; padding: 5px;">' + numeral(rankTotal).format('0,0') + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 50px;">&nbsp;</td>' +
-                            '</tr>' +
-                            '<tr class="current" style="font-weight: bold;">' +
-                                '<td style="color: #999999; font-size: 11px; width: 230px; padding-right: 30px; text-align: right;">Average</td>' +
-                                '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(~~(hitsTotal / 5)).format('0,0') + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; padding: 5px;">' + numeral(~~(killsTotal / 5)).format('0,0') + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 70px; padding: 5px;">' + numeral(~~(influTotal / 5)).format('0,0') + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 50px; padding: 5px;">' + numeral(~~(rankTotal / 5)).format('0,0') + '</td>' +
-                                '<td style="color: #999999; font-size: 11px; width: 50px;">&nbsp;</td>' +
-                            '</tr>';
+                influRow1.push(
+                    $('<tr>', {class: 'current', style: 'font-weight: bold;'}).append(
+                        $('<td>', {style: 'color: #999999; font-size: 11px; width: 230px; padding-right: 30px; text-align: right;', text: 'Total'}),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; padding: 5px;'}).text(numeral(hitsTotal).format('0,0')),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; padding: 5px;'}).text(numeral(killsTotal).format('0,0')),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; width: 70px; padding: 5px;'}).text(numeral(influTotal).format('0,0')),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; width: 50px; padding: 5px;'}).text(numeral(rankTotal).format('0,0')),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; width: 50px;'}).html('&nbsp;')
+                    ),
+                    $('<tr>', {class: 'current', style: 'font-weight: bold;'}).append(
+                        $('<td>', {style: 'color: #999999; font-size: 11px; width: 230px; padding-right: 30px; text-align: right;', text: 'Average'}),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; padding: 5px;'}).text(numeral(~~(hitsTotal / 5)).format('0,0')),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; padding: 5px;'}).text(numeral(~~(killsTotal / 5)).format('0,0')),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; width: 70px; padding: 5px;'}).text(numeral(~~(influTotal / 5)).format('0,0')),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; width: 50px; padding: 5px;'}).text(numeral(~~(rankTotal / 5)).format('0,0')),
+                        $('<td>', {style: 'color: #999999; font-size: 11px; width: 50px;'}).html('&nbsp;')
+                    )
+                );
                 
                 $('#influTable > tbody:last').append(influRow1);
             }
             
-            $('.citizen_avatar').wrap('<a href="' + $('.citizen_avatar').css('background-image').match(/url\((.+)\)/i)[1].split('_')[0].replace(/"/i, '') + '.jpg" target="_blank" />');
+            $('.citizen_avatar').wrap(
+                $('<a>', {href: $('.citizen_avatar').css('background-image').match(/url\((.+)\)/i)[1].split('_')[0].replace(/"/i, '') + '.jpg', target: '_blank'})
+            );
         }
     },
 
     monetaryMarket: {
         o: function() {
             var transformer = function() {
-                var goldIcon = '<img src="http://www.erepublik.net/images/modules/_icons/gold_icon.png" alt="">',
-                    goldMode = $('#buy_flag em').text() == 'GOLD',
+                var goldMode = $('#buy_flag em').text() == 'GOLD',
                     currency = $('#buy_flag em').text()
                 ;
 
@@ -2504,10 +2497,12 @@ var era = {
 
             era.settings.dotrack && dod.Battlefield == location.href.split('/')[6] && $('#pvp_actions').after(
                 '<div class="dailyTrackerHolder">' +
-                    '<div id="dailyTracker" class="dailyTrackerInner">' + dod.Progress + ' / 25</div>' +
+                    '<div id="dailyTracker" class="dailyTrackerInner"></div>' +
                     '<div class="dtTipsy"><div class="dtTipsy-arrow">&nbsp;</div><div class="dtTipsy-inner">Daily orders progress</div></div>' +
                 '</div>'
             );
+
+            $('#dailyTracker').text(dod.Progress + ' / 25');
             // --
             
             // Convert region name to region link.    
@@ -2527,7 +2522,9 @@ var era = {
             var userCountry = currency_country[era.characterCurrency];
             
             if (myCountry.indexOf('Resistance') == -1 && vsCountry.indexOf('Resistance') == -1 && myCountry == userCountry && vsCountry == natural) {
-                $('#pvp_header div.country.right_side a img').after('<img alt="" title="Natural enemy" src="' + neIcon + '" style="margin-top: -2px; position: absolute; margin-left: -9px;">');
+                $('#pvp_header div.country.right_side a img').after(
+                    $('<img>', {title: 'Natural enemy', src: neIcon, style: 'margin-top: -2px; position: absolute; margin-left: -9px;'})
+                );
                 enemyNatural = true;
             }
             // --
@@ -2626,42 +2623,46 @@ var era = {
                     var icon;
 
                     if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 141) {
-                        icon = '<img src="http://www.erepublik.com/images/icons/industry/999/26.png">';
+                        icon = $('<img>', {src: 'http://www.erepublik.com/images/icons/industry/999/26.png'});
                     } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 13) {
-                        icon = '<img src="http://s3.www.erepublik.net/images/icons/industry/999/1.png">';
+                        icon = $('<img>', {src: 'http://s3.www.erepublik.net/images/icons/industry/999/1.png'});
                     } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 1213) {
-                        icon = '<img src="http://s1.www.erepublik.net/images/icons/industry/999/21.png">';
+                        icon = $('<img>', {src: 'http://s1.www.erepublik.net/images/icons/industry/999/21.png'});
                     } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 12) {
-                        icon = '<img src="http://s3.www.erepublik.net/images/icons/industry/999/1.png">';
+                        icon = $('<img>', {src: 'http://s3.www.erepublik.net/images/icons/industry/999/1.png'});
                     } else if (storageContent.cooked[i].industry == 2 && storageContent.cooked[i].quality == 1212) {
-                        icon = '<img src="http://s1.www.erepublik.net/images/icons/industry/999/21.png">';
+                        icon = $('<img>', {src: 'http://s1.www.erepublik.net/images/icons/industry/999/21.png'});
                     } else {
-                        icon = '<img src="http://www.erepublik.com/images/icons/industry/' + storageContent.cooked[i].industry + '/q' + storageContent.cooked[i].quality + '.png">';
+                        icon = $('<img>', {src: 'http://www.erepublik.com/images/icons/industry/' + storageContent.cooked[i].industry + '/q' + storageContent.cooked[i].quality + '.png'});
                     }
 
                     $('#miniInventory1').append(
-                        '<div class="itemCountHolder">' +
-                            icon +
-                            '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + storageContent.cooked[i].amount + '</strong>' +
-                        '</div>'
+                        $('<div>', {class: 'itemCountHolder'}).append(
+                            icon,
+                            $('<strong>', {style: 'color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;'}).text(storageContent.cooked[i].amount)
+                        )
                     );
                 }
             }
 
             if (storageContent.hasOwnProperty('raw')) {
                 for (var i in storageContent.raw) {
-                    $('#miniInventory1').append('<div class="itemCountHolder">' +
-                                                    '<img src="http://www.erepublik.com/images/icons/industry/' + storageContent.raw[i].industry + '/default.png">' +
-                                                    '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + storageContent.raw[i].amount + '</strong>' +
-                                                '</div>');
+                    $('#miniInventory1').append(
+                        $('<div>', {class: 'itemCountHolder'}).append(
+                            $('<img>', {src: 'http://www.erepublik.com/images/icons/industry/' + storageContent.raw[i].industry + '/default.png'}),
+                            $('<strong>', {style: 'color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;'}).text(storageContent.raw[i].amount)
+                        )
+                    );
                 }
             }
             
             if (storageContent.hasOwnProperty('bazooka') && storageContent.bazooka > 0) {
-                $('#miniInventory1').append('<div class="itemCountHolder">' +
-                                                '<img src="http://www.erepublik.com/images/icons/industry/000/1.png">' +
-                                                '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + storageContent.bazooka + '</strong>' +
-                                            '</div>');
+                $('#miniInventory1').append(
+                    $('<div>', {class: 'itemCountHolder'}).append(
+                        $('<img>', {src: 'http://www.erepublik.com/images/icons/industry/000/1.png'}),
+                        $('<strong>', {style: 'color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;'}).text(storageContent.bazooka)
+                    )
+                );
             }
             
             var citizenshipCountry = id_country[era.characterCitizenshipId];
@@ -2679,23 +2680,25 @@ var era = {
                 var offPriceTax = parseFloat(marketOffers[i].price) / (1 + ((offVat + offImp * foreignOffer()) / 100));
                 var tOfferVal = marketOffers[i].amount * parseFloat(marketOffers[i].price) / (1 + ((offVat + offImp * foreignOffer()) / 100));
 
-                $('#miniInventory3').append('<div id="itemCountHolder_' + marketOffers[i].id + '" class="itemCountHolder">' +
-                                                (marketOffers[i].quality > 0 ? '<img src="http://www.erepublik.com/images/icons/industry/' + marketOffers[i].industry + '/q' + marketOffers[i].quality + '.png">' : '<img src="http://www.erepublik.com/images/icons/industry/' + marketOffers[i].industry + '/default.png">') +
-                                                '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;">' + marketOffers[i].amount + '</strong>' +
-                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png">' +
-                                                '<span style="float: right; font-size: 11px; color: grey;">' + marketOffers[i].price + '</span>' +
-                                            '</div>' +
-                                            '<div id="marketDropHolder_' + marketOffers[i].id + '" class="marketDropHolder">' +
-                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png">' +
-                                                '<span id="offPriceTaxG_' + marketOffers[i].id + '" style="float: right; font-size: 11px; color: grey; margin-left: 5px;">n/a</span>' +
-                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png">' +
-                                                '<span style="float: right; font-size: 11px; color: grey;">' + offPriceTax.toFixed(2) + '</span>' +
-                                                
-                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px; clear: both;" title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png">' +
-                                                '<span id="tOfferValG_' + marketOffers[i].id + '" style="float: right; font-size: 11px; color: grey; margin-left: 5px;">n/a</span>' +
-                                                '<img style="float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;" title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png">' +
-                                                '<span style="float: right; font-size: 11px; color: grey;">' + tOfferVal.toFixed(2) + '</span>' +
-                                            '</div>');
+                $('#miniInventory3').append(
+                    $('<div>', {id: 'itemCountHolder_' + marketOffers[i].id, class: 'itemCountHolder'}).append(
+                        marketOffers[i].quality > 0 ? $('<img>', {src: 'http://www.erepublik.com/images/icons/industry/' + marketOffers[i].industry + '/q' + marketOffers[i].quality + '.png'}) : $('<img>', {src: 'http://www.erepublik.com/images/icons/industry/' + marketOffers[i].industry + '/default.png'}),
+                        $('<strong>', {style: 'color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold;'}).text(marketOffers[i].amount),
+                        $('<img>', {style: 'float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;', title: era.characterCurrency, alt: era.characterCurrency, src: 'http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png'}),
+                        $('<span>', {style: 'float: right; font-size: 11px; color: grey;'}).text(marketOffers[i].price)
+                    ),
+                    $('<div>', {id: 'marketDropHolder_' + marketOffers[i].id, class: 'marketDropHolder'}).append(
+                        $('<img>', {style: 'float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;', title: 'Gold', alt: 'Gold', src: 'http://www.erepublik.com/images/modules/_icons/gold.png'}),
+                        $('<span>', {id: 'offPriceTaxG_' + marketOffers[i].id, style: 'float: right; font-size: 11px; color: grey; margin-left: 5px;', text: 'n/a'}),
+                        $('<img>', {style: 'float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;', title: era.characterCurrency, alt: era.characterCurrency, src: 'http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png'}),
+                        $('<span>', {style: 'float: right; font-size: 11px; color: grey;'}).text(offPriceTax.toFixed(2)),
+
+                        $('<img>', {style: 'float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px; clear: both;', title: 'Gold', alt: 'Gold', src: 'http://www.erepublik.com/images/modules/_icons/gold.png'}),
+                        $('<span>', {id: 'tOfferValG_' + marketOffers[i].id, style: 'float: right; font-size: 11px; color: grey; margin-left: 5px;', text: 'n/a'}),
+                        $('<img>', {style: 'float: right; margin-right: 3px; margin-left: 3px; margin-top: 5px; height: 16px; width: 16px;', title: era.characterCurrency, alt: era.characterCurrency, src: 'http://www.erepublik.com/images/flags_png/S/' + marketOffers[i].country + '.png'}),
+                        $('<span>', {style: 'float: right; font-size: 11px; color: grey;'}).text(tOfferVal.toFixed(2))
+                    )
+                );
                 
                 $('#offPriceTaxG_' + marketOffers[i].id).gold(offPriceTax, 4);
                 $('#tOfferValG_' + marketOffers[i].id).gold(tOfferVal, 4);
@@ -2723,19 +2726,32 @@ var era = {
 
             if(!monetaryOffers.length) return;
             
-            $('.inventoryHolder').append('<a href="http://www.erepublik.com/' + era.hostLang + '/economy/exchange-market"><div style="text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;">Monetary market</div><div id="miniMonetary1" class="miniInventoryHolder"></div></a>');
+            $('.inventoryHolder').append(
+                $('<a>', {href: 'http://www.erepublik.com/' + era.hostLang + '/economy/exchange-market'}).append(
+                    $('<div>', {style: 'text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;', text: 'Monetary market'}),
+                    $('<div>', {id: 'miniMonetary1', class: 'miniInventoryHolder'})
+                )
+            );
 
             for (var i in monetaryOffers) {
-                $('#miniMonetary1').append('<div id="monCountHolder_' + monetaryOffers[i].id + '" class="monCountHolder">' +
-                                                (monetaryOffers[i].currency == 'GOLD' ? '<img title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png">' : '<img title="' + monetaryOffers[i].currency + '" alt="' + monetaryOffers[i].currency + '" src="http://www.erepublik.com/images/flags_png/S/' + currency_country[monetaryOffers[i].currency] + '.png">') +
-                                                '<strong style="color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold; float: left;">' + (monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].amount * 1).toFixed(2) : (monetaryOffers[i].amount * 1).toFixed(0) ) + '</strong>' +
-                                                (monetaryOffers[i].currency == 'GOLD' ? '<img title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + currency_country[era.characterCurrency] + '.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">' : '<img title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">') +
-                                                '<span style="color: grey; font-size: 11px; text-shadow: 0 1px 0 #FFFFFF; float: right;">' + (monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].rate * 1).toFixed(0) : (monetaryOffers[i].rate * 1).toFixed(2) ) + '</strong>' +
-                                            '</div>' +
-                                            '<div id="monDropHolder_' + monetaryOffers[i].id + '" class="monDropHolder">' +
-                                                (monetaryOffers[i].currency == 'GOLD' ? '<img title="' + era.characterCurrency + '" alt="' + era.characterCurrency + '" src="http://www.erepublik.com/images/flags_png/S/' + currency_country[era.characterCurrency] + '.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">' : '<img title="Gold" alt="Gold" src="http://www.erepublik.com/images/modules/_icons/gold.png" style="float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;">') +
-                                                '<span style="float: right; font-size: 11px; color: grey; margin-left: 5px;">' + (monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].amount * monetaryOffers[i].rate).toFixed(0) : (monetaryOffers[i].amount * monetaryOffers[i].rate).toFixed(2) ) + '</span>' +
-                                            '</div>');
+                $('#miniMonetary1').append(
+                    $('<div>', {id: 'monCountHolder_' + monetaryOffers[i].id, class: 'monCountHolder'}).append(
+                        monetaryOffers[i].currency == 'GOLD' ? $('<img>', {title: 'Gold', alt: 'Gold', src: 'http://www.erepublik.com/images/modules/_icons/gold.png'}) : $('<img>', {title: monetaryOffers[i].currency, alt: monetaryOffers[i].currency, src: 'http://www.erepublik.com/images/flags_png/S/' + currency_country[monetaryOffers[i].currency] + '.png'}),
+                        $('<strong>', {style: 'color: #585858; font-size: 12px; text-shadow: 0 1px 0 #FFFFFF; font-weight: bold; float: left;'}).text(
+                            monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].amount * 1).toFixed(2) : (monetaryOffers[i].amount * 1).toFixed(0)
+                        ),
+                        monetaryOffers[i].currency == 'GOLD' ? $('<img>', {style: 'float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;', title: era.characterCurrency, alt: era.characterCurrency, src: 'http://www.erepublik.com/images/flags_png/S/' + currency_country[era.characterCurrency] + '.png'}) : $('<img>', {title: 'Gold', alt: 'Gold', src: 'http://www.erepublik.com/images/modules/_icons/gold.png', style: 'float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;'}),
+                        $('<span>', {style: 'color: grey; font-size: 11px; text-shadow: 0 1px 0 #FFFFFF; float: right;'}).text(
+                            monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].rate * 1).toFixed(0) : (monetaryOffers[i].rate * 1).toFixed(2)
+                        )
+                    ),
+                    $('<div>', {id: 'monDropHolder_' + monetaryOffers[i].id, class: 'monDropHolder'}).append(
+                        monetaryOffers[i].currency == 'GOLD' ? $('<img>', {style: 'float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;', title: era.characterCurrency, alt: era.characterCurrency, src: 'http://www.erepublik.com/images/flags_png/S/' + currency_country[era.characterCurrency] + '.png'}) : $('<img>', {title: 'Gold', alt: 'Gold', src: 'http://www.erepublik.com/images/modules/_icons/gold.png', style: 'float: right; margin-left: 6px; margin-right: 1px; margin-top: 6px;'}),
+                        $('<span>', {style: 'float: right; font-size: 11px; color: grey; margin-left: 5px;'}).text(
+                            monetaryOffers[i].currency == 'GOLD' ? (monetaryOffers[i].amount * monetaryOffers[i].rate).toFixed(0) : (monetaryOffers[i].amount * monetaryOffers[i].rate).toFixed(2)
+                        )
+                    )
+                );
             }
             
             $('#miniMonetary1 .monCountHolder:last').css('border-bottom', 'none');
@@ -2761,33 +2777,35 @@ var era = {
             
             $('.inventoryHolder').append('<div style="text-align: center; display: block; float: left; color: #b4b4b4; width: 100%; margin-bottom: 3px;">Mercenary</div><div id="miniMercenary1" class="miniInventoryHolder" style="cursor: default;"></div>');
 
-            var tmp = '<div id="mercHolder" class="mercHolder" data-state="0" style="text-align: center; position: relative; cursor: pointer;">' +
-                                            '<div id="mercenaryTooltip" style="display: none; position: absolute;">' +
-                                                '<div style="font-size: 11px; background-color: #fffcc8; line-height: initial; padding: 5px; border-radius: 4px; border: 1px solid #ffd800; color: #595959;">Defeat 25 enemies for 50 different countries to get Mercenary medal.</div>' +
-                                                '<div style="width: 0; height: 0; border: 1px solid transparent; border-top-color: #ffd800; border-width: 4px 4px; margin: auto;"></div>' +
-                                            '</div>' +
-                                            '<div class="mercBarBg">' +
-                                                '<img src="' + mercBarIcon + '" alt="" style="position: absolute; top: -1px; z-index: 3; left: -5px;">' +
-                                                '<strong id="currMercProgress" style="width: 100%; text-align: center; position: absolute; right: 2px; top: 2px; height: 17px; font-size: 11px; line-height: 17px; z-index: 3; color: #333; color: rgba(51, 74, 33, 0.6); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4),0 0 5px rgba(255, 255, 255, 0.9);">' + mercenaryProgress.totalProgress + ' / 50</strong>' +
-                                                '<div id="mercBarProgress" class="mercBarProgress"></div>' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div id="mercDropHolder" class="mercDropHolder" style="text-align: center;">' +
-                                            '<ul class="mercList" style="font-size: 11px; color: grey;">';
+            $('#miniMercenary1').append(
+                '<div id="mercHolder" class="mercHolder" data-state="0" style="text-align: center; position: relative; cursor: pointer;">' +
+                    '<div id="mercenaryTooltip" style="display: none; position: absolute;">' +
+                        '<div style="font-size: 11px; background-color: #fffcc8; line-height: initial; padding: 5px; border-radius: 4px; border: 1px solid #ffd800; color: #595959;">Defeat 25 enemies for 50 different countries to get Mercenary medal.</div>' +
+                        '<div style="width: 0; height: 0; border: 1px solid transparent; border-top-color: #ffd800; border-width: 4px 4px; margin: auto;"></div>' +
+                    '</div>' +
+                    '<div class="mercBarBg">' +
+                        '<img src="" alt="" style="position: absolute; top: -1px; z-index: 3; left: -5px;">' +
+                        '<strong id="currMercProgress" style="width: 100%; text-align: center; position: absolute; right: 2px; top: 2px; height: 17px; font-size: 11px; line-height: 17px; z-index: 3; color: #333; color: rgba(51, 74, 33, 0.6); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4),0 0 5px rgba(255, 255, 255, 0.9);"></strong>' +
+                        '<div id="mercBarProgress" class="mercBarProgress"></div>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="mercDropHolder" class="mercDropHolder" style="text-align: center;">' +
+                    '<ul class="mercList" style="font-size: 11px; color: grey;"></ul>' +
+                '</div>'
+            );
 
-                                        for (var i in mercenaryProgress.countryProgress) {
-            tmp +=                                  '<li title="' + mercenaryProgress.countryProgress[i].country + '">' +
-                                                        '<img src="http://www.erepublik.com/images/flags_png/S/' + id_country[countryName_id[mercenaryProgress.countryProgress[i].country]] + '.png" alt="">' +
-                                                        '<small>' + i + '</small>' +
-                                                        '<em style="background-image: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(225, 225, 225); background-position: initial initial; background-repeat: initial initial; ">' + mercenaryProgress.countryProgress[i].progress + '/25</em>' +
-                                                    '</li>';
-                                        }
+            $('#mercHolder mercBarBg img').attr('src', mercBarIcon);
+            $('#currMercProgress').text(mercenaryProgress.totalProgress + ' / 50');
 
-
-            tmp +=                          '</ul>' +
-                                        '</div>';
-
-            $('#miniMercenary1').append(tmp);
+            for (var i in mercenaryProgress.countryProgress) {
+                $('#mercDropHolder ul').append(
+                    $('<li>', {title: mercenaryProgress.countryProgress[i].country}).append(
+                        $('<img>', {src: 'http://www.erepublik.com/images/flags_png/S/' + id_country[countryName_id[mercenaryProgress.countryProgress[i].country]] + '.png'}),
+                        $('<small>').text(i),
+                        $('<em>', {style: 'background-image: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(225, 225, 225); background-position: initial initial; background-repeat: initial initial;'}).text(mercenaryProgress.countryProgress[i].progress + '/25')
+                    )
+                )
+            }
             
             $('#mercBarProgress').css('width', mercenaryProgress.totalProgress / 0.5 + '%');
             
@@ -2873,7 +2891,9 @@ var era = {
                     }
                 }
 
-                $(this).find('.reply_links').append('<li style="color: #999; font-size: 11px;">' + showText + ' ago</li>');
+                $(this).find('.reply_links').append(
+                    $('<li>', {style: 'color: #999; font-size: 11px;'}).text(showText + ' ago')
+                );
             });
         }
     },
@@ -2976,14 +2996,18 @@ var era = {
                     '<tr style="background: none repeat scroll 0 0 #F7FCFF;">' +
                         '<td colspan="4">&nbsp;</td>' +
                         '<td id="marketTotals" style="border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;">' +
-                            '<strong id="sumValue">' + (0).toFixed(2) + '</strong>&nbsp;' + citizenCurrency + '<br>' +
-                            '<strong style="color: #B2B2B2; font-size: 10px;" id="sumGold">' + (0).toFixed(4) + '</strong>' +
+                            '<strong id="sumValue"></strong>&nbsp;<span class="eracurrency"></span><br>' +
+                            '<strong style="color: #B2B2B2; font-size: 10px;" id="sumGold"></strong>' +
                             '<span style="color: #B2B2B2; font-size: 10px;">&nbsp;GOLD</span>' +
                         '</td>' +
                         '<td colspan="2">&nbsp;</td>' +
                     '</tr>' +
                 '</tfoot>'
             ).find('th:not(#totalValue, .offers_action)').css('padding-left', '10px');
+
+            $('#sumValue').text((0).toFixed(2));
+            $('#sumGold').text((0).toFixed(4));
+            $('#marketTotals .eracurrency').text(citizenCurrency);
 
             $('#sell_offers').bind('update', function() {
                 var price = $('#sell_price').val().replace(',', '.');
@@ -3044,16 +3068,20 @@ var era = {
                 $(this).find('.goldOfferPrice').gold(offerPrice, 4);
 
                 $(this).find('.offer_price').after(
-                    '<td style="border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;">' +
-                        '<strong class="taxlessOfferPrice">' + taxlessOfferPrice.toFixed(2) + '</strong> ' + citizenCurrency + '<br>' +
-                        '<strong class="goldTaxlessOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
-                        '<span style="color: #B2B2B2; font-size: 10px;"> GOLD</span>' +
-                    '</td>' +
-                    '<td style="border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;">' +
-                        '<strong class="taxlessTotalOfferPrice">' + (offerAmount * taxlessOfferPrice).toFixed(2) + '</strong> ' + citizenCurrency + '<br>' +
-                        '<strong class="goldTaxlessTotalOfferPrice" style="color: #B2B2B2; font-size: 10px;">n/a</strong>' +
-                        '<span style="color: #B2B2B2; font-size: 10px;">&nbsp;GOLD</span>' +
-                    '</td>'
+                    $('<td>', {style: 'border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;'}).append(
+                        $('<strong>', {class: 'taxlessOfferPrice'}).text(taxlessOfferPrice.toFixed(2)),
+                        $('<span>').text(citizenCurrency),
+                        $('<br>'),
+                        $('<strong>', {class: 'goldTaxlessOfferPrice', style: 'color: #B2B2B2; font-size: 10px;', text: 'n/a'}),
+                        $('<span>', {style: 'color: #B2B2B2; font-size: 10px;', text: ' GOLD'})
+                    ),
+                    $('<td>', {style: 'border-top: 1px solid #E2F3F9; color: #5E5E5E; padding-left: 12px;'}).append(
+                        $('<strong>', {class: 'taxlessTotalOfferPrice'}).text((offerAmount * taxlessOfferPrice).toFixed(2)),
+                        $('<span>').text(citizenCurrency),
+                        $('<br>'),
+                        $('<strong>', {class: 'goldTaxlessTotalOfferPrice', style: 'color: #B2B2B2; font-size: 10px;', text: 'n/a'}),
+                        $('<span>', {style: 'color: #B2B2B2; font-size: 10px;', text: ' GOLD'})
+                    )
                 );
 
                 $(this).find('.goldTaxlessOfferPrice').gold(taxlessOfferPrice, 4);
@@ -3063,9 +3091,9 @@ var era = {
                 });
 
                 $(this).find('.delete_offer').before(
-                    '<a title="Visit market" target="_blank" class="fluid_blue_dark_small" style="padding-left: 3px;" id="visit_market" href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + country_id[currency_country[offerCurrency].toLowerCase()] + '/' + offerIndustry + '/' + offerQuality + '/citizen/0/price_asc/1">' +
-                        '<span>M</span>' +
-                    '</a>'
+                    $('<a>', {title: 'Visit market', target: '_blank', class: 'fluid_blue_dark_small', style: 'padding-left: 3px;', id: 'visit_market', href: 'http://www.erepublik.com/' + era.hostLang + '/economy/market/' + country_id[currency_country[offerCurrency].toLowerCase()] + '/' + offerIndustry + '/' + offerQuality + '/citizen/0/price_asc/1'}).append(
+                        $('<span>').text('M')
+                    )
                 );
 
                 $(this).find('td:last').css('padding-left', '15px');
@@ -3209,90 +3237,94 @@ var era = {
                 }
                 
                 function generateItem(industry, quality) {
-                    var genItem = '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/' + industry + '/' + quality + '/citizen/0/price_asc/1" target="_blank"><div class="taxLinkItem">Q' + quality + '</div></a>';
-                    return (genItem);
+                    return $('<a>', {href: 'http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/' + industry + '/' + quality + '/citizen/0/price_asc/1', target: '_blank'}).append(
+                        $('<div>', {class: 'taxLinkItem'}).text('Q' + quality)
+                    )
                 }
 
-                $('#taxTable tbody').append('<tr>' +
-                                                '<td style="padding-left: 5px;"><img style="vertical-align: top;" src="' + countrFlag + '"> ' + countrName + '</td>' +
-                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                                    '<div class="taxLinkHolder">' +
-                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                        generateItem(1, 1) +
-                                                        generateItem(1, 2) +
-                                                        generateItem(1, 3) +
-                                                        generateItem(1, 4) +
-                                                        generateItem(1, 5) +
-                                                        generateItem(1, 6) +
-                                                        generateItem(1, 7) +
-                                                    '</div>' +
-                                                    '<span>' + taxSum1 + '%</span>' +
-                                                '</td>' +
-                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                                    '<div class="taxLinkHolder">' +
-                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                        generateItem(2, 1) +
-                                                        generateItem(2, 2) +
-                                                        generateItem(2, 3) +
-                                                        generateItem(2, 4) +
-                                                        generateItem(2, 5) +
-                                                        generateItem(2, 6) +
-                                                        generateItem(2, 7) +
-                                                    '</div>' +
-                                                    '<span>' + taxSum2 + '%</span>' +
-                                                '</td>' +
-                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                                    '<div class="taxLinkHolder">' +
-                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                        generateItem(3, 1) +
-                                                        generateItem(3, 2) +
-                                                        generateItem(3, 3) +
-                                                        generateItem(3, 4) +
-                                                        generateItem(3, 5) +
-                                                    '</div>' +
-
-                                                    '<span>' + taxSum3 + '%</span>' +
-                                                '</td>' +
-                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                                    '<div class="taxLinkHolder">' +
-                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                        generateItem(4, 1) +
-                                                        generateItem(4, 2) +
-                                                        generateItem(4, 3) +
-                                                        generateItem(4, 4) +
-                                                        generateItem(4, 5) +
-                                                    '</div>' +
-                                                    '<span>' + taxSum4 + '%</span>' +
-                                                '</td>' +
-                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                                    '<div class="taxLinkHolder">' +
-                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                        generateItem(5, 1) +
-                                                        generateItem(5, 2) +
-                                                        generateItem(5, 3) +
-                                                        generateItem(5, 4) +
-                                                        generateItem(5, 5) +
-                                                    '</div>' +
-                                                    '<span>' + taxSum5 + '%</span>' +
-                                                '</td>' +
-                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                                    '<div class="taxLinkHolder">' +
-                                                        '<div class="taxLinkItemTransparent">&nbsp;</div>' +
-                                                        generateItem(6, 1) +
-                                                        generateItem(6, 2) +
-                                                        generateItem(6, 3) +
-                                                        generateItem(6, 4) +
-                                                        generateItem(6, 5) +
-                                                    '</div>' +
-                                                    '<span>' + taxSum6 + '%</span>' +
-                                                '</td>' +
-                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                                    '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/7/1/citizen/0/price_asc/1" target="_blank">' + taxSum7 + '%</a>' +
-                                                '</td>' +
-                                                '<td class="taxLink" style="text-align: center; padding-left: 0px;">' +
-                                                    '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/12/1/citizen/0/price_asc/1" target="_blank">' + taxSum12 + '%</a>' +
-                                                '</td>' +
-                                            '</tr>');
+                $('#taxTable tbody').append(
+                    $('<tr>').append(
+                        $('<td>', {style: 'padding-left: 5px;'}).text(countrName).prepend(
+                            $('<img>', {style: 'vertical-align: top;', src: countrFlag})
+                        ),
+                        $('<td>', {class: 'taxLink', style: 'text-align: center; padding-left: 0px;'}).append(
+                            $('<div>', {class: 'taxLinkHolder'}).append(
+                                $('<div>', {class: 'taxLinkItemTransparent'}).html('&nbsp;'),
+                                generateItem(1, 1),
+                                generateItem(1, 2),
+                                generateItem(1, 3),
+                                generateItem(1, 4),
+                                generateItem(1, 5),
+                                generateItem(1, 6),
+                                generateItem(1, 7)
+                            ),
+                            $('<span>').text(taxSum1 + '%')
+                        ),
+                        $('<td>', {class: 'taxLink', style: 'text-align: center; padding-left: 0px;'}).append(
+                            $('<div>', {class: 'taxLinkHolder'}).append(
+                                $('<div>', {class: 'taxLinkItemTransparent'}).html('&nbsp;'),
+                                generateItem(2, 1),
+                                generateItem(2, 2),
+                                generateItem(2, 3),
+                                generateItem(2, 4),
+                                generateItem(2, 5),
+                                generateItem(2, 6),
+                                generateItem(2, 7)
+                            ),
+                            $('<span>').text(taxSum2 + '%')
+                        ),
+                        $('<td>', {class: 'taxLink', style: 'text-align: center; padding-left: 0px;'}).append(
+                            $('<div>', {class: 'taxLinkHolder'}).append(
+                                $('<div>', {class: 'taxLinkItemTransparent'}).html('&nbsp;'),
+                                generateItem(3, 1),
+                                generateItem(3, 2),
+                                generateItem(3, 3),
+                                generateItem(3, 4),
+                                generateItem(3, 5)
+                            ),
+                            $('<span>').text(taxSum3 + '%')
+                        ),
+                        $('<td>', {class: 'taxLink', style: 'text-align: center; padding-left: 0px;'}).append(
+                            $('<div>', {class: 'taxLinkHolder'}).append(
+                                $('<div>', {class: 'taxLinkItemTransparent'}).html('&nbsp;'),
+                                generateItem(4, 1),
+                                generateItem(4, 2),
+                                generateItem(4, 3),
+                                generateItem(4, 4),
+                                generateItem(4, 5)
+                            ),
+                            $('<span>').text(taxSum4 + '%')
+                        ),
+                        $('<td>', {class: 'taxLink', style: 'text-align: center; padding-left: 0px;'}).append(
+                            $('<div>', {class: 'taxLinkHolder'}).append(
+                                $('<div>', {class: 'taxLinkItemTransparent'}).html('&nbsp;'),
+                                generateItem(5, 1),
+                                generateItem(5, 2),
+                                generateItem(5, 3),
+                                generateItem(5, 4),
+                                generateItem(5, 5)
+                            ),
+                            $('<span>').text(taxSum5 + '%')
+                        ),
+                        $('<td>', {class: 'taxLink', style: 'text-align: center; padding-left: 0px;'}).append(
+                            $('<div>', {class: 'taxLinkHolder'}).append(
+                                $('<div>', {class: 'taxLinkItemTransparent'}).html('&nbsp;'),
+                                generateItem(6, 1),
+                                generateItem(6, 2),
+                                generateItem(6, 3),
+                                generateItem(6, 4),
+                                generateItem(6, 5)
+                            ),
+                            $('<span>').text(taxSum6 + '%')
+                        ),
+                        $('<td>', {class: 'taxLink', style: 'text-align: center; padding-left: 0px;'}).append(
+                            $('<a>', {href: 'http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/7/1/citizen/0/price_asc/1', target: '_blank'}).text(taxSum7 + '%')
+                        ),
+                        $('<td>', {class: 'taxLink', style: 'text-align: center; padding-left: 0px;'}).append(
+                            $('<a>', {href: 'http://www.erepublik.com/' + era.hostLang + '/economy/market/' + countrCode + '/12/1/citizen/0/price_asc/1', target: '_blank'}).text(taxSum12 + '%')
+                        )
+                    )
+                );
             });
             
             $('#taxTable .taxLinkHolder').css('width', '65px');
@@ -3306,21 +3338,27 @@ var era = {
                     var regionName = $(this).find('strong:first').html().replace(/\./gi, '');
 
                     if (!region_link.hasOwnProperty(regionName)) return;
-                    else $(this).find('strong:first').wrap('<a style="float: left; margin-top: 0px; margin-left: 0px; background: none;" href="http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName] + '" />');
+                    else $(this).find('strong:first').wrap(
+                        $('<a>', {style: 'float: left; margin-top: 0px; margin-left: 0px; background: none;', href: 'http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName]})
+                    );
                 });
                 
                 $('#battle_listing .country_battles li').each(function() {
                     var regionName = $(this).find('strong:first').text().replace(/\./gi, '');
 
                     if (!region_link.hasOwnProperty(regionName)) return;
-                    else $(this).find('strong:first').wrap('<a style="float: left; margin-top: 0px; margin-left: 0px; background: none;" href="http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName] + '" />');
+                    else $(this).find('strong:first').wrap(
+                        $('<a>', {style: 'float: left; margin-top: 0px; margin-left: 0px; background: none;', href: 'http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName]})
+                    );
                 });
                 
                 $('#battle_listing .allies_battles li').each(function() {
                     var regionName = $(this).find('strong:first').text().replace(/\./gi, '');
 
                     if (!region_link.hasOwnProperty(regionName)) return;
-                    else $(this).find('strong:first').wrap('<a style="float: left; margin-top: 0px; margin-left: 0px; background: none;" href="http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName] + '" />');
+                    else $(this).find('strong:first').wrap(
+                        $('<a>', {style: 'float: left; margin-top: 0px; margin-left: 0px; background: none;', href: 'http://www.erepublik.com/' + era.hostLang + '/region/' + region_link[regionName]})
+                    );
                 });
             } else {
                 $('#battle_listing li').each(function() {
@@ -3357,7 +3395,7 @@ var era = {
                     
                     $(holder).find('img[title*="' + natural + '"]').each(function() {
                         if($(holder).find('img[class*="resistance_sign"]').attr('title') == undefined) {
-                            var neImage = '<img alt="" title="Natural enemy" src="' + neIcon + '" class="natural_sign">';
+                            var neImage = $('<img>', {title: 'Natural enemy', src: neIcon, class: 'natural_sign'});
                             
                             $(this).before(neImage);
                             
@@ -3394,7 +3432,7 @@ var era = {
                                 $(this).wrap('<div class="opponent_holder">');
                             }
                             
-                            var neImage = '<img alt="" title="Natural enemy" src="' + neIcon + '" class="natural_sign" style="z-index: 2;">';
+                            var neImage = $('<img>', {title: 'Natural enemy', src: neIcon, class: 'natural_sign', style: 'z-index: 2;'});
                             
                             $(this).before(neImage);
                             
@@ -3421,14 +3459,16 @@ var era = {
                         $(this).append('<span class="shareDot">· </span>' +
                                         '<a class="shareButton" href="javascript:;">Share</a>' +
                                         '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
-                                            '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?viewPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
+                                            '<input class="shareUrl" name="shareUrl" value="" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
                                         '</div>');
+                        $(this).find('input.shareUrl').val('http://www.erepublik.com/en?viewPost=' + postId);
                     } else {
                         $(this).append('<span class="shareDot">· </span>' +
                                         '<a class="shareButton" href="javascript:;">Share</a>' +
                                         '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
-                                            '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?unitPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
+                                            '<input class="shareUrl" name="shareUrl" value="" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
                                         '</div>');
+                        $(this).find('input.shareUrl').val('http://www.erepublik.com/en?unitPost=' + postId);
                     }
                 }
             });
@@ -3520,14 +3560,16 @@ var era = {
                             $(this).append('<span class="shareDot">· </span>' +
                                             '<a class="shareButton" href="javascript:;">Share</a>' +
                                             '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
-                                                '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?viewPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
+                                                '<input class="shareUrl" name="shareUrl" value="" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
                                             '</div>');
+                            $(this).find('input.shareUrl').val('http://www.erepublik.com/en?viewPost=' + postId);
                         } else {
                             $(this).append('<span class="shareDot">· </span>' +
                                             '<a class="shareButton" href="javascript:;">Share</a>' +
                                             '<div style="clear: both; width: 310px; display: none; padding: 5px 0 0 0; height: 0px; overflow: hidden;">' +
-                                                '<input class="shareUrl" name="shareUrl" value="http://www.erepublik.com/en?unitPost=' + postId + '" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
+                                                '<input class="shareUrl" name="shareUrl" value="" style="display: none; width: 300px; font-size: 9px; border-radius: 3px; border: 1px solid #D2D2D2; color: grey; padding: 2px; opacity: 0;">' +
                                             '</div>');
+                            $(this).find('input.shareUrl').val('http://www.erepublik.com/en?unitPost=' + postId);
                         }
                     });
                     
@@ -3698,15 +3740,19 @@ var era = {
                                         '</div>' +
                                    '</div>');
                 } else {
-                    $(this).append('<div class="mercMainHolder">' +
-                                        '<div style="width: 139px; float: left;">' +
-                                            '<strong style="font-size: 11px; float: right; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressOne + '</strong>' +
-                                        '</div>' +
-                                        '<div class="mercTank" style="margin: 3px 13px 0 13px;"></div>' +
-                                        '<div style="width: 130px; float: left;">' +
-                                            '<strong style="font-size: 11px; float: left; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;">' + mercProgressTwo + '</strong>' +
-                                        '</div>' +
-                                   '</div>');
+                    $(this).append(
+                        $('<div>', {class: 'mercMainHolder'}).append(
+                            $('<div>', {style: 'width: 139px; float: left;'}).append(
+                                $('<strong>', {style: 'font-size: 11px; float: right; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;'}).text(mercProgressOne)
+                            ),
+                            $('<div>', {class: 'mercTank', style: 'margin: 3px 13px 0 13px;'}),
+                            $('<div>', {class: 'mercMainHolder'}).append(
+                                $('<div>', {style: 'width: 130px; float: left;'}).append(
+                                    $('<strong>', {style: 'font-size: 11px; float: left; color: #9e0b0f; margin-top: 1px; margin-left: 0px; font-weight: bold;'}).text(mercProgressTwo)
+                                )
+                            )
+                        )
+                    );
                 }
                 
                 if (mercProgressTwo == '0') {
@@ -3758,15 +3804,17 @@ var era = {
                                         '</div>' +
                                    '</div>');
                 } else {
-                    $(this).append('<div class="mercTrackerHolder" style="width: 106px;">' +
-                                        '<div style="width: 28px; float: left; text-align: center;">' +
-                                            '<strong style="font-size: 11px; color: #9e0b0f; margin-top: 15px; font-weight: bold; width: 28px; margin-left: 0px;">' + mercProgressOne + '</strong>' +
-                                        '</div>' +
-                                        '<div class="tank_img" style="margin: 16px 13px 0 13px;"></div>' +
-                                        '<div style="width: 28px; float: left; text-align: center;">' +
-                                            '<strong style="font-size: 11px; color: #9e0b0f; margin-top: 15px; font-weight: bold; width: 28px; margin-left: 0px;">' + mercProgressTwo + '</strong>' +
-                                        '</div>' +
-                                   '</div>');
+                    $(this).append(
+                        $('<div>', {class: 'mercTrackerHolder', style: 'width: 106px;'}).append(
+                            $('<div>', {style: 'width: 28px; float: left; text-align: center;'}).append(
+                                $('<strong>', {style: 'font-size: 11px; color: #9e0b0f; margin-top: 15px; font-weight: bold; width: 28px; margin-left: 0px;'}).text(mercProgressOne)
+                            ),
+                            $('<div>', {class: 'tank_img', style: 'margin: 16px 13px 0 13px;'}),
+                            $('<div>', {style: 'width: 28px; float: left; text-align: center;'}).append(
+                                $('<strong>', {style: 'font-size: 11px; color: #9e0b0f; margin-top: 15px; font-weight: bold; width: 28px; margin-left: 0px;'}).text(mercProgressTwo)
+                            )
+                        )
+                    );
                 }
                 
                 if (mercProgressTwo == '0') {
@@ -3806,8 +3854,16 @@ var era = {
             var mercProgressOne = neededProgress[id_countryName[$('.listing.resistance a:first').attr('href').split('/').pop()]];
             var mercProgressTwo = neededProgress[id_countryName[$('.listing.resistance a:last').attr('href').split('/').pop()]];
             
-            $('.listing.resistance strong:eq(0)').after('<strong style="font-size: 11px; color: #9e0b0f; font-weight: bold; width: 35%; right: 0px; left: auto;"><div style="float: left;">' + mercProgressTwo + '</div></strong>');
-            $('.listing.resistance strong:eq(0)').before('<strong style="font-size: 11px; color: #9e0b0f; font-weight: bold; width: 35%; left: 0px;"><div style="float: right;">' + mercProgressOne + '</div></strong>');
+            $('.listing.resistance strong:eq(0)').after(
+                $('<strong>', {style: 'font-size: 11px; color: #9e0b0f; font-weight: bold; width: 35%; right: 0px; left: auto;'}).append(
+                    $('<div>', {style: 'float: left;'}).text(mercProgressTwo)
+                )
+            );
+            $('.listing.resistance strong:eq(0)').before(
+                $('<strong>', {style: 'font-size: 11px; color: #9e0b0f; font-weight: bold; width: 35%; left: 0px;'}).append(
+                    $('<div>', {style: 'float: right;'}).text(mercProgressOne)
+                )
+            );
             
             if (mercProgressTwo == '0') {
                 $('.listing.resistance strong:eq(2)').css('color', '#999999');
@@ -3841,8 +3897,12 @@ var era = {
             var mercProgressOne = neededProgress[$('#pvp_header .country.left_side h3').html().replace('Resistance Force Of ', '')];
             var mercProgressTwo = neededProgress[$('#pvp_header .country.right_side h3').html().replace('Resistance Force Of ', '')];
             
-            $('#pvp_header .country.left_side').append('<div style="font-size: 14px; color: #9e0b0f; font-weight: bold; float: left; position: absolute; left: 130px; top: 20px;">' + mercProgressOne + '</div>');
-            $('#pvp_header .country.right_side').append('<div style="font-size: 14px; color: #9e0b0f; font-weight: bold; float: left; position: absolute; right: 130px; top: 20px;">' + mercProgressTwo + '</strong>');
+            $('#pvp_header .country.left_side').append(
+                $('<div>', {style: 'font-size: 14px; color: #9e0b0f; font-weight: bold; float: left; position: absolute; left: 130px; top: 20px;'}).text(mercProgressOne)
+            );
+            $('#pvp_header .country.right_side').append(
+                $('<div>', {style: 'font-size: 14px; color: #9e0b0f; font-weight: bold; float: left; position: absolute; right: 130px; top: 20px;'}).text(mercProgressTwo)
+            );
             
             if (mercProgressOne == '0') {
                 $('#pvp_header .country.left_side div:last').css('color', '#999999');
@@ -3864,13 +3924,17 @@ var era = {
                 var employeeId = $(this).prev().attr('id').split('_')[2];
                 
                 var employeeName = $(this).find('.employee_info .employee_entry strong').html();
-                $(this).find('.employee_info .employee_entry strong').replaceWith('<p style="float: left; margin-left: 8px; margin-top: 14px; color: #333; font-size: 11px; font-weight: bold; text-shadow: white 0 1px 0; width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + employeeName + '</p>');
+                $(this).find('.employee_info .employee_entry strong').replaceWith(
+                    $('<p>', {style: 'float: left; margin-left: 8px; margin-top: 14px; color: #333; font-size: 11px; font-weight: bold; text-shadow: white 0 1px 0; width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'}).text(employeeName)
+                );
                 
                 $(this).find('.employee_info .employee_entry').css({'position': 'relative', 'z-index': '1'});
-                $(this).find('.employee_info').append('<div class="citizen_actions">' +
-                                                                    '<a href="http://www.erepublik.com/' + era.hostLang + '/main/messages-compose/' + employeeId + '" class="action_message tip" original-title="Send message">Send message</a>' +
-                                                                    '<a href="http://www.erepublik.com/' + era.hostLang + '/economy/donate-items/' + employeeId + '" class="action_donate tip" original-title="Donate">Donate</a>' +
-                                                                '</div>');
+                $(this).find('.employee_info').append(
+                    $('<div>', {class: 'citizen_actions'}).append(
+                        $('<a>', {href: 'http://www.erepublik.com/' + era.hostLang + '/main/messages-compose/' + employeeId, class: 'action_message tip', 'original-title': 'Send message', text: 'Send message'}),
+                        $('<a>', {href: 'http://www.erepublik.com/' + era.hostLang + '/economy/donate-items/' + employeeId, class: 'action_donate tip', 'original-title': 'Donate', text: 'Donate'})
+                    )
+                );
             });
             
             $('#remove_mode').click(function() {
@@ -3933,13 +3997,13 @@ var era = {
             $('.area h4').css('position', 'relative').append(
                 '<div class="area_buttons" style="top: 0; left: 110px; position: absolute;">' +
                     '<a id="selectAll" href="javascript:;" class="grey_plastic" title="Select all companies" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 4px;">' +
-                        '<img src="' + allCompanies + '" alt="" width="25" height="25">' +
+                        '<img src="" alt="" width="25" height="25">' +
                     '</a>' +
                     '<a id="selectFactory" href="javascript:;" class="grey_plastic left_pos" title="Select all factories" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 10px;">' +
-                        '<img src="' + allFactories + '" alt="" width="25" height="25">' +
+                        '<img src="" alt="" width="25" height="25">' +
                     '</a>' +
                     '<a id="selectRaw" href="javascript:;" class="grey_plastic right_pos" title="Select all raw companies" style="display: inline-block; float: none; vertical-align: -9px; margin-left: -1px;">' +
-                        '<img src="' + allRaw + '" alt="" width="25" height="25">' +
+                        '<img src="" alt="" width="25" height="25">' +
                     '</a>' +
                     '<a id="selectFood" href="javascript:;" class="grey_plastic left_pos" title="Select all food factories" style="display: inline-block; float: none; vertical-align: -9px; margin-left: 10px;">' +
                         '<img src="http://www.erepublik.com/images/icons/industry/1/q6.png" alt="" width="25" height="25">' +
@@ -3955,6 +4019,10 @@ var era = {
                     '</a>' +
                 '</div>'
             );
+
+            $('#selectAll img').attr('src', allCompanies);
+            $('#selectFactory img').attr('src', allFactories);
+            $('#selectRaw img').attr('src', allRaw);
 
             $('.listing_holder').css('margin-top', '8px');
 
@@ -4264,7 +4332,11 @@ var era = {
                     'box-shadow: 0px 0px 7px rgba(230,230,230,0.9);' +
                 '}'
             );
-            era.settings.sidebar && $('#optionsHolder').before('<div class="inventoryHolder"><a href="http://www.erepublik.com/' + era.hostLang + '/economy/inventory"></a></div>');
+            era.settings.sidebar && $('#optionsHolder').before(
+                $('<div>', {class: 'inventoryHolder'}).append(
+                    $('<a>', {href: 'http://www.erepublik.com/' + era.hostLang + '/economy/inventory'})
+                )
+            );
 
             era.settings.sidebar && era.inventoryPageProcessor.subscribers.push(era.miniInventory.o);
             era.settings.sidebar && era.inventoryPageProcessor.o();
